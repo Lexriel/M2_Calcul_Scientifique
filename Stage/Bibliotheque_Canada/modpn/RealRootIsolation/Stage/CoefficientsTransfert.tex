@@ -1,0 +1,67 @@
+\newtheorem*{drs}{Descartes' rule of signs (DRS)}
+\newtheorem*{gp}{Gauss' property}
+\newtheorem*{tiv}{Theorem of the intermediate values (TIV)}
+
+\subsection{Context}
+
+
+René Descartes express in his treaty called "La Géométrie" in 1637 a rule allowing to estimate the number $c$ of real positive roots of a polynomial, which we commonly call the Descartes's rule of sign. Later, in 1828, Carl Friedrich Gauss demonstrates that if we count the roots with their multiplicity, then the number of positive roots has the same parity than $c$. Usually, we include the Gauss' property insode the Descartes' rule of signs. 
+
+
+\begin{drs}
+Let us consider a univariate polynomial $P\in\mathbb{R}[X]$ and the sequence $(a_n)$ of its non-null coefficients. Let $c$ be the number of sign change, then the number of positive roots of $P$ is at most $c$.
+\end{drs}
+
+
+\begin{gp}
+If we consider the previous Descartes' rule of signs and the roots with their multiplicity, then the number of real positive roots of $P$ has the same parity than $c$.
+\end{gp}
+
+\noindent \textit{Conséquence :} We can also find the number of negative real roots using $Q(X) = P(-X)$ the Descartes' rule of signs.
+
+
+This easy rule is the pillar of the reasoning in this work. Indeed, to know the number of roots is equivalent to know where are located these roots in $\mathbb{R}$. But to find in what interval are located the roots is easier than to discover to roots of a polynomial. See the example to understand how we can find roots thanks to this rule and some reasoning using in particular the following theorem :
+
+
+\begin{tiv}
+If $f$ is a real-valued continuous function on the interval $[a, b]$ and $u$ is a number between $f(a)$ and $f(b)$, then $\exists c\in [a, b]\, |\, f(c) = u$.
+\end{tiv}
+
+
+In particular if $u = 0$, then $\exists c\in [a, b]\, |\, f(c) = u$.
+
+
+\subsection{Horner's rule}
+
+The Horner's rule is a method for calculating polynomials transforming the monomial form of this polynomial to a particular form and then calculate it easily than considering the powers of $X$.\\
+
+Instead of considering $P(X) = \sum_{i=0}^{n} a_i\, X^i = a_0 + a_1\, X + a_2\, X^2 + ... + a_n\, X^n$, we consider \\
+$P(X) = a_0 + X\, \left(a_1 + x\, \left(a_2 + X\,\left(...\left(a_{n-1} + \left(a_n\, X\right)...\right)\right)\right)\right)$ to evaluate a polynomial at a value $\alpha$.\\
+
+\textit{\textbf{Example :}}
+Let us consider $P(X) = 3\, X^3 - 5\,X^2 - 3\,X + 2$. We want to calculate $P(4)$ by hand.\\
+\underline{Naive method :} $P(4) = 3\times 4^3 - 5\times 4^2 - 3\times 4 + 2$\\
+So $P(4) = 3\times 4^3 - 5\times 16 - 12 + 2 = 3\times 16\times 4 - 80 - 10 = 3\times 64 - 90 = 192 - 90 = 102$\\
+\underline{Horner's method :} $P(X) = 2 + X\, \left(-3 + X\, \left(-5 + 3\,X \right) \right)$\\
+So :
+$ P(4) = 2 + 4\, \left(-3 + 4\, \left(-5 + 3\,4 \right) \right) = 2 + 4\, \left(-3 + 4\times 7 \right) = 2 + 4\times 25 = 102 $\\
+
+If we consider the difference, there are less calculations in the Horner's method than in the first one, besides, we can face big numbers because of $X^n$ in the first case, contrary to the Horner's method which just handle smaller numbers. To calculate by hand is easier with the Horner's method.
+
+\subsubsection*{Cost of the method}
+
+We can count the number of operations needed in each case for a polynomial of degree n. \\
+\underline{Naive method :} $n-1$ multiplications to get successively each $X^i$, $n$ multiplication to get the product $a_i\,X^i$ and $n$ additions so \textbf{$3n - 1$} operations.\\
+\underline{Horner's method :} $n$ multiplications and $n$ additions so \textbf{$2n$} operations.\\
+
+We can deduce that the Horner's method is more efficient than the naive method.
+
+
+\subsection{Example}
+Let us consider $P(X) = X^3 + 3\, X^2 - X - 2$.\\
+According to the Descartes' rule of signs, $c = 1$ so $P$ has $1$ positive root.\\
+Let us consider $Q(X) = P(-X) = -X^3 + 3\, X^2 + X - 2$, here $c = 2$ so $P$ has either $2$ either $0$ negative roots. We have $P(-1) = 1$ and $\lim_{X \to -\infty} P(X) = -\infty$ so there exists $r_{1}\in ]-\infty; -1[\, |\, P(r_1) = 0$, then we deduce that there are exactly $2$ negative roots.\\
+Using the TIV for $u = 0$, we can refine these intervals, calculating $P$ at some real numbers : \\
+As $P(-1) = 1$ and $P(-2) = -2$, then $r_1\in ]-2, -1[$.\\
+As $P(0) = -2$ and $P(-1) = 1$, then the second negative root $r_2\in ]-1;0[$.\\
+As $P(0) = -2$ and $P(1) = 1$, then the positive root is $r_3\in ]0, 1[$.

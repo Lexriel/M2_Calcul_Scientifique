@@ -1,0 +1,186 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Divide \& Conquer method}}}
+
+Recall how we can realize the \textit{D{\&}C method}.
+
+\begin{block}{}
+\textcolor{blue}{\textbf{The Divide \& Conquer method consists of :}}
+
+\begin{enumerate}
+\item \textcolor{violet}{split} the polynomial as : $P(x) = P^{(0)}(x+1)+(x+1)^{n/2}\times P^{(1)}(x+1)$
+\item \textcolor{violet}{evaluate} $P^{(0)}(x+1)$ and $P^{(1)}(x+1)$ \textcolor{violet}{recursively}
+\item \textcolor{violet}{compute a product} when $P^{(1)}(x+1)$ is evaluated
+\item \textcolor{violet}{compute a sum} when $P^{(0)}(x+1)$ and the product are evaluated
+\end{enumerate}
+\end{block}
+
+These are the four main things to implement to realize the \textit{Taylor shift by $1$}.\\
+We will only focus on the multiplication, which is the most hard and tricky operation to realize our code.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Multiplication : concept}}}
+
+\begin{block}{}
+\begin{itemize}
+\item \textcolor{blue}{\textbf{Small sizes ($n \leq 512$) :}}\\
+\hspace{4mm}
+We can use a procedure called \textit{list\_Plain\_Mul} which computes a list of pairwise products of polynomials of \underline{same size}.
+\item \textcolor{blue}{\textbf{Big sizes ($n > 512$) :}}\\
+\hspace{4mm}
+We can use \textit{FFT} whic several procedures which compute a list pairwise products of polynomials of \underline{same size}.
+\end{itemize}
+\end{block}
+
+\begin{block}{}
+\textcolor{violet}{\textbf{Polynomials considered at step $i$ :}}\\
+Polynomials \textcolor{red}{$P^{(1)}$} (of size $2^{i}$) and \textcolor{red}{$(x+1)^{2^i}$} (of size $2^{i} + 1$).
+\end{block}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Multiplication : a challenge}}}
+
+\begin{block}{}
+\textcolor{blue}{\textbf{Problems :}}
+\hspace{3mm}
+\begin{itemize}
+\item Polynomials considered \underline{must be of the same size} (rather $2^{i}$) so as to use the procedures of the lab.
+\item Size of the product of two such polynomials is not a power of $2$ (but $2^{i+1} - 1$).
+\end{itemize}
+\end{block}
+
+\begin{block}{}
+\textcolor{red}{\textbf{Solutions :}}
+\hspace{3mm}
+\begin{itemize}
+\item Modify procedure \textit{list\_Plain\_Mul} and adapt it for my case.
+\item Consider another product with polynomials of same sizes.
+\end{itemize}
+\end{block}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Multiplication : decomposition}}}
+
+We can decompose the product desired as follows :
+
+\begin{block}{}
+\footnotesize
+\begin{align*}
+P^{(1)}(X) \times (X+1)^{2^i} 
+&= \left( \sum_{i=0}^{2^i-1} a_i\,X^i\right) \times (X+1)^{2^i}\\
+&= P^{(1)}(X) \times \left[(X+1)^{2^i} - 1 + 1 \right]\\
+&= P^{(1)}(X) \times \left[(X+1)^{2^i} - 1\right] + P^{(1)}(X)\\
+&= P^{(1)}(X) \times X \times \cfrac{(X+1)^{2^i} - 1}{X} + P^{(1)}(X)\\
+&= X \cdot \left( P^{(1)}(X) \times \cfrac{(X+1)^{2^i} - 1}{X} \right) + P^{(1)}(X)
+\end{align*}
+\end{block}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Multiplication : technic}}}
+\begin{tsmc}
+Using the following formula :
+$$\textcolor{red}{P^{(1)}(X) \times (X+1)^{2^i}  = X \cdot \left( P^{(1)}(X) \times \cfrac{(X+1)^{2^i} - 1}{X} \right) + P^{(1)}(X)}$$
+
+The multiplication desired amounts to :
+
+\begin{enumerate}
+\item \textcolor{violet}{multiplying} $P^{(1)}(X)$ by $[(X+1)^{2^i} - 1]/X$ of sizes $2^i$,
+\item doing a \textcolor{violet}{right shift} (multiplication by $X$), and
+\item \textcolor{violet}{semi-adding} the result of the two first steps with $P^{(1)}(X)$.
+\end{enumerate}
+\end{tsmc}
+
+We will just detail how to do the multiplication for the two cases of polynomial sizes.
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Multiplication : arrays considered (artificial ex.)}}}
+
+If we consider polynomials at step $1$ :
+
+\tiny
+\begin{center}
+\textit{Polynomial\_shift\_device}[0] = \begin{tabular}{|c|c||c|c||c|c||c|c|}
+\hline
+1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+\hline
+\end{tabular}
+\end{center}
+
+\normalsize
+Then for the two multiplication techniques used, we consider :
+
+\begin{block}{}
+\begin{itemize}
+\item \textcolor{blue}{\textbf{"Small sizes" ($n \leq 512$) :}}\\
+\hspace{4mm}
+\tiny
+\begin{center}
+\textit{Mgpu} = \begin{tabular}{|c|c||c|c||c|c||c|c|}
+\hline
+3 & 4 & 2 & 1 & 5 & 6 & 2 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+\hspace{4mm}
+
+\item \normalsize{\textcolor{blue}{\textbf{"Big sizes" ($n > 512$) :}}}\\
+\hspace{4mm}
+\tiny
+\begin{center}
+\textit{fft\_device} = \begin{tabular}{|c|c|c|c||c|c|c|c||c|c|c|c||c|c|c|c|}
+\hline
+3 & 4 & 0 & 0 & 2 & 1 & 0 & 0 & 5 & 6 & 0 & 0 & 2 & 1 & 0 & 0 \\
+\hline
+\end{tabular}
+\end{center}
+\end{itemize}
+\end{block}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Multiplication according to the size of the polynomials}}}
+
+\begin{block}{}
+\begin{itemize}
+\item \textcolor{blue}{\textbf{"Small sizes" ($n \leq 512$) :}}\\
+\hspace{4mm}
+We use \textit{Mgpu} and multiply directly pairwise polynomials inside, then do a right shift. Product size is still a power of $2$. So \textit{list\_Plain\_Mul\_and\_right\_shift} is used to do : $X \cdot \left( P^{(1)}(X) \times [(X+1)^{2^i} - 1]/X \right)$.
+\end{itemize}
+\end{block}
+
+\begin{block}{}
+\begin{itemize}
+\item \normalsize{\textcolor{blue}{\textbf{"Big sizes" ($n > 512$) :}}}\\
+\hspace{4mm}
+We transform \textit{Mgpu} in \textit{fft\_device} and then use \textit{FFT} for the multiplication $P^{(1)}(X) \times [(X+1)^{2^i} - 1]/X$.
+\end{itemize}
+\end{block}
+
+The \textit{FFT} will be explained in the following section.
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

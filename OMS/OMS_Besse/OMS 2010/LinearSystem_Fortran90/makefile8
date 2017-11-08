@@ -1,0 +1,30 @@
+FC=ifort  # Compilateur
+LD=ifort  # Linker
+HOST=T    # Pour processeur Intel Core 2 Duo
+L=1       # Niveau d'optimisation
+FFLAGS = -O$(L) 
+LDFLAGS = $(FFLAGS) 
+LIBS=  -L/opt/intel/Compiler/11.1/058/Frameworks/mkl/lib/32 \
+	-I/opt/intel/Compiler/11.1/058/Frameworks/mkl/include \
+	-lmkl_intel -lmkl_core -lmkl_blas95\
+	-lmkl_sequential -lmkl_solver_sequential
+INCLUDE=-I/opt/intel/Compiler/11.1/058/Frameworks/mkl/include/32
+EXE=test3.exe
+
+OBJS = methode.o test3.o
+
+all:   $(OBJS) 
+	@echo "Edition de liens"
+	$(LD) $(INCLUDE) $(LDFLAGS) $(OBJS) $(LIBS)  -o $(EXE) 
+
+test3.o : test3.f90
+	$(FC) $(INCLUDE) $(FFLAGS) -c test3.f90
+
+methode.o : methode.f90
+	$(FC) $(INCLUDE) $(FFLAGS) -c methode.f90
+
+clean: 
+	rm -f *.o *.mod $(EXE) 
+ 
+%.o : %.mod 
+

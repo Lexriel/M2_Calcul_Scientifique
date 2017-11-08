@@ -1,0 +1,21 @@
+FC = ifort
+LD = ifort
+LIBS = -L/opt/intel/Compiler/11.1/073/mkl/lib/32/ -I/opt/intel/Compiler/11.1/073/mkl/include -lmkl_intel -lmkl_core -lmkl_sequential -lmkl_solver_sequential -lmkl_blas95 -lmkl_lapack95
+INCLUDE = -I/opt/intel/Compiler/11.1/073/mkl/lib/32/
+EXE = exo2
+
+OBJS = exo2_module.o exo2_program.o 
+
+all : $(OBJS)
+	$(LD) $(INCLUDE) $(OBJS) $(LIBS) -o $(EXE)
+
+
+exo2_module.o : exo2_module.f90
+	$(LD) $(INCLUDE) -c exo2_module.f90
+
+exo2_program.o : exo2_program.f90
+	$(LD) $(INCLUDE) -c exo2_program.f90
+
+clean:
+	rm *.o
+	rm *.dat

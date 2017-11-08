@@ -1,0 +1,63 @@
+## Computes the inverse of the univariate polynomial f(x) 
+## modulo x^l and modulo the pruime number p
+## IMPORTANT: requires that f(0) = 1, that is, the 
+## TRAILING coefficient of f should be ONE.
+inverse_mod := proc(f, x, l, p)
+	    local g, r, neg_f;
+	    neg_f := (expand(-f) mod p);
+	    g := 1;
+	    r := ceil(log[2](l));
+	    ## print("r = ", r);
+	    for i from 1 to r do
+                ## print("i = ", i);
+                h := (expand(g^2) mod p);
+	    	h := rem(h, x^(2^i), x);
+                truncated_neg_f := rem(neg_f, x^(2^i), x);
+                h := (expand(truncated_neg_f * h) mod p);
+		h := rem(h, x^(2^i), x);
+		g := (expand(2 * g + h) mod p);
+		## print("g_i = ", g);
+	    end do;
+	    return sort(rem(g, x^l, x), order=plex(x));
+end proc;
+
+## returns 1 iff f*g is one
+## modulo x^l and modulo the pruime number p
+verify_inverse_mod := proc(f, g, x, l, p)
+	    return rem((expand(f*g) mod p), x^l, x)
+end proc;
+;
+
+f := 1+x;
+g := inverse_mod(f,x,100,17);
+verify_inverse_mod(f,g,x,100,17);
+
+f := 1-x;
+g := inverse_mod(f,x,100,17);
+verify_inverse_mod(f,g,x,100,17);
+
+f := sum(x^i, i=0..99);
+g := inverse_mod(f,x,100,17);
+verify_inverse_mod(f,g,x,100,17);
+
+f := sum((-1)^(i) * x^i, i=0..99);
+g := inverse_mod(f,x,100,17);
+verify_inverse_mod(f,g,x,100,17);
+
+f := sum((-1)^(i) * x^i, i=0..99);
+g := inverse_mod(f,x,100,2147483659);
+verify_inverse_mod(f,g,x,100,2147483659);
+
+f := 1+x+x^2;
+g := inverse_mod(f,x,100,2147483659);
+verify_inverse_mod(f,g,x,100,2147483659);
+
+### AN IMPORTANT TEST with a random poly
+### NOTE the trick to enforce that f(0) = 1
+f :=  randpoly(x, degree=2000) * x + 1;
+g := inverse_mod(f,x,1000,2147483659);
+verify_inverse_mod(f,g,x,1000,2147483659);
+
+f := 1 + 2 *x + 3*x^2 + x^3;
+g := inverse_mod(f,x,4,7);
+verify_inverse_mod(f,g,x,4,7);

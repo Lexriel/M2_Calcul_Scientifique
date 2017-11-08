@@ -1,0 +1,146 @@
+README
+
+
+cumodp-create-test-README
+-------------------------
+Guidelines for writing shell scripts
+
+.test_script.template
+----------------------
+Template for writing shell scripts
+
+subproduct_tree.sh 
+------------------
+Relies on subproduct_tree_dev_eff in subproduct_tree.cu
+Working fine.
+
+
+subproduct_tree_file.sh
+-----------------------
+
+
+fast_evaluation.sh 
+------------------
+relies on fast_evaluation_dev in fast_evaluation.cu
+Working,
+
+fast_evaluation_file.sh 
+-----------------------
+reads the points from inputx.txt and the polynomial from inputf.txt:
+- if inputx.txt has m on its first line then there should 2^(m-1) values
+  blank separated on the second line. These values are the points at
+  which we want to evaluate
+- inputf.txt must have a prime number on its first line and 2^(m-1) values
+  blank separated on the second line. These values are the coefficients of
+  the polynomial to be evaluated. The coefficients are sorted from
+  trailing to leading
+writes the values of the polynomial are in output.txt. They are sorted
+in the same order as points in  inputx.txt
+
+fast_rem.txt
+------------
+Yuzhen's Maple code for subproduct tree construction
+
+subproduct_tree_file.sh
+-----------------------
+reads the points from inputx.txt 
+- if inputx.txt has m on its first line then there should 2^(m-1) values
+  blank separated on the second line. These values are the points at
+  which we want to evaluate
+- generates a Maple input file to check the computed subproduct tree
+  against Yuzhe's code
+
+device_query.sh
+---------------
+This is a shell script that detects whether there is a CUDA card
+or not.
+
+list_expand_to_fft.sh
+---------------------
+Tests zero padding before FFT-multiplication. Working
+
+list_fast_division.sh
+---------------------
+tests (list of) fast division: k is the log of the degree of the divisor
+and the degree of the divisor is half of that. m is the number
+of input pairs "dividend-divisor"
+
+list_fft_poly_mul.sh
+--------------------
+tests list of FFT-multiplication: k is the log of degree of the input
+and m is the number of input pairs.
+The code is optimized for input polynomials 
+- whose degrees are powers of TWO. 
+- leading coefficients are ONE.
+It is implemented in list_fft_poly_mul_eff
+in list_fft_poly_mul.cu
+
+list_fft_poly_mul_dev   in list_fft_poly_mul.cu
+is a general list_of_multiplication  function 
+
+IMPORTANT: Running this test shows the limitation of the
+current card/code/memory.  If log(m) + k reaches 25
+things may fail
+
+ ====> Anis to have a look
+
+
+list_inv_stockham.sh
+--------------------
+Test list of inv FFT.
+m and k are as above.
+Working
+
+list_naive_poly_mul.sh
+----------------------
+List of naive plain multiplication.
+Comparison with CPU code
+2^{k-1} is the number of points in the subproduct tree
+The test is on building the second layer from the first one.
+
+It calls list_poly_mul_ker   in list_naive_poly_mul.cu
+It is used  in the subproduct tree construction for 
+the first two layers
+
+list_plain_division.sh
+----------------------
+It relies on list_divCUDA
+which is used in the fast evaluation for the last
+7 seven layers.
+In the test, length_poly is length is the divisor polynomial
+while the dividend has a double length.
+Working fine.
+
+list_pointwise_mul.sh
+---------------------
+Working fine.
+
+list_shrink_poly.sh
+-------------------
+Working fine.
+
+
+naive_poly_mul.sh
+-----------------
+Just multiplies one polynomial by another via naive multiplication algo
+Working fine.
+
+
+opt_plain_mul.sh
+----------------
+TO SPECIFY WITH ANIS
+Working fine.
+
+power_inversion.sh
+------------------
+list of power inversions that is computing g s.t. f * g = 1 mod x^l
+k is the length of f
+m is the number of input pairs [f, l]
+
+uni_fft_tst.sh
+--------------
+
+
+
+FILES THAT MAY GO AWAY
+---------------------

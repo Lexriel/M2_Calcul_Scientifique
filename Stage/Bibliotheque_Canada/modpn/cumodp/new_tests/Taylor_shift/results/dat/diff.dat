@@ -1,0 +1,47 @@
+# DIFFERENCES BETWEEN THE FILES
+
+CASE n = 2^3
+diff Pol3.shiftCPU_958922753.dat Pol3.shiftGPU_958922753.dat
+
+CASE n = 2^4
+diff Pol4.shiftCPU_958922753.dat Pol4.shiftGPU_958922753.dat
+
+CASE n = 2^5
+diff Pol5.shiftCPU_958922753.dat Pol5.shiftGPU_958922753.dat
+
+CASE n = 2^6
+diff Pol6.shiftCPU_958922753.dat Pol6.shiftGPU_958922753.dat
+
+CASE n = 2^7
+diff Pol7.shiftCPU_958922753.dat Pol7.shiftGPU_958922753.dat
+
+CASE n = 2^8
+diff Pol8.shiftCPU_958922753.dat Pol8.shiftGPU_958922753.dat
+
+CASE n = 2^9
+diff Pol9.shiftCPU_958922753.dat Pol9.shiftGPU_958922753.dat
+
+CASE n = 2^10
+diff Pol10.shiftCPU_958922753.dat Pol10.shiftGPU_958922753.dat
+
+CASE n = 2^11
+diff Pol11.shiftCPU_958922753.dat Pol11.shiftGPU_958922753.dat
+
+CASE n = 2^12
+diff Pol12.shiftCPU_958922753.dat Pol12.shiftGPU_958922753.dat
+
+CASE n = 2^13
+diff Pol13.shiftCPU_958922753.dat Pol13.shiftGPU_958922753.dat
+
+CASE n = 2^14
+diff Pol14.shiftCPU_958922753.dat Pol14.shiftGPU_958922753.dat
+
+CASE n = 2^15
+diff Pol15.shiftCPU_958922753.dat Pol15.shiftGPU_958922753.dat
+
+CASE n = 2^16
+diff Pol16.shiftCPU_958922753.dat Pol16.shiftGPU_958922753.dat
+
+CASE n = 2^17
+diff Pol17.shiftCPU_958922753.dat Pol17.shiftGPU_958922753.dat
+

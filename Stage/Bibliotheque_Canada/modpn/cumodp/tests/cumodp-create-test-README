@@ -1,0 +1,57 @@
+User Instruction for cumodp-create-test(cumodp-create-test.sh)
+
+cumodp-create-test is an automatic script to create specific test to verify the functionality
+and correctness in cumodp project. 
+The main idea is to extract the test code from the source file and rebuild a test driver code 
+to execute a test.
+The main idea of the script "cumodp-create-test.sh" is to copy the template called
+".test_script.template" to [NAME OF YOUR TEST]
+Hence if you want to change the template, please rename it and change the cumodp-create-test.sh,
+or, simply let me know. I know it's buggy and ugly. Hence it's pretty welcomed to do so.
+If you have any question and suggestions, please feel free to contact me at <jim.jiajian.yang@gmail.com>
+
+Usage:
+To create a test, just run:
+$ ./cumodp-create-test [NAME OF YOUR TEST]
+and you will find a new test script generated in current directory.
+
+And we take an example, say:
+[NAME OF YOUR TEST]=list_stockham
+
+So we create the test first:
+$./cumodp-create-test list_stockham
+Then we will find a new file called list_stockham.sh in the directory.
+
+We will change the related fields to make the test running properly:
+1. Get into your list_stockham.sh
+2. Change the description of your test in the first line
+3. Change the author field, hence we could acknowledge your contribution :)
+4. Set TARGET="list_stockham"
+5. In the source file of your test, here is ../src/list_stockham.cu , 
+   add the flag before your test code start:
+	//////////////////////////////////////////////////////////////////////
+	//BEGIN:list_stockham_tst
+	//////////////////////////////////////////////////////////////////////
+	void list_stockham_tst(bla bla bla bla parameters){
+		..................your test code..........................
+6. At the end of the test function list_stockham_tst() also add the flag:
+		..................your test code..........................
+	}
+	//////////////////////////////////////////////////////////////////////
+	//END:list_stockham_tst
+	//////////////////////////////////////////////////////////////////////
+7. Then go back to your list_stockham.sh, change the field of "include files"
+	as you want. Remember to redirect the code lines you input to the test source code,
+	here is "src.cu". You will find it easy.
+8. Well then change your main function in it, it's easy for you to change the parameters.
+	You know what I'm saying right?
+9. Remember to check the $(CC) field, because sometimes we want gcc and sometimes nvcc.
+10. Start changing your way of test your function in the later fields. For example, change
+	the dimension of your parameters.
+11. I would recommend you redirect your console output to a text file. You could see how I did
+	all these. I hate tons of console output of my screen. Yes it looks very geeky, but trust
+	me the best way to check if your result is correct is to put it into a log file. Here I set
+	TWO places for you to put your log. One is called "$LOG" is to place the test results, say
+	the marks of each test, pass or fail. The other is to record the console output called "$OUT".
+	$OUT file might be mass. You have to check it just for the failed tests.
+12. After everything is done, the script will clean up the temporary source file src.cu. 

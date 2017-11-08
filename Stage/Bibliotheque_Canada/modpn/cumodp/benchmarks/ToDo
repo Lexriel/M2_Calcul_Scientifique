@@ -1,0 +1,33 @@
+optimized_mult.sh
+------------------
+o Make w (= the # of coefficients per thread
+    and B the # of threads in a thread block) 
+  optional arguments
+o Run each caculation 10 times and retunn the average time
+
+stockham_poly_mul.sh
+--------------------
+      OK
+
+
+subproduct_tree_construction.sh
+--------------------------------
+1/ Input: n // the number of points
+          p //  prime number
+          points are random and pairwise different
+    Output:  the subproduct tree stays  on the GPU
+    On the screen, we have
+    n      t      s
+    2^23   3,14   
+
+    where s is the space in bytes for the subproduct tree data structure
+2/ Allow n to be a range 2..24
+
+  !!!!!!!! Size=2^25,  is not working properly
+     ===> Anis will have a look
+
+
+subproduct_tree_step.sh
+------------------------
+
+     !!!!!! OK 

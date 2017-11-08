@@ -1,0 +1,84 @@
+Point(1) = {0, 0, 0, 0.1};
+Point(2) = {1, 0, 0, 0.1};
+Point(3) = {2, 0, 0, 0.1};
+Point(5) = {3, 0, 0, 0.1};
+Point(6) = {3, 1, 0, 0.1};
+Point(7) = {3, 2, 0, 0.1};
+Point(8) = {3, 3, 0, 0.1};
+Point(9) = {2, 3, 0, 0.1};
+Point(10) = {1, 3, 0, 0.1};
+Point(11) = {0, 3, 0, 0.1};
+Point(12) = {0, 2, 0, 0.1};
+Point(13) = {0, 1, 0, 0.1};
+Point(14) = {1, 1, 0, 0.1};
+Point(15) = {2, 1, 0, 0.1};
+Point(16) = {2, 2, 0, 0.1};
+Point(17) = {1, 2, 0, 0.1};
+
+
+Line(5) = {16, 17};
+Line(6) = {14, 17};
+Line(7) = {15, 14};
+Line(8) = {16, 15};
+Line(9) = {8, 9};
+Line(10) = {9, 10};
+Line(11) = {10, 11};
+Line(12) = {11, 12};
+Line(13) = {12, 17};
+Line(14) = {10, 17};
+Line(15) = {9, 16};
+Line(16) = {16, 7};
+Line(17) = {7, 8};
+Line(18) = {6, 7};
+Line(19) = {15, 6};
+Line(20) = {15, 3};
+Line(21) = {3, 5};
+Line(22) = {5, 6};
+Line(23) = {2, 3};
+Line(24) = {14, 2};
+Line(25) = {1, 2};
+Line(26) = {13, 1};
+Line(27) = {13, 14};
+Line(28) = {12, 13};
+
+Line Loop(29) = {25, -24, -27, 26};
+Plane Surface(30) = {29};
+Line Loop(31) = {23, -20, 7, 24};
+Plane Surface(32) = {31};
+Line Loop(33) = {21, 22, -19, 20};
+Plane Surface(34) = {33};
+Line Loop(37) = {19, 18, -16, 8};
+Plane Surface(38) = {37};
+Line Loop(39) = {16, 17, 9, 15};
+Plane Surface(40) = {39};
+Line Loop(41) = {-5, -15, 10, 14};
+Plane Surface(42) = {41};
+Line Loop(43) = {13, -14, 11, 12};
+Plane Surface(44) = {43};
+Line Loop(45) = {27, 6, -13, 28};
+Plane Surface(46) = {45};
+Physical Line(47) = {25, 23, 21, 22, 18, 17, 9, 10, 11, 12, 28, 26};
+Physical Line(48) = {7, 8, 5, 6};
+Physical Surface(100) = {30, 32, 34, 38, 40, 42, 44, 46};
+
+Transfinite Line{26,24,20,22,28,6,8,18,12,14,15,17} = 4;
+Transfinite Line{11,13,27,25,10,5,7,23,9,16,19,21} = 4;
+
+Transfinite Surface{30} = {13, 1, 2, 14};
+Transfinite Surface{32} = {14, 2, 3, 15};
+Transfinite Surface{34} = {15, 3, 5, 6};
+Transfinite Surface{38} = {16, 15, 6, 7};
+Transfinite Surface{40} = {9, 16, 7, 8};
+Transfinite Surface{42} = {10, 17, 16, 9};
+Transfinite Surface{44} = {11, 12, 17, 10};
+Transfinite Surface{46} = {12, 13, 14, 17};
+
+Recombine Surface{30};
+Recombine Surface{32};
+Recombine Surface{34};
+Recombine Surface{38};
+Recombine Surface{40};
+Recombine Surface{42};
+Recombine Surface{44};
+Recombine Surface{46};
+

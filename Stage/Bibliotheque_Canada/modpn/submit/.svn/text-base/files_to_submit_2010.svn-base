@@ -1,0 +1,52 @@
+# The build process under linux X86_64 is the following
+#
+# (1) build libcumodp.so using the Makefile of src.32/cumodp/src/Makefile
+# (2) build libmodpn.so linked with libcumodp.so
+#
+# Currently under Linux and Windows Maple supports CUDA. Under the other 
+# platforms do not need to generate and link with libcumodp.so.
+#
+
+
+U    files_to_submit
+U    src.32/MapleCConverter.h
+U    src.32/IsInvertible.c
+U    src.32/LinkedList.c
+U    src.32/IteratedResultant.c
+U    src.32/cumodp/include/rdr_poly.h
+U    src.32/cumodp/include/fft_aux.h
+U    src.32/cumodp/include/inlines.h
+U    src.32/cumodp/include/scube.h
+U    src.32/cumodp/include/subres.h
+U    src.32/cumodp/include/list_stockham.h
+U    src.32/cumodp/include/stockham.h
+U    src.32/cumodp/include/defines.h
+U    src.32/cumodp/include/cumodp.h
+U    src.32/cumodp/src/stockham.cu
+U    src.32/cumodp/src/benchmark.cu
+U    src.32/cumodp/src/fft_aux.cu
+U    src.32/cumodp/src/modpn.cu
+U    src.32/cumodp/src/main.c
+U    src.32/cumodp/src/scube.cu
+U    src.32/cumodp/src/subres_p.cu
+U    src.32/cumodp/src/subres.cu
+U    src.32/cumodp/src/list_stockham.cu
+U    src.32/cumodp/src/Makefile
+A    src.32/cumodp/tst/fast_resultant3_cumodp.mpl
+A    src.32/cumodp/tst/fast_resultant2_cumodp.tst
+A    src.32/cumodp/tst/fast_resultant3_cumodp.tst
+A    src.32/cumodp/tst/fast_resultant2_cumodp.mpl
+U    src.32/LinkedList.h
+U    src.32/IteratedResultant.h
+U    src.32/FMUL.c
+U    src.32/FMUL.h
+U    src.32/Types.h
+U    src.32/CONSTANTS.c
+U    src.32/MPMMTS.c
+U    src.32/RegularGcd.c
+U    src.32/TEST.c
+U    src.32/RegularGcd.h
+U    src.32/MapleCConverter.c
+A    misc
+A    misc/ConnectorModuleNew1.mm
+A    misc/modpn.mpl

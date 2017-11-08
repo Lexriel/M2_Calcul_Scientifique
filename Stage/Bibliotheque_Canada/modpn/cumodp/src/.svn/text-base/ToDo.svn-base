@@ -1,0 +1,79 @@
+
+
+
+1. the kernal list_poly_mul_ker() along with the other kernals written
+by you for list of plain multiplications do not address the fact that
+there might be a possibility when a subset of the threads in a thread
+block must be kept idle explicitly. Otherwise this threads will access
+into the memory and do unexpected things.
+
+==> After checking, we do not expect that idle threads are involved
+
+2. I strongly believe that the bug is in line 56 to 62 in
+subproduct_tree.cu. In those lines you computed the number of thread
+blocks required by an integer division. Instead of integer division,
+it should be a ceil() of double values.
+
+==> After checking, we do not expect that idle threads are involved
+
+3. In line 305 of subproduct_tree. cu you malloc() and free() F in
+each iteration, which is unnecessary. Sometimes frequent malloc and
+free on a single pointer could make bug if you call it for large
+number of times due to internal fragmentation of memory allocation.
+
+==> After checking, we are OK
+
+4. You could create the lower level of the tree on GPU. If you do so,
+you do not need two pointer.
+
+==> After checking, we are OK
+
+
+----------------------------------------------------
+--% Below, every is probably done. Double-check ...%
+----------------------------------------------------
+
+list_inv_fft.cu:
+---------------
+<> check the test
+
+list_naive_poly_mul.cu:
+-----------------------
+<> should use the "less naive plain" multiplication  ( mul_eff_ker)
+<> In low degrees, one thread block should so several multiplications
+
+subproduct_tree.cu
+------------------
+<> list_inv_fft and list_fft needs to be able to allocate extra storage
+    for the enlarged input vectors
+<> list_pointwise_multiplication:  1D grid 1D thread blocks each 
+   thread does 16 coeffs
+<> missing: list of fft, list of point-wise computation, list of inv 
+   fft in use in the subproduct_tree code
+
+opt_plain_mul.cu
+------------------
+<> Needs comments, performance measurements
+<> Does the code hadle all sizes?
+
+euclidean division (divCuda.cu)
+--------------------------------
+<> needs to compute remainder 
+<> should export a function that assumes that A and B are proper 
+   polynomials 
+<> need comments and autimated tests
+
+euclidean algorithm
+-------------------
+<> EA:
+<> EEA:
+
+cumodpn testing
+---------------
+      - uni_fft_tst.sh (breaks for k \geq 29) -> Wei !!!!
+      - tests committed (in progress)
+      - run.sh (once the previous step is completed)
+      - from which n do we trust the FFT stuff on GPU: 8
+      - main.c in cumodp/src fails for bivariate fft (for some sizes) 
+        and scuebconstruction  -> Wei
+      - remove main.c (once the previous step is completed)

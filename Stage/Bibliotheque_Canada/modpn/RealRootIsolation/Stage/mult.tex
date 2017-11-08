@@ -1,0 +1,122 @@
+\subsection{The beginning}
+First of all, we need to have in input the different coefficients of the polynomial we want to be shifted by $1$. I made a code called \textit{aleaPol.cpp} to create random polynomials of the size wanted. This code store the coefficients created in a file line per line. So the input is a file we need to read in sequence and then store its data in an array to begin our program. To do that has obviously a cost in time which increases with the size of the polynomial. The way to store efficiently the polynomials is also a question we must ask.\\
+
+At the beginning of the Taylor shift, after the array \textit{Monomial\_shift} was built, we need to copy the array \textit{Polynomial} for the device and then do the first step, which is very simple, this is done by the procedure \textit{init\_polynomial\_shift\_GPU}.\\
+
+Since the second step, computations become less obvious.
+
+\subsection{Next steps, how we proceed}
+Let us recall what we have to do. In each step of the previous tree we saw before. In each step, the half of the branches need to be multiplicated by $(x+1)^{2^i}$, $i$ being the current step. Then the result must be added with the previous polynomials of each branch and all of this in parallel in each part of the tree. First of all, we need to determinate which polynomials we have to multiplicate between us. This is what we do with the procedure \textit{transfert\_array\_GPU}. This procedure stores in the array \textit{Mgpu} the polynomials we need to be multiplicated, at a little difference we will explain with the following procedure.\\
+
+\subsection{The plain multiplication \& the right shift}
+Now I want to multiplicate in parallel all the polynomials I have stored in \textit{Mgpu}. A member of the laboratory, Anis Sardar Haque has implemented a very efficient multiplication called \textit{listPlainMulGpu} of a list of polynomials I wanted to use for its efficiency. I need to be careful with this because the use I want to do with it is different from the use done by other codes written by the laboratory. So, I face to different problems.\\
+
+Before seeing these problems, let us explain how works exactly \textit{listPlainMulGpu} :\\
+
+\textit{listPlainMulGpu} do pairwise products of polynomials of the same size in a list containing these polynomial. For example, an array may contain the coefficients of eight polynomials called $P_i$ for $i\in \mbox{\textlbrackdbl} 0, 7\mbox{\textrbrackdbl}$ with \textit{listPlainMulGpu}, we can multiply in parallel four products : the products $P_0\times P_1$, $P_2\times P_3$, $P_4\times P_5$ and $P_6\times P_7$. To do that, we need in particular in parameter the array containing the polynomials to multiply (\textit{Mgpu1}), the array which will contain the products (\textit{Mgpu2}), the size of the polynomials \textit{length\_poly}, the number of polynomials called \textit{poly\_on\_layer} (for our example $poly\_on\_layer=8$), the number of threads used for on multiplication, the number of multiplications in a thread block, and obviously $p$ and its inverse for computations modulo $p$. If \textit{Mgpu1} contains $k$ polynomials of size $m$ then \textit{Mgpu1} is of size $k\times m$) and \textit{Mgpu2} contains $k/2$ polynomials of size $2m-1$ so \textit{Mgpu2} is of size $\cfrac{k}{2}\times (2m-1)\neq k\times m$.\\
+
+So, for example after the plain multiplication, the following array \textit{Mgpu1} of size\\
+$$poly\_on\_layer \times lenght\_poly = 8 \times 128 = 1024\,:$$
+
+\begin{center}
+\begin{tabular}{|c|c||c|c||c|c||c|c|}
+\hline
+$P_0$ & $P_1$ & $P_2$ & $P_3$ & $P_4$ & $P_5$ & $P_6$ & $P_7$ \\
+\hline
+\end{tabular}
+\end{center}
+
+becomes the following array \textit{Mgpu2} of size\\
+$$\cfrac{poly\_on\_layer}{2} \times (2\times lenght\_poly - 1) = 4 \times 255 = 1020\,:$$
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+$P_0 \times P_1$ & $P_2 \times P_3$ & $P_4 \times P_5$ & $P_6 \times P_7$ \\
+\hline
+\end{tabular}\\
+\end{center}
+
+Now, let us explain what are the problem we face. \\
+
+First of all, the multiplications we want to do are not between polynomials of the same size. If we look at the tree of computations, we can see that we have to multiply a polynomial $P(X)=\sum_{i=0}^{n-1} a_i\,X^i$ of size $n=2^k$ by $(X+1)^n$, we obtain a polynomial of size $2^{k+1}$ but $P(X)$ and $(X+1)^n$ have for size respectively $n$ and $n+1$. So, to use the multiplication, either we can put zeros on polynomials to have the same sizes (but we will have a lot of multiplications by zeros which will be useless), or we think another way to use the multiplication. \\
+
+Secondly, the initial code of the plain multiplication considered the output array has a modified size as I show that in the previous arrays (size of $1024$ for the first and $1020$ for the second). My objective is to keep the same size as the product of my polynomials are different and allow me to keep at each step polynomial sizes as a power of $2$.\\
+
+So I clearly need to modify this procedure a little to adapt it for what I want to do with. My idea was the following :\\
+
+I decompose the multiplication in another multiplication, a right shift and an addition. As we need the Newton's binomial coefficients, the way to store them I used before was a power of $2$. Consider $local\_n = 2^k$ : $$\forall j\in \mbox{\textlbrackdbl} 0, local\_n - 1\mbox{\textrbrackdbl},\; Monomial\_shift[local\_n + j] = {local\_n \choose j + 1}$$
+so at \textit{Monomial\_shift + local\_n}, we store the coefficients of $[(X+1)^{local\_n} - 1]/X$, this polynomial is of size $local\_n$ and thus I want to use this polynomial instead of $(X+1)^m$ for the multiplication. \\
+
+To understand what we can do, imagine we have to multiply locally a polynomial $Q(X)$ of size $m=2^k$ by $(X+1)^{m}$, let us decompose $Q(X) \times (X+1)^{m} 
+$ and see how to proceed according to the following to compute $Q(X) \times (X+1)^{m}$ :\\
+
+\begin{align*}
+Q(X) \times (X+1)^{m} 
+&= \left( \sum_{i=0}^{2^k-1} a_i\,X^i\right) \times (X+1)^{2^k}\\
+&= Q(X) \times \left[(X+1)^{m} - 1 + 1 \right]\\
+&= Q(X) \times \left[(X+1)^{m} - 1\right] + Q(X)\\
+&= Q(X) \times X \times \cfrac{(X+1)^{m} - 1}{X} + Q(X)\\
+&= X \times \left( Q(X) \times \cfrac{(X+1)^{m} - 1}{X} \right) + Q(X)
+\end{align*}\\
+
+So let us keep in mind the formula obtained :
+
+$$Q(X) \times (X+1)^{m} = X \times \left( Q(X) \times \cfrac{(X+1)^{m} - 1}{X} \right) + Q(X)$$
+
+This formula is very interesting because it allows to solve the problems I explained before. Let us explain why. The polynomials $Q(X)$ and $[(X+1)^{m} - 1]/X$ are of the same size $m$ so can be computed with the plain multiplication described before. Then, as it is not what we really want, we nedd to multiply the result by $X$ which corresponds for our arrays to a right shift of all the coefficients computed, then I won't need to decrease of $1$ the size of each product if I do the right shift within this procedure. And then, we just need to add the previous value of $Q$ to get the result we wish. I called this procedure modified \textit{listPlainMulGpu\_and\_right\_shift}. Just see now a concrete example.\\
+
+\textit{\textbf{Example :}} 
+We want to compute $(3+4x) \times (x+1)^2$.\\
+Then we store the following coefficients in the array \textit{Mgpu1} : $[3,4,2,1]$.\\
+If we write what happens, this is : \\
+
+\begin{align*}
+(3+4x) \times (x+1)^2 &= x\,[(3+4x) \times (2+x)] + (3+4x) & \mbox{ decomposition to simplify the problem }\\
+&= x\,(6+11x+4x^2+0x^3) + (3+4x) & \mbox{ plain multiplication done }\\
+&= (0+6x+11x^2+4x^3) + (3+4x) & \mbox{ right shift done }\\
+&= 3+10x+11x^2+4x^3 & \mbox{ addition done }\\
+\end{align*}
+
+\textit{listPlainMulGpu\_and\_right\_shift} do the product giving $6+11x+4x^2$ and store it like this $[0,6,11,4]$ so we have done the right shift for the multiplication by $x$ (I write useless zeros in the calculations to show they correspond to a position in the array \textit{Mgpu2}), then we just need to sum with the polynomial, we notice that we just need to sum the half of the coefficients, to do that, I will use the procedure called \textit{semi\_add} I explain in the following part.
+
+
+\subsection{Partial additions}
+
+As we just saw in the previous part, at the end, we need to add the missing parts $Q(X)$ to obtain exactly the products we want. If we look precisely at these additions, we don't really need to add all the positions of the arrays. Indeed, if we look at the previous example, just the half of the coefficients of the polynomial where added to $Q(X)$ as the size of the $Q(X)$ is the half of the sizes of the polynomials obtained with the procedure \textit{listPlainMulGpu\_and\_right\_shift}. Now we have really multiplied the half of the branches of the current step, we have to add the polynomials computed in these branches with the polynomials of the branches where there were not any multiplication to do.\\
+
+So, to sum up, semi\_add adds the elements $Q(X)$ which were missing to do correctly $Q(X) \times (X+1)^{2^i}$ and then adds in some way $P^{(0)} with P^{(1)}\times (X+1)^{2^i}$ (with $Q = P^{(1)}$). This ends a loop. For the next loop, we do the same with polynomial sizes increased by $2$ and a number of polynomials considered to be multiplicated divided by $2$. This corresponds respectively to $local\_n *= 2$ and $polyOnLayerCurrent /= 2$.\\
+
+\subsection{The arrays}
+
+Some arrays are used in all what I have described before. But let us explained exactly the choice of these arrays and what each array does exactly.\\
+
+At the first step, the array \textit{Polynomial\_device} contains all the coefficients defining the polynomial we want to be shifted. Inside this array, the coefficients are store in the increasing order of the power of $x$.\\
+We do then the first step of the tree in the array \textit{Polynomial\_shift\_device[0]} which must contain at the end of the loop the polynomials for the next step.\\
+
+Since the second step, the array \textit{Mgpu} contains exclusively all the polynomials which need to be multiplicated pairwise. For example, at the step 2, let us consider the array :\\
+
+\begin{center}
+Polynomial\_shift\_device[0] = \begin{tabular}{|c|c||c|c||c|c||c|c|}
+\hline
+1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+\hline
+\end{tabular}
+\end{center}
+
+
+Then, some polynomials of size 2 inside need to be multiplicated by $(x+1)^2$ so we store in \textit{Mgpu} :\\
+\begin{center}
+Mgpu = \begin{tabular}{|c|c||c|c||c|c||c|c|}
+\hline
+3 & 4 & 2 & 1 & 5 & 6 & 2 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+
+We store then the result of \textit{listPlainMulGpu\_and\_right\_shift} in \textit{Polynomial\_shift\_device[1]}. To complete this array, we add the missing part to have exactly $Q(X) \times (X+1)^{2^i}$ so we add parts of \textit{Polynomial\_shift\_device[0]} with \textit{Mgpu}, and then to finish we complete \textit{Polynomial\_shift\_device[1]}, ready for the next step.\\
+
+Before to comment the other step, one can see that at each step since now, we just need the previous\\ \textit{Polynomial\_shift\_device[i-1]} to compute \textit{Polynomial\_shift\_device[i]} (and a new \textit{Mgpu}). We don't need to keep all these arrays, but just the previous one at each step so to avoid useless arrays and costly cudaMalloc, I modified my code to just use \textit{Polynomial\_shift\_device[i\%2]} and \textit{Polynomial\_shift\_device[(i+1)\%2]} so that finally in each step we invert \textit{Polynomial\_shift\_device[0]} and \textit{Polynomial\_shift\_device[1]}. Thus, whatever is the size of the polynomial we consider at the beginning, we have the same number of arrays in the code, at least before the step $10$.\\
+
+Now, we come in a new part of the code. The plain multiplication implemented by the laboratory is very efficient for multiplicate polynomials of degrees at most the number of threads in a thread block, so for polynomials of degrees 512 for my machine. This multiplication can't be done for polynomials of degree size more than 512, at least, it can't be sufficiently efficient. Then we need to proceed differently. For bigger degree, we need to use FFT. The next section will explain what it is exactly and how we use it.

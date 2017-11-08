@@ -1,0 +1,140 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Possible improvements \& FFT primes}}}
+
+\begin{block}{}
+\begin{itemize}
+\item We need to improve the parallel computation of the sequence $(i!)_{1 \leq i \leq n}$, and
+\item We can reduce the size of the array storing the elements of $(x+1)^{2^i}$ as these polynomials are symmetric.
+\end{itemize}
+\end{block}
+
+\begin{block}{}
+The \textit{Taylor shift} modulo $p$ is needed several times to get the \textit{Taylor shift} in $\mathbb{Z}$. Two questions arises :
+\vspace{3mm}
+\begin{enumerate}
+\item \textcolor{violet}{What prime numbers must we use ?}
+\item \textcolor{violet}{How many such primes numbers must we use ?}
+\end{enumerate}
+\end{block}
+
+\begin{block}{}
+Primes numbers of the form $\textcolor{red}{p = M \times 2^j + 1}$ yield the best performance for \textit{FFT}, with $p>n$ and $M<2^j$ odd integer.
+\end{block}
+
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Combination with the Chinese Remainder thm.}}}
+
+\begin{block}{}
+We need to Taylor shift by a prime number $(m_i)_{1 \leq i \leq s}$ $s$ times.\\
+For each coefficient in $\mathbb{Z}$, we obtain a vector $\textbf{x} = (x_1,\dots,x_s)$.
+\end{block}
+
+\begin{block}{}
+\textcolor{blue}{\textbf{Objective :}} using the \textit{CRT2}, compute the image $a$ of $\mathbf{x}$ by
+\begin{center}
+$\mathbb{Z}/m_1\mathbb{Z} \times \cdots \times \mathbb{Z}/m_s\mathbb{Z} \cong \mathbb{Z}/m_1\cdots m_s\mathbb{Z}$.\\
+\end{center}
+\vspace{3mm}
+\textcolor{blue}{\textbf{Representation :}} we can represent $a$ by $\textbf{b} = (b_1,\dots,b_s)$ s.t.
+\begin{center}
+$\textcolor{red}{a = b_1 + b_2m_2 + b_3m_1m_2 + \cdots + b_sm_1\cdots m_{s-1}}$.
+\end{center}
+\end{block}
+
+Then we will use the conversion of modular numbers to their \textcolor{violet}{\textbf{mixed radix representation by a matrix formula}} to compute $\textbf{b}$.
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Definition (1)}}}
+
+Let us consider $m_1, m_2,\dots,m_s$ distinct prime numbers.
+
+\begin{Definition}[$(m_{i,j})$ and $(n_{i,j})$]
+We define the sequences $\textcolor{red}{(m_{i,j})_{1 \leq i < j \leq s}}$ and $\textcolor{red}{(n_{i,j})_{1 \leq i < j \leq s}}$ such that :
+$$\left\{
+\begin{array}{l}
+m_{i,j}\times m_i \equiv 1\mod m_j \;\; | \;\; 0 \leq m_{i,j} < m_j\\
+n_{i,j} = m_j - m_{i,j}
+\end{array}
+\right.$$
+\end{Definition}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Definition (2)}}}
+
+\begin{Definition}[matrix $A$]
+We define the matrix $(A_k)_{1 \leq k \leq s-1}$ as the following :
+$$\textcolor{darkgreen}{A_k = \left(
+  \begin{array}{c|c}
+     I_{k-1}  & 0    \\ \hline
+     0        & B_k
+  \end{array} \right)} \mbox{ with } $$
+
+$$\textcolor{darkgreen}{B_k = \left(
+  \begin{array}{c c c c c}
+     1      & n_{k,k+1} & n_{k,k+2} & \dots  & n_{k,s} \\
+     0      & m_{k,k+1} & 0         & \dots  & 0       \\
+     \vdots & \ddots    & m_{k,k+2} & \ddots & \vdots  \\
+     \vdots &           & \ddots    & \ddots & 0       \\
+     0      & \dots     & \dots     & 0      & m_{k,s}
+  \end{array} \right)}
+$$
+\end{Definition}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Mixed radix representation by a matrix formula}}}
+
+\begin{Theorem}
+$$\textcolor{red}{\textbf{b} = \left(\dots\left(\left(\left( \textbf{x}A_1 \right)A_2\right)A_3\right)\dots\right)\ A_{s-1}}$$
+\end{Theorem}
+
+\begin{Definition}
+As $A_k$ is sparse, we don't really need to multiply our results by a matrix.\\
+Thus, we will consider sequences $(L_k)_{1 \leq k \leq s-1}$ and $(D_k)_{1 \leq k \leq s-1}$ respectively the first row of $A_k$ and the diagonal of $A_k$ such that :
+$$\textcolor{darkgreen}{(L_k) = (n_{k,j} \; | \; k+1 \leq j \leq s)},$$
+$$\textcolor{darkgreen}{(D_k) = (m_{k,j} \; | \; k+1 \leq j \leq s)}.$$
+\end{Definition} 
+
+This gives the following algorithm (with $d=n-1 = 2^e-1$) :
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+\frametitle{\textbf{\textcolor{orange}{Algorithm for the mixed radix representation}}}
+
+\begin{block}{}
+\underline{\textbf{Input :}} $\textbf{X}[0..d][1..s]$, $s$, $(m_i)_{1\leq i \leq s}$, $(L_k)_{1 \leq k \leq s-1}$, $(D_k)_{1 \leq k \leq s-1}$ \\
+$\textbf{Y} := \textbf{X}$\\
+for $k = 1..s-1$ do \\
+\hspace{4mm}for $i = 0..d$ do \\
+\hspace{8mm}for $j = k+1..s$ do \\
+\hspace{12mm}$Y_{i,j} := \left[ \left( Y_{i,j}L_{k,j}\mod m_j \right) + \left( Y_{i,j}D_{k,j}\mod m_j \right) \right]\mod m_j$ \\
+\hspace{8mm}end do \\
+\hspace{4mm}end do \\
+end do \\
+\underline{\textbf{Output :}} $\textbf{Y}[0..d][1..s]$
+\end{block}
+
+
+This algorithm can be parallelized but the different loops in $k$ need less and less computations, parallelization must me done with reflection.
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

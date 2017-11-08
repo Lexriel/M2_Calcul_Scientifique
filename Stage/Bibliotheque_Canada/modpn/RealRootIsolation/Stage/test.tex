@@ -1,0 +1,149 @@
+\documentclass[10pt]{report}
+
+
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{epsfig}
+\usepackage{verbatim}
+\usepackage{fancybox}
+\usepackage{moreverb}
+\usepackage{graphicx}
+\usepackage{psfrag}
+\usepackage{hyperref}
+\usepackage[all]{xy}
+\usepackage[toc,page]{appendix}
+\usepackage[subnum]{cases}
+\usepackage{bm}
+\usepackage{framed}
+\usepackage{color}
+\usepackage{dsfont}
+\usepackage{textcomp}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[francais]{babel}
+\usepackage[utf8]{inputenc}  
+\usepackage[T1]{fontenc}
+\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+
+
+%\textheight 22cm    \textwidth 16cm
+%\voffset = 0 cm
+%\hoffset = 0 cm
+%\marginparwidth = 0pt
+%\oddsidemargin = 31pt
+%one inch + \hoffset
+%one inch + \voffset
+%\oddsidemargin = 31pt
+%\topmargin = 20pt
+%\headheight = 12pt
+%\headsep = 25pt
+%\textheight = 592pt
+%\textwidth = 390pt
+%\marginparsep = 10pt
+%\marginparwidth = 35pt
+%\footskip = 30pt
+%\marginparpush = 7pt
+%\hoffset = 0pt
+%\voffset = 0pt
+%\paperwidth = 597pt
+%\paperheight = 845pt
+
+
+\newcommand{\C}{{\mathbb C}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\N}{{\mathbb N}}
+\newcommand{\Z}{{\mathbb Z}}
+\newcommand{\Q}{{\mathbb Q}}
+\newcommand{\T}{{\mathbb T}}
+\newcommand{\E}{{\mathbb E}}
+\newcommand{\di}{{\mathbb D}}
+\newcommand{\Y}{{\mathbf Y}}
+\newcommand{\D}{{\partial}}
+\newcommand{\Cl}{{\mathcal C}}
+\newcommand{\Pa}{{\mathcal P}}
+\newcommand{\Flux}{{\mathcal F}}
+\newcommand{\B}{{\mathfrak B}}
+\newcommand{\M}{{\mathcal M}}
+\newcommand{\dis}{{\mathcal D}}
+\newcommand{\A}{{\mathcal{A}}}
+\newcommand{\fin}{\rule{1ex}{1ex}}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\renewcommand\labelitemi{\textbullet}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{hypothesis}[theorem]{Hypothesis}
+
+
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thelemma}{\thesection\arabic{lemma}}
+\renewcommand{\theproposition}{\thesection\arabic{proposition}}
+\renewcommand{\thetheorem}{\thesection\arabic{theorem}}
+\renewcommand{\thecorollary}{\thesection\arabic{corollary}}
+\renewcommand{\thedefinition}{\thesection\arabic{definition}}
+\renewcommand{\theexample}{\thesection\arabic{example}}
+\renewcommand{\theremark}{\thesection\arabic{remark}}
+\renewcommand{\thenotation}{\thesection\arabic{notation}}
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\def\commutatif{\ar@{}[rd]|{\circlearrowleft}}
+
+
+\begin{document}
+
+Let $b = (b_1 \ldots, b_s)$ be the $m = (m_1, \ldots, m_s)$-mixed radix 
+representation of $n$ computed from the residue vector 
+$x = (x_1, \ldots, x_s)$ via some program.
+Thus we have $n \equiv b_j \mod{m_j}$ for all $j \in \{ 1, \ldots, s \}$.
+
+In order to formally verify that the output vector 
+$b$ is correct we would need to know $n$ as an (long) integer,
+that is, the recombined $n$ as a single number.
+
+Since we do not $n$ in this way, we can only provide a criterion
+to catch some incorrect results. Here's one such criterion.
+This criterion will accept all correct results, but may
+fail to detect some incrorrect ones. However, this is very unlikely.
+
+
+The vector $(b_1 \ldots, b_s)$ satisfies the relation
+\begin{equation*}
+n = b_1 + b_2 M_2 + \cdots b_s M_s
+\end{equation*}
+where $M_j$ is the product of $m_1,\ldots,m_{j-1}$.
+
+Therefore we have
+$n \equiv b_1 \mod{m_1}$ and thus we have
+$x_1 \equiv b_1 \mod{m_1}$.
+Next we have
+$n \equiv b_1 + b_2 M_2 \mod{m_2}$ and thus we have
+$x_2 \equiv b_1 + b_2 M_2  \mod{m_2}$.
+More generally, for all $j \in \{ 1, \ldots, s \}$ we have
+$x_j  \equiv b_1 + b_2 M_2 + \cdots + b_j M_j$.
+
+The following pseudo-C function implements this criterion
+
+int is\_probably\_correct (s,b,x,m)
+{
+    for (j=1,j<=s,j++) { \\
+        M = 1;\\
+        S = b\_1;\\
+        for (k=2,k<=j;k++) {\\
+           M = (M * m\_{k-1}) \% (m\_j);\\
+           S  = (S + (b\_k * M) \% m\_j) \% m\_j;
+        }\\
+        if (x\_j - S) \% m\_j != 0 {  return 1; }\\
+     }
+     return 0;
+}
+
+\end{document}

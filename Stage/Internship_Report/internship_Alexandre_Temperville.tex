@@ -1,0 +1,172 @@
+\documentclass[10pt]{report}
+
+
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{epsfig}
+\usepackage{verbatim}
+\usepackage{fancybox}
+\usepackage{moreverb}
+\usepackage{graphicx}
+\usepackage{psfrag}
+\usepackage{hyperref}
+\usepackage[all]{xy}
+\usepackage[toc,page]{appendix}
+\usepackage[subnum]{cases}
+\usepackage{bm}
+\usepackage{framed}
+\usepackage{color}
+\usepackage{dsfont}
+\usepackage{textcomp}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[francais]{babel}
+\usepackage[utf8]{inputenc}  
+\usepackage[T1]{fontenc}
+\usepackage[top=2.8cm, bottom=2.8cm, left=2.8cm, right=2.8cm]{geometry}
+\usepackage{epstopdf}
+\usepackage{epsfig}
+\usepackage{listings}
+
+%\textheight 22cm    \textwidth 16cm
+%\voffset = 0 cm
+%\hoffset = 0 cm
+%\marginparwidth = 0pt
+%\oddsidemargin = 31pt
+%one inch + \hoffset
+%one inch + \voffset
+%\oddsidemargin = 31pt
+%\topmargin = 20pt
+%\headheight = 12pt
+%\headsep = 25pt
+%\textheight = 592pt
+%\textwidth = 390pt
+%\marginparsep = 10pt
+%\marginparwidth = 35pt
+%\footskip = 30pt
+%\marginparpush = 7pt
+%\hoffset = 0pt
+%\voffset = 0pt
+%\paperwidth = 597pt
+%\paperheight = 845pt
+
+
+\newcommand{\C}{{\mathbb C}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\N}{{\mathbb N}}
+\newcommand{\Z}{{\mathbb Z}}
+\newcommand{\Q}{{\mathbb Q}}
+\newcommand{\T}{{\mathbb T}}
+\newcommand{\E}{{\mathbb E}}
+\newcommand{\di}{{\mathbb D}}
+\newcommand{\Y}{{\mathbf Y}}
+\newcommand{\D}{{\partial}}
+\newcommand{\Cl}{{\mathcal C}}
+\newcommand{\Pa}{{\mathcal P}}
+\newcommand{\Flux}{{\mathcal F}}
+\newcommand{\B}{{\mathfrak B}}
+\newcommand{\M}{{\mathcal M}}
+\newcommand{\dis}{{\mathcal D}}
+\newcommand{\A}{{\mathcal{A}}}
+\newcommand{\fin}{\rule{1ex}{1ex}}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\renewcommand\labelitemi{\textbullet}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem*{theorem*}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem*{proposition*}{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem*{definition*}{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{hypothesis}[theorem]{Hypothesis}
+
+
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thelemma}{\thesection\arabic{lemma}}
+\renewcommand{\theproposition}{\thesection\arabic{proposition}}
+\renewcommand{\thetheorem}{\thesection\arabic{theorem}}
+\renewcommand{\thecorollary}{\thesection\arabic{corollary}}
+\renewcommand{\thedefinition}{\thesection\arabic{definition}}
+\renewcommand{\theexample}{\thesection\arabic{example}}
+\renewcommand{\theremark}{\thesection\arabic{remark}}
+\renewcommand{\thenotation}{\thesection\arabic{notation}}
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\def\commutatif{\ar@{}[rd]|{\circlearrowleft}}
+
+
+\begin{document}
+
+\input{./title.tex}
+\newpage
+\section*{Acknowledgements}
+\input{./acknowledgements}
+
+\renewcommand{\contentsname}{Contents}
+\renewcommand{\bibname}{References}
+\tableofcontents
+% \maketitle
+
+
+
+
+\newpage
+\section{Internship context}
+\input{./intro}
+
+\newpage
+\section{Key points of the research of real roots of a univariate polynomial}
+\input{./Descartes'.tex}
+\input{./ChineseRemainder.tex}
+
+\newpage
+\section{Taylor shift}
+\input{./taylorshift.tex}
+
+\subsection{Compute the $(x+1)^{2^i}$}
+\input{./Factorial.tex}
+
+\newpage
+\section{First steps : Polynomials of size $2$ to $512$}
+\input{./mult}
+
+\newpage
+\section{Fast Fourier Transform (FFT)}
+\input{./fft}
+
+\newpage
+\section{Polynomials of high degrees ($> 512$)}
+\input{./fft2}
+
+\newpage
+\section{Next works}
+\input{./NextWorks}
+
+\newpage
+\section{Benchmarks}
+\input{./benchmarks.tex}
+
+\newpage
+\section{Conclusion}
+\input{./conclusion}
+
+\newpage
+\section{Appendix}
+\input{./appendix.tex}
+
+\newpage
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{references}
+
+
+\end{document}

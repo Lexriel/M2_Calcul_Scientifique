@@ -1,0 +1,89 @@
+ 
+/************** HELP: Layer Infos Window ***************
+/                       version 4.0
+/-------------------------------------------------------
+Please note that this help does not replace the
+user-guide, not the tutorial. Both can be found at
+/          http://spdbv.vital-it.ch/
+          http://www.expasy.org/spdbv/
+ 
+ 
+/General Information
+/-------------------
+The name of the currently active layer appears in red,
+and clicking on a layer name activates it.
+This will become the current layer and update the Control Panel
+and other windows accordingly.
+
+All other columns are toggles allowing to individually
+change the status of a layer. From left to right:
+
+taxon: The guessed taxon of a given layer, based on NCBI taaxonomy.
+       Clicking on the taxon of a given layer will select all layers
+       with the same taaxon.
+
+sel:  layer is selected (several menus will act on selected sequences
+                         when invoked with the SHIFT key)
+grp:  tag (number) allowing to group sequences together for easier selection.
+      Clicking on a number will select all sequences belonging to the group.
+      Control Click will add/remove to/from the current selection Layers with
+      the same group number as the clicked sequence.   
+
+vis:  layer is visible (same as the checkbox in the Control Panel)
+mov:  layer can move (same as the checkbox in the Control Panel).
+axis: Draw Referential for the concerned layer at its (0,0,0) coord.
+
+CA:   Force layer backbone to be drawn as Carbon Alpha Trace.
+O:    Backbone oxygens of this layer are visible.
+H:    Hydrogens of this layer (if any) are visible.
+
+Hbnd: H-bonds of this layer (if they have been computed) are visible.
+Hdst: Same for H-bonds distances
+
+side: allow sidechains to be visible even when backbone is hidden.
+      This is mostly useful when rendering images with ribbons
+      representations.
+
+HOH:  water of this layer are visible. Note that by default
+      water (HOH, SOL, WAT) are not loaded into the workspace.
+      Uncheck the appropriate item of the "Loading Protein"
+      preferences menu to load solvent.
+
+cyc:  This layer is elected for cycling through (blinking)
+      Cycling through layers is achieved with Control+Tab
+      This will automatically display ONLY the next layer
+      having an enabled cycling flag.
+      layers with a '+' are always visible.
+      layers with a '-' are always hiden.
+
+AlnW: control whether a given sequence will appear in the
+      alignment window.
+
+mdl:  Allow to select templates to use to build preliminary model or
+      that will be submitted to the SwissModel server.
+      In addition, one of the layer will be marked as the 'reference layer'
+      This layer will be used as the main template during SwissModel requests.
+      This is the layer from which the backbone will be used, all the other
+      templates serving mainly to increase the sidechain modeling accuracy.
+
+SelG: Shows the number of groups currently selected in each layer.
+
+/-------------------------------------------------------------
+/Tips
+
+Holding down the shift key while clicking on a checkmark will
+affect all layers.
+
+Clicking on the 'sel' column header will inverse the current layer selection
+Clicking on the 'taxon' header will prompt the user to enter a new taxon for the
+         currently active layer. This can be given as the NCBI taxon ID, or as a
+         scientific or common name.
+         Shift+Clicking on the 'taxon' header apply the change to all selected layers.
+Clicking on the 'grp' column header will allow to change the 'grp' label 
+         for the currently active layer.
+         Shift+Clicking on the 'grp' header apply the change to all selected layers.
+Clicking on any other column header will add a checkmark in the given column
+         only for selected sequences.
+Control+Click on a layer name will allow to rename the clicked layer.
+
+

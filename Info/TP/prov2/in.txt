@@ -1,0 +1,3 @@
+set term postscript landscape
+set output "timeall.ps"
+plot "time.dat" using 2:1 title 'basic algorithm'

@@ -1,0 +1,32 @@
+/* Authors: Xin Li <xli96@csd.uwo.ca>, Marc Moreno Maza <moreno@csd.uwo.ca> */
+/* Copyright (c) 2009 by Marc Moreno Maza.  All rights reserved             */
+#Intel Linux 32 machine
+make clean 
+make ARCH=LINUXINTEL32
+
+#10.60.0.2
+make clean
+make ARCH=MAC32
+
+
+#10.60.0.3
+make clean
+make ARCH=WINDOWS
+
+#10.60.0.4
+bash
+gmake clean
+gmake ARCH=SOLARIS64
+
+#10.60.0.6
+sh
+make clean
+make ARCH=PPC64
+
+#10.60.0.8
+make clean
+make ARCH=LINUXINTEL64
+
+#10.60.0.9
+make clean
+make ARCH=MAC64

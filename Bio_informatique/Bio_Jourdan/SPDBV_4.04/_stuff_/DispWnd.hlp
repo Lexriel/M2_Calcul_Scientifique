@@ -1,0 +1,134 @@
+ 
+/**************** HELP: Display Window *****************
+/                       version 4.0
+/-------------------------------------------------------
+Please note that this help does not replace the
+user-guide, nor the tutorial. Both can be found at
+/          http://spdbv.vital-it.ch/
+          http://www.expasy.org/spdbv/
+ 
+/Display
+-------
+
+The display window is divided into two regions.
+The top one gives access to the most commonly used tools,
+and the bottom part displays the residues marked as
+visible in the control panel. You can toggle the fullscreen 
+display with the F1 key (PC only).
+
+/Toolbar
+-------
+
+The first icon allows to center the view around all the
+groups currently marked as visible. It is like a magic
+re-centering tool.
+
+
+The next three icons allow to select the translation,
+zoom and rotation tools (note that you can also use
+the "Tab" key to activate the next tool and shift+tab
+to activate the previous tool).
+Once a tool is selected, simply click and drag the
+mouse to move, translate or zoom on the molecule.
+With a two or three button mouse, it is recommended to keep the rotation
+tool always selected, and use the left mouse button to rotate the view,
+the right mouse button to move the view and the left+right button together
+to zoom.
+Note that the movement of the molecule can be constrained along a given axis
+(x y or z) by simultaneously holding down the "control" "option" or "command"
+key on the  Mac, or F5 F6 and F7 on PC.
+
+By default, the any move operation will affect the view ('Move All' is written
+below the translation icon, and a small earth icon is drawn on the left)
+Clicking on the 'Move all' text will toggle the mode to allow moving or rotating
+only the selected residues (or compounds) of the  current layer.
+When this mode is enabled, a small protein blob icon is drawn instead of the earth.
+It may be useful to center the view around a specific atom before using this feature.
+It may also be useful to enable the 'update H-bond and clashes during
+coordinate move' in the real time preference dialog.
+
+
+/Tools
+---------------
+
+The third group of icons regroups the most commonly used tools.
+All the functions described previously will ask you to pick atoms
+in the display window. Follow the instructions that appear in red under
+the tools; the results will be given at the same place as well as
+directly on the molecule.
+To exit the measurement mode hit the 'esc' key.
+
+
+- Distance between two atoms.
+
+- Angle between three atoms.
+
+- Dihedral angles (By default, gives a measure of omega,
+  phi and psi angles of the picked amino-acid (you can pick
+  any atom of the aa). But when this tool is invoked with
+  the "control" key, it will prompt you to pick 4 atoms,
+  which allows to measure the torsion angle of any specific bond.
+
+_ Provenance of an atom (will give the name of the molecule,
+  group, chain, and atom).
+ 
+- Display/Undisplay or select groups that are/aren't at a
+  certain distance from an atom. More advanced features
+  are accessible through the select menu.
+  
+- Center the view on one atom.
+
+- Fit a molecule onto an other (available only when two or more
+  molecules are loaded). In this case, you will be prompted
+  to pick three corresponding atoms of each molecule to fit.
+  More advanced fitting features are available in the "Fit" menu.
+  Read the user guide for more information.
+
+- Mutation tool. This works only on amino-acids and DNA. Once a
+  mutation is underway, it is possible to browse the backbone dependent
+  rotamer library by clicking on the small  arrows that appear under the
+  tool icon, or by hitting the '*' or shift+'*' key of the numerical
+  keypad. The characteristics of the selected rotamer are displayed at
+  in the toolbar. The one letter amino-acid code is followed by the rotamer
+  number currently selected,  followed by the number of available rotamers.
+  Then there is a 's:' followed by a crude score for the given rotamer.
+  Lower scores are better, higher scored indicate clashes with the surrounding
+  environment. Finally,  there is a 'p:' which gives the probability of
+  observing this rotamer in this conformation in the current secondary
+  structure (h=helix, s=strand or c=coil).
+  To end a mutation, click on the mutation tool.
+
+- Torsion tool allowing to rotate sidechains atoms downstram a
+  specfic bond. A real-time evaluation of clashes and hydrogen
+  bonds is performed. 
+  The procedure is very easy: first click on the tool, then pick
+  any atom belonging to the amino-acid you want to modify. Any
+  sidechain bond can be rotated using the small arrows that appear at
+  the right of  the tool, or by by holding down a key from "1" to "5"
+  while clicking and moving the mouse from left-to right. Key "1" will
+  rotate the CA-CB bond, key "2" the CB-CD bond and so on. Clicking
+  a second time on the "Torsion" tool will ask you if you want to keep or
+  discard the torsions. If you accept, atoms names will be updated
+  accordingly to the IUPAC nomenclature, if needed. 
+  Torsion will also work on HET atoms (such as ATP), in which case
+  you will have to pick two atoms that will determine a bond around which
+  to rotate the molecule. Consider this as a vector, all atoms attached
+  at the tip of the vector will rotate.
+  Alternately, clicking twice on the same atom will select the compound 
+  for multiple torsion. In this case, the bond around which the torsion will
+  operate can be selected using the 'Top or Bottom Arrow Keys'.
+  The molecule will be divided in two parts. One drawn in solid lines,
+  the other part drawn in dotted lines. The part displayed in solid lines
+  can be rotated relative to the part drawn in dotted lines using the
+  Left or Right Arrow Keys. To swap the two parts of the molecule
+  (solid vs dotted), use the 'Tab' key.
+
+  Note that the torsion tool can also be used to dynamically alter the Phi
+  or Psi angle by holding down the "9" or "0" key respectively.
+  All the backbone from this point will move. If you want to move
+  only a part of the backbone, you'll have to break it (Build menu).
+  If you want to freeze the C-terminal part of the backbone and move
+  the N-terminal, uncheck the appropriate item of the Tools menu.
+
+  An other way of altering the backbone is to use the Ramachandran plot.
+

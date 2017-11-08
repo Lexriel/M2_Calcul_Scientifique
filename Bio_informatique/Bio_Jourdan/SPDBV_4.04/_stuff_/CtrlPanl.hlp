@@ -1,0 +1,154 @@
+ 
+/***************** HELP: Control Panel *****************
+/                     version 4.0
+/-------------------------------------------------------
+Please note that this help does not replace the
+user-guide, nor the tutorial. Both can be found at
+/          http://spdbv.vital-it.ch/
+          http://www.expasy.org/spdbv/
+
+
+/General Infos:
+-------------
+The Control Panel is divided into two parts: a header
+and a list displaying all the groups of the currently
+active layer.
+ 
+/Header:
+------
+You can change the currently active layer
+with the popup located at the top of the header or
+by using the Tab Key.
+A whole layer can be hidden or "frozen" by altering
+the status of the corresponding checkbox of the header
+(see also the Layer Infos window).
+
+/List:
+----
+The Color column has a little arrow meaning that a
+pop-up is available. By default 'BS' is written just
+above (which stands for Backbone+Sidechains). It means
+that changing a color will affect a gropup backbone 
+and sidechain. The pop-up menu let you choose on what
+part of the group will be affected by a color change.
+
+Similarily, the "dots" column has a pop-up letting
+you choose whether van der Waals dots or accessible
+surface dots have to be displayed for the residue.
+Accessibile surface is simply plotted by increasing 
+the radius of each atom by 1.4 Angstrom.
+Note that the van der Waals dots appear as solid
+space-filling spheres when solid rendering is enabled 
+(OpenGL) or POV-Ray
+
+
+ 
+/Altering Selections  and Display Options
+-----------------------------------------
+
+Clicking on a group name:
+
+/SHIFT   will extend the selection to the last clicked residue.
+/CONTROL will allow for discontinuous selection (not affecting previous selection).
+/OPTION  (right mouse button) center the view on the Carbon Alpha 
+         of the clicked residue.
+
+Selected groups appear in red
+Centered Group appear in bold
+
+
+
+
+Clicking on a secondary structure (h,s or blank)
+
+This will select the entire secondary structure in which the clicked
+residue belongs to.
+
+/CONTROL will allow to add or remove other secondary structure blocks
+         to the current selection.
+/OPTION  (right mousebutton for PC) will center the secondary strucutre in the view.
+
+
+
+
+Clicking on a chain
+
+This will select the entire chain in which the clicked residue belongs to.
+
+/CONTROL will allow to add or remove other chains to the current selection.
+/OPTION  (right mousebutton for PC) will center the chain in the view.
+
+
+
+Clicking somewhere in a given column (show, side, labl, ::, ribn)
+
+This will modify the display options of a given residue.
+
+/SHIFT         will act on the whole column.
+/SHIFT+CONTROL will act on the whole column of each selected layer.
+               (layers selection status can be altered using the Layer Info Window).
+
+
+
+Clicking in a given column header (show, side, labl, ::, ribn)
+
+will set the corresponding option only for the selected groups.
+The display option will be disabled for every non-selected group.
+However, clicking on the '+' sign will add check-marks to the selected 
+groups, leaving any other group untouched. Likewise, clicking on the '-'
+sign will remove the flag for every selected group, leaving others group
+display options untouched. 
+
+/CONTROL while clicking on a given column header (show, side, labl, ::, ribn)
+will select all groups for which the corresponding display option is enabled
+(that is those for which a check-mark is present in the clicked column name).
+This essentially provides an simple two-steps way to transfer display
+features from columns to columns.
+
+
+Clicking on the layer name (on top of the header):
+
+When more than one layer is has been loaded, this will bring up
+a popup menu that allows to select the current layer
+
+-----------------------------------------------------------------
+
+/Keys:
+-----
+
+Hitting the 'return' key is equivalent to clicking on the 'show' button.
+Hitting the 'enter' key (numerical keypad) toggles the 'sho' flag of the
+                    selected residues.
+
+  
+/Hot Typing Selection:
+--------------------
+Let's say you want to select ALA12, HIS42 and ARG65
+of chain A, GLY15 of chain B, and TRP1 of "no chain name".
+First of all, you will have to type "a12". Notice that a "A"
+appears in red at the top of the first column of the
+control panel. It means that any successive numbers will
+automatically be assigned to chain A so that you don't have
+to specify the chain anymore. So hold down the "Control" key
+(for discontinuous selection) and type "42" then wait half
+a second and type "65", wait, type "b15", wait, and finally
+hit the "Spacebar" (to reset the chain selection to
+"nothing") and type "1".
+Note for PC users: the "Control key" must be hit after having
+typed the residue number and not be held down while you
+type numbers.
+ 
+/Tips & Tricks:
+-------------
+  
+  
+Once the view is centered on a residue or compound, the left and right
+arrow keys can be used to navigate along the chain (or compound), which
+is useful to check electron density for each residue, or if the active layer
+contains an sdf file with multiple compounds, this is useful to check
+docking results, as this feature will also only display one compound at a time.
+
+If you atered the selection or view by mistake, immediately
+use the UNDO item of the edit menu to return to the previous
+state.
+

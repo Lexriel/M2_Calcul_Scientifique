@@ -1,0 +1,48 @@
+\subsection{Critical look and improvements}
+Some procedure and functions I have implemented can be improved. \\
+
+I think notably to the factorial procedure which has the default that in each step, some threads are calling the same elements of an array. This is not disturbing as it has a work of $\Theta(n\log(n))$ and this is called just one at the beginning. It is also possible that the way to compute the $(x+1)^{2^i}$ I had chosen is not the best, and if there exists a better way to compute this, maybe it doesn't need to compute the factorial sequence. \\
+
+I can probably use more the shared memory and reduce the global work for example when I store several times the polynomials $(x+1)^{2^i}$ and I would like to take a look at the use of the global memory.
+
+
+\subsection{Prime numbers to consider}
+The Taylor\_shift procedure I have implemented is done modulo a prime number $p$. According to the Section 2.6, we need to do this Taylor shift several times with different primes numbers and then use the Chinese Remainder Theorem to have the Taylor shift by $1$ of the input polynomial in $\mathbb{Z}$. \\
+
+Two questions arises :\\
+\begin{itemize}
+\item[(1)] What prime numbers $p$ must we use ?
+\item[(2)] How many such primes numbers must we use ?
+\end{itemize}
+
+The works of Wei Pan (see \cite{Wei}) put in evidence that primes numbers of the form $p = M\times 2^i + 1$ bring best performances for FFT than other prime number with $i$ and $M$ integers such that $M$ is odd and $M < 2^i$. $p$ must be also sufficiently greater than the degree of the incoming polynomial, otherwise the monomials of big degrees which compose the input polynomial won't be taken into account.
+
+To find these prime numbers, we can run a MAPLE code which will be more adapted to deal with prime number with its pre-existing functions. Here is a prototype of such a code : \\
+
+\begin{verbatim}
+A:= Array(1..500):
+p:= 962592769:
+pow := 2^26:
+pow2 := 2^19:
+i:= 0:
+
+  while ((i<400) and (p>pow)) do
+    if ((p-1 mod pow2) = 0) then
+      A[i] := p:
+      i := i+1:
+    end if:
+    p := prevprime(p):
+  end do:
+\end{verbatim}
+
+This code can give a list of prime numbers, we have such a list but it does not contain sufficiently primes numbers for the moment. Now, let us explain how many such prime numbers we need. According to the calculation we just made, we can need approximatively 300 prime numbers for polynomials of degree $10000$, so we need to create a table containing the prime numbers we want to use. The Taylor shift we implement will be called several times for these different prime numbers, and with an increasing size of the polynomial, we will need more or less calls of this procedure.
+
+\subsection{Combining several computations of the Taylor\_shift procedure}
+Now the problem we are actually discussing is how to recombine the output solutions modulo prime numbers efficiently using the Chinese Remainder Theorem. In input,  we will have $m_1,\dots,m_s$ prime numbers and the $s$ polynomials of size $d$ shifted by 1 stored in an array $X[1:s][1:d]$ such that the $s$ first positions of this array contain the first coefficient of each polynomial, then the second coefficient of each polynomial...\\
+Let us consider $\textbf{x} = (x_1,\dots,x_s)$. \\
+
+The objective is to compute the image $a$ of $\textbf{x}$ by $\mathbb{Z}/m_1\mathbb{Z} \times \dots \times \mathbb{Z}/m_s\mathbb{Z} \cong \mathbb{Z}/m_1\dots m_s\mathbb{Z}$. According to \cite{RadixRep}, we can represent $a$ by $\textbf{b} = (b_1,\dots,b_s)$ such that
+
+$$a = b_1 + b_2m_1 + b_3m_1m_2 + \dots + b_sm_1m_2\dots m_{s-1}$$
+
+The idea of \cite{RadixRep} is to compute $a$ step by step using a mixed representation by a matrix formula. My work until this report ends here, but I'll explain how to use this radix representation when I will defend my internship.

@@ -1,0 +1,152 @@
+ 
+/***************** HELP: Fit Menu *****************
+/                     version 4.0
+/--------------------------------------------------
+Please note that this help does not replace the
+user-guide, nor the tutorial. Both can be found at
+/          http://spdbv.vital-it.ch/
+          http://www.expasy.org/spdbv/
+ 
+
+/Fit Raw Sequence
+----------------
+Aligns the target sequence (the one above the divider line in the Alignment Window) onto the
+reference template (the first sequence below the divider line in the Alignment Window).
+
+/Align Selected Columns (using MUSCLE)
+----------------------
+This will send the sequence of the selected residues to a remote server.
+Note that an internet connection is necessary to use this feature.
+This can be used to either globally align a set of sequences (when no residues are
+selected) or to refine sections of an alignment that are not  satisfactory.
+an example would be to realign regions of a structural alignment where the proteins structure
+differ so much that the resulting alignment is meaningless, without touching the rest of the
+alignment.
+Note that discontinuous selections should not be sent. The best way to use this function is
+to select one sequence block from the Alignment Window, holding down the shift key while selecting
+residues so as to extend the selection to all layers.
+
+/Align All
+---------
+This will align all sequences. It is recommended to use the 'Align Selected Columns' instead,
+which is faster and more flexible. However, this function might be useful in situations where
+no internet connection is available.
+
+/Align Selected Sequences onto non Selected Sequences...
+-------------------------------------------------------
+This tool will treat each group of sequences (the selected ones and the non-selected ones)
+as a frozen alignment. The blocks will be realigned through a pairwise alignment using
+the selected reference sequence for each group. The alignment of each group of sequence
+will not be modified by this process. This is useful for example to align a manually refined
+sequence alignment of proteins to model onto a structural alignment of all possible templates. 
+
+/Realign Raw Sequence Selection against Ref. Seq. Selection
+----------------------------------------------------------
+This function allows to realign a region of the target sequence (the one above the divider
+line in the Alignment Window) onto the reference template (the first sequence below the divider
+line in the Alignment Window) without affecting other parts of the alignment which might have
+been manually optimized.  
+
+/Magic Fit
+---------
+Compares the primary sequences of the two molecules using a PAM matrix (PAM 200 by default),
+selects the best matching fragments of amino acid pairs and, based on them, superimposes
+the molecules on the Graphic window. This is the quickest way to test if two molecules could
+fit, but it will only work if a reasonable sequence homology is found.
+This fit can usually be improved.
+Note that the sequence alignment is not altered by this function.
+
+/Iterative Magic Fit
+-------------------
+First, an initial superposition as described above (Magic Fit) is performed. Then, the fit is
+optimized by iterating through several 'Improve Fit' cycles. Finally a structural alignment
+is generated. This method is only slightly slower than Magic Fit, but gives a better global
+superposition. Depending on the option selected on the RMS & Auto Fit options dialog, the fit is
+optimized by minimizing the RMS deviation between Carbon alpha, backbone, sidechain, or all atoms.
+The RMS deviation for the last cycle is displayed in the tool bar message space.
+Note that the sequence alignment is altered by this function, and that it might be necessary to
+recompute the structural alignment with the 'Generate Structural Alignment' command if more than
+two layers are loaded in your workspace.
+
+/Explore Fragment Alternate Fits
+-------------------------------
+This method is not using any sequence information and is much slower than the two previous ones.
+It is useful to explore local matches (in cases of hinge motions for example), or to superpose
+two molecules that have a sequence identity so low that Magic Fit fails.
+Basically, it uses small fragments to seed the superposition, and then evaluates the fit.
+Solutions for which roughly 30% of the residues of the structure to superpose match the reference
+one are reported as a clickable list that allows for further visual evaluation.
+The structure that has been superposed onto the reference is colored by RMSd.
+
+/Explore Domain Alternate Fits
+-----------------------------
+This method is not using any sequence information.
+It is useful to explore local matches (in cases of hinge motions for example), or to superpose
+two molecules that have a sequence identity so low that Magic Fit fails.
+Basically, it uses vectorized representation of secondary  structure elements to seed the
+superposition, and then evaluates the fit. Therefore, it is not suitable to superpose proteins
+that have less than three secondary structure elements. 
+Solutions for which roughly 30% of the residues of the structure to superpose match the reference
+one are reported as a clickable list that allows for further visual evaluation.
+The structure that has been superposed onto the reference is colored by RMSd.
+
+/Fit Molecules (from selection)
+------------------------------
+The selected residues are used to seed a superposition.
+Note that this can be used on compounds as well, in which case various solutions  are provided for
+further visual inspection. Only one compound should be selected in each layer. 
+
+/Improve Fit
+-----------
+an improved superimposition is done by iterating through:1 - Generation of a structural alignment to find those pairs of residues that are spatially close
+    to each other. These will be selected.2-  Superimposing again the two structures based on the new selection.
+Iterations are done until the RMS cannot be lowered while keeping the number of matching residues
+as high as possible.
+
+/Calculate RMS...
+----------------
+Evaluates the quality of a fit by calculating the RMS (Root Mean Squared deviation) between
+two superimposed molecules. Only selected groups are taken into account.
+
+/Set Layer Std Dev. into B-factors
+---------------------------------
+This command is useful to analyze molecular dynamic results or NMR files. Based on the alignment,
+the Standard Deviation of each corresponding atom of each residue is computed and assigned to the
+B-factor column of the PDB file. Proteins are then accordingly colored, with those parts that move
+the most being highlighted in red.NOTE: This command requires that all layers have exactly the same sequence.
+
+/Generate Structural Alignment
+-----------------------------
+Generates the structural alignment of superimposed molecules.
+Note that this can differ from a 'sequence alignment' residues. This reflects residues that are closer
+in space, after a structural superposition. Therefore, it does not make much sense to use it in regions
+where the two proteins are not well superposed (different domains, or structural rearrangements).
+It might be interesting to color the superposed molecules by RMSd to have a better sense of the alignment
+quality and identify regions that do not match well.
+
+/Compress Gaps
+-------------
+Compresses non-sense aligned gaps in the Alignment window (gaps present in all layers for a specific column).
+
+/Reset Alignment
+---------------
+Resets an alignment by striping all gaps
+
+/Validate Current Fit
+--------------------
+This will clear any information relative to the current transformation, effectively validating
+the new coordinates for the current layer. This is useful to save pdb files with new coordinates
+(for example to use with other software). Otherwise,  the original  coordinates are saved, along with
+the transformation matrix.
+Note that it will not be possible to undo a Fit after having invoked this command. 
+
+/UnFit Current Layer (current layer only)
+-------------------
+Moves the superposed layer back to it's original position before a fitting operation.
+
+/UnFit Current Layer (other layer follow)
+-------------------
+Moves both the superposed layer and all static layers back to the original position of the superposed
+layer before a fitting operation. This is useful to change the coordinates of several layers, which will
+be put in the referential of the superimposed molecule.
+

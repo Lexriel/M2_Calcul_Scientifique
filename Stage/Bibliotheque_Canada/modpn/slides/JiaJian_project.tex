@@ -1,0 +1,109 @@
+\documentclass{beamer}
+\input{macros}
+
+%%\usepackage{alltt}
+%%\usepackage{euler}
+\usepackage{graphics}
+\usepackage{amsmath,color}
+
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+
+\newif\iftalk
+\talktrue
+
+
+\newif\ifshow
+\showfalse
+
+\definecolor{lightblue}{RGB}{255,250,250}
+\definecolor{MediumSeaGreen}{RGB}{60,179,113}
+\definecolor{DarkGreen}{RGB}{0,200,0}
+\mode<presentation>
+{
+%\usetheme{Boadilla}
+\usetheme{CambridgeUS}
+%\usetheme{Berkeley}
+%\usetheme{Warsaw}
+%\beamersetaveragebackground{lightblue}
+\beamersetaveragebackground{white}
+%\setbeamercovered{transparent}
+%\setbeamercovered{dynamic}
+\setbeamercovered{invisible}
+%\setbeamercovered{still covered=<1>{0}<2>{0}}
+\usefonttheme[stillsansseriftext]{serif}
+\setbeamertemplate{itemize subitem}[circle]
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+%\setbeamertemplate{headline}{}
+\useoutertheme{infolines}
+\setbeamerfont{title}{size={\Large \bf}}
+\setbeamerfont{frametitle}{size={\bf}}
+\setbeamerfont{blocktitle}{size={\Large \bf}}
+}
+
+
+\title[]{Fast Polynomial Arithmetic on the GPU}
+\author[]{Jiajian Yang}
+\institute[]{
+University of Western Ontario, Canada
+}
+
+
+\date[]{December 19, 2011}
+
+
+
+\AtBeginSection[]
+{
+   \begin{frame}<beamer>
+     \frametitle{Plan}
+     \tableofcontents[currentsection]
+   \end{frame}
+}
+
+%%---------------------------------------
+
+\begin{document}
+\maketitle
+
+
+%% ============================================================================
+\begin{frame} %% [shrink=15]
+%%%%%%%%%%%%%%%%%%%%
+\frametitle{Plan}  %
+%%%%%%%%%%%%%%%%%%%%
+\tableofcontents
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The CUDA programming and memory models} %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{CUDA_model}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Fast Polynomial Arithmetic} %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{fast_poly_arith}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Subproduct Tree Techniques} %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{subproduct_tree}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementation in CUDA}     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{implementation}
+
+\end{document}
+
+
+
+\begin{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frametitle{Summary and notes} %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{frame}
+

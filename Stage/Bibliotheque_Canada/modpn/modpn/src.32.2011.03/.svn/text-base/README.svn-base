@@ -1,0 +1,53 @@
+Regular GCD new implementation: NEW !!!!
+=======================================
+- The new code is in RegularGcdImp.c 
+- In Modpn, the old Regular GCD is not longer used
+- In Types.h  -> ChainType_t
+                   ->  regular_chain2  (bivariate regular chain)
+- The "methods" for the SCUBE data-type are declared
+       in IteratedResultant.h:   
+          - EX_SubResultantChainOpt  determines the appropriate SCUBE rep
+          - EX_SubResultantChainSelect enforces a SCUBE rep
+          -  EX_IthDthCoeff   
+          -  EX_IthSubres
+
+
+Bivariate Solver new code and interface: NEW !!!
+================================================
+      - solve2.h:    (methods for bivariate regular chains)
+           EX_RegularChain2_Init // constructs a regular chain without copye
+            EX_RegularChain2_Free
+            EX_ModularSolve2 // top-level solver
+
+Converting Modpn (Rec Dense Rep) to Maple: NEW!!!!!!
+=========================================
+       MapleConverter.c -> static ALGEB decomp_to_maple_da
+         // to build the DAG for a decomposition
+       ALGEB rdr2dag_inner(MKernelVector kv, sfixn *A, sfixn *B, ALGEB v, sfixn m)      // to build the DAG for a polynomial
+        // requires maplec.h
+
+
+Bivariate solver code
+=====================
+- modpn.mpl contains the top-level warpper, namely "BivariateSolve"
+  i.e. this is the Maple code wrapping everything
+  
+
+Modpn benchmarking
+==================
+(1) Use Test.c
+(2) Run bench/DoBenchResultant2
+
+Bivariate solver benchmarking
+=============================
+On top of the above, one can select various types of code:
+       // method == 0 ==> gpu_fft + subprodtree
+       // method == 1 ==> cpu_fft + subprodtree
+while using the function
+       scube = EX_SubResultantChainSelect(method, F1, F2, 2, pPtr);
+
+
+
+
+
+

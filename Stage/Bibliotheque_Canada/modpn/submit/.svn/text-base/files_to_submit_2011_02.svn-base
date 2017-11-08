@@ -1,0 +1,51 @@
+## files for modpn
+## U stands for update
+## N stands for new
+
+U  modpn/src.32.2011.02/Factorization.c
+U  modpn/src.32.2011.02/Factorization.h
+U  modpn/src.32.2011.02/FDIV.c
+U  modpn/src.32.2011.02/FINTERP.c
+U  modpn/src.32.2011.02/FMUL.c
+U  modpn/src.32.2011.02/generalFuncs.c
+U  modpn/src.32.2011.02/HGCD.c
+U  modpn/src.32.2011.02/HGCD.h
+U  modpn/src.32.2011.02/inlineFuncs.h
+U  modpn/src.32.2011.02/IsInvertible.c
+U  modpn/src.32.2011.02/IteratedResultant.c
+U  modpn/src.32.2011.02/IteratedResultant.h
+U  modpn/src.32.2011.02/LinkedList.c
+U  modpn/src.32.2011.02/Makefile
+U  modpn/src.32.2011.02/MapleCConverter.c
+U  modpn/src.32.2011.02/MapleCConverter.h
+U  modpn/src.32.2011.02/MPMMTS.c
+U  modpn/src.32.2011.02/RegularGcd.h
+U  modpn/src.32.2011.02/SubResultantSeq.c
+N  modpn/src.32.2011.02/solve2.c
+N  modpn/src.32.2011.02/solve2.h
+U  modpn/src.32.2011.02/TEST.c
+U  modpn/src.32.2011.02/Types.h
+U  modpn/src.32.2011.02/UniHensel.c
+
+## files for cumodp
+## U stands for update
+## N stands for new
+
+U cumodp/src/fft_aux.cu
+  
+N cumodp/tst/fast_solve2_a.mpl
+N cumodp/tst/fast_solve2_b.mpl
+N cumodp/tst/fast_solve2_c.mpl
+N cumodp/tst/fast_solve2_a.tst
+N cumodp/tst/fast_solve2_b.tst
+N cumodp/tst/fast_solve2_c.tst
+
+## files for modpn interface 
+## U stands for update
+## N stands for new
+U mpl/ConnectorModuleNew1.mm
+U mpl/modpn.mpl
+U mpl/FastTriade.mm ==> RegularChain/src/FastTriade.mm
+
+## build script
+U  build/modpn.targ ==> internal/bin/filelists/modpn.targ

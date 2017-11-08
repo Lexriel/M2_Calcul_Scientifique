@@ -1,0 +1,151 @@
+\newtheorem*{crt1}{Chinese Remainder theorem $1^{st}$ version (CRT1)}
+\newtheorem*{crt2}{Chinese Remainder theorem $2^{nd}$ version (CRT2)}
+
+\subsection{Modular arithmetic}
+
+Computing with polynomials or matrices over $\mathbb{Z}$ (and thus  $\mathbb{Q}$,
+$\mathbb{R}$, $\mathbb{C}$) one generally observes expression swell in the
+coefficients.
+This phenomenom can be a severe performance bottleneck for computer algebra
+software. 
+There are essentially two ways to deal with that.
+One solution is to use highly optimized multi-precision libraries, such as GMP, 
+for computing in  $\mathbb{Z}$ and $\mathbb{Q}$.
+Another approach consists in computing by homomorphic images.
+One popular way to do this is via (one of the variants of) 
+the {\em Chinese Remainder Algorithm}, the other one is to
+Hensel's Lemma.
+In our work, we rely on the former, see Section 2.6.
+
+Therefore, we replace computations (for instance Taylor shift by 1) 
+over $\mathbb{Z}$ by computations over prime fields
+of the form $\mathbb{Z}/p{\mathbb{Z}}$ where $p$ has machine word size.
+Then it becomes essential to perform efficiently 
+arithmetic operations in  $\mathbb{Z}/p{\mathbb{Z}}$.
+
+In the C code below, used in my implementation, \textit{sfixn} represents an integer according to the architecture and operating system of the target computer. 
+For Linux on Intel 64-bit, \textit{sfixn} is an \textit{int}) and $BASE\_1 = 31$.
+
+\subsubsection*{add\_mod}
+It corresponds to the addition modulo a number, using binary operations.
+
+\begin{verbatim}
+__device__ __host__ __inline__ 
+sfixn add_mod(sfixn a, sfixn b, sfixn p)
+{
+    sfixn r = a + b;
+    r -= p;
+    r += (r >> BASE_1) & p;
+    return r;
+}
+\end{verbatim}
+
+\subsubsection*{mul\_mod}
+It corresponds to the multiplication modulo a number, using binary operations also, but contrary to what we can expect, we use floting point numbers and the euclidean division.
+
+\begin{verbatim}
+__device__ __host__ __inline__ 
+sfixn mul_mod(sfixn a, sfixn b, sfixn n, double ninv)
+{
+    sfixn q  = (sfixn) ((((double) a) * ((double) b)) * ninv2);
+    sfixn res = a * b - q * n;
+    res += (res >> BASE_1) & n;
+    res -= n;
+    res += (res >> BASE_1) & n;
+    return res;
+}
+\end{verbatim}
+
+The reason of the use of this \textit{mul\_mod} procedure is detailed in \cite{Wei} pages 78-79, it takes advantage of hardware floating point arithmetic. Double precision floating point numbers are encoded on $64$ bits and make this technique work correctly for primes $p$ up to $30$ bits. This technique comes from euclidean division. Let us explain this, to obtain $res = a \times b \mod p$ with $p$ a prime number and $res < p$, then  we have to divide$ a \times b$ by $p$ to obtain the quotient $q$ and then the remainder. This is equivalent to multiply $a \times b$ with $pinv$ and do an integer cast after so $q = (int)\; a \times b \times pinv.$\\
+Let us consider $prod = a \times b$. Let us recall also that the euclidean division of a integer $prod$ by another $p$ is of the form : $prod = quotient * p + remainder$ with $q = quotient$ and $res = remainder < p$. \\
+
+Then : $res = a\times b - q\times p$. After, there are just some binary operations to have clearly the good number we wish.
+
+\subsubsection*{inv\_mod}
+To compute the inverse of an integer $a$ modulo another integer $p$, we must first check if this possible. Indeed, this is possible only if $a$ and $m$ are relatively primes. If $p$ is a prime number and $1\leq a < p$, this is always the case. That's why we will only deal with prime numbers in our code as we will need to compute inverse of numbers. To do that, we will use the extended euclidean algorithm which consists on finding the integers $u$ and $v$ such that $a\times u + b \times v = GCD(a,b)$ for two integers $a$ and $b$ given. In particular, if we take $b = p$ a prime number then we have $a\times u \equiv 1 \mod p$ so $u$ will be the inverse we are looking for. \textit{egcd} computes this $u$ used in the function \textit{inv\_mod}.
+
+\begin{verbatim}
+__device__ __host__ __inline__ 
+void egcd(sfixn x, sfixn y, sfixn *ao, sfixn *bo, sfixn *vo)
+{
+    sfixn t, A, B, C, D, u, v, q;
+
+    u = y; v = x;
+    A = 1; B = 0;
+    C = 0; D = 1;
+
+    do {
+        q = u / v;
+        t = u;
+        u = v;
+        v = t - q * v;
+        t = A;
+        A = B;
+        B = t - q * B;
+        t = C;
+        C = D;
+        D = t - q * D;
+    } while (v != 0);
+
+    *ao = A;
+    *bo = C;
+    *vo = u;
+}
+
+__device__ __host__ __inline__ 
+sfixn inv_mod(sfixn n, sfixn p)
+{
+    sfixn a, b, v;
+    egcd(n, p, &a, &b, &v);
+    if (b < 0) b += p;
+    return b % p;
+}
+\end{verbatim}
+
+\subsubsection*{quo\_mod}
+Using the previous modular instructions, this one gives the quotient modulo a prime number of two integers.\\
+
+\begin{verbatim}
+__device__ __host__ __inline__ 
+sfixn quo_mod(sfixn a, sfixn b, sfixn n, double ninv)
+{
+    return mul_mod(a, inv_mod(b, n), n, ninv);
+}
+\end{verbatim}
+
+
+\subsection{Chinese Remainder Theorem}
+As we are working modulo a prime number in our work, it is not sufficient to give the answer in $\mathbb{Z}$. We will need to run our code several times with different values of $p$ and then recombine the results to get the real solution on $\mathbb{Z}$. In this section we recall the Chinese Remainder theorem and explain how we can use it, the implementation in the code will be explained later.\\
+
+\begin{crt1}
+Let us consider $m_1$, $m_2$, ..., $m_r$ a sequence of $r$ positive integers which are pairwise coprimes. Let us consider also a sequence $(a_i)$ of integers and the following system $(S)$ of congruence equations :
+\begin{center}
+$(S) : \begin{cases}
+x \equiv a_1 \mod m_1 \\
+x \equiv a_2 \mod m_2 \\
+\;\;\;\;\vdots \\
+x \equiv a_r \mod m_r
+\end{cases}$
+\end{center}
+
+Then $(E)$ has a unique solution modulo $M = \prod_{i\in \mbox{\textlbrackdbl} 1, r\mbox{\textrbrackdbl}}m_i = m_1\times m_2\times \dots \times m_r$ : \\
+
+$$x = \sum_{i=1}^{r} a_i\times M_i \times y_i = a_1 \times M_1 \times y_1 + a_2 \times M_2 \times y_2 + \dots + a_r \times M_r \times y_r$$
+
+with $\forall i \in \mbox{\textlbrackdbl} 1, r\mbox{\textrbrackdbl}$, $M_i = \cfrac{M}{m_i}$ and $y_i\times M_i \equiv 1 \mod m_i$.
+\end{crt1}
+
+Running the code of the Taylor shift by $1$ we implement a lot of times for differents prime number $m_i$, we will obtain all the coefficients $a_i$ and then we will just need to get the integers $M_i$ and $y_i$ to have $x \mod M$. We can so use this theorem to solve our problem and find the different coefficients of our polynomial 'shifted'. One may notice that in this case, we will obtain the solution in $\mathbb{Z}[x]/M\mathbb{Z}$ and not in $\mathbb{Z}$ as we want but according to the following lemma coming from \cite{Gerhard}, if $M$ is sufficiently big then we have our solution in $\mathbb{Z}$ :\\
+
+\begin{lemma*}
+Let $f \in \mathbb{Z}[x]$ be nonzero of degree $n\in\mathbb{N}$ and $a\in \mathbb{Z}$. If the coefficients of $f$ are bounded in absolute value by $B\in\mathbb{N}$, then the coefficients of $g=f(x+a)\in\mathbb{Z}[x]$ are absolutely bounded by $B(|a|+1)^n$.
+\end{lemma*}
+
+The Chinese Remainder Theorem is also known i its algebraic form :\\
+
+\begin{crt2}
+Let us consider $m_1,\,m_2,\,...,\, m_r$ a sequence of $r$ positive integers which are pairwise coprimes and $M = \prod_{i\in \mbox{\textlbrackdbl} 1, r\mbox{\textrbrackdbl}}m_i = m_1\times m_2\times \dots \times m_r$.\\ 
+Then $\mathbb{Z}/M\mathbb{Z} \cong \mathbb{Z}/m_1\mathbb{Z} \times \mathbb{Z}/m_2\mathbb{Z} \times \dots \times \mathbb{Z}/m_r\mathbb{Z}$.
+\end{crt2}
+
+

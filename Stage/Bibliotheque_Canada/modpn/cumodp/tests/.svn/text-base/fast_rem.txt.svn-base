@@ -1,0 +1,442 @@
+##----------------------------------------------------------
+#m--a list of square free univar polys
+#return a list 0f gcd free basis of m
+TRDcoprime_factor := proc(m, var, p)
+   local i, j, mp, r, factor_tree, numOfNodes, level, interm, bottom;
+   r := nops(m);
+   if r = 0 then error "Zero number of input polys"; end if;
+
+   mp := Array(1..r);
+   if r = 1 then return m; end if; 
+   
+   level := round(log[2](r));
+   if r < 2^level then level:=level-1; end if;
+   bottom := (r-2^level)*2;
+
+   numOfNodes := 2*r-1; 
+   factor_tree := Array(1..numOfNodes);
+   if p > 1 then 
+      for i from 1 to r do
+         mp[i] := op(i, m) mod p;
+      end do;
+      ##print("mp: ", mp);
+   else
+      for i from 1 to r do
+         mp[i] := op(i, m);
+      end do;   
+   end if;
+   
+   for i from 1 to bottom do
+      factor_tree[numOfNodes-bottom+i] := {mp[r-bottom+i]};
+   end do;
+
+   for i from r-bottom to 1 by -1 do
+      factor_tree[numOfNodes-bottom-i+1] := {mp[r-bottom-i+1]};
+   end do;
+
+   for i from numOfNodes-r to 1 by -1 do
+      level := round(log[2](i));
+      if i < 2^level then level:=level-1; end if;
+      ##print("factor_tree: ", 2^(level+1)+(i-2^level)*2, factor_tree[2^(level+1)+(i-2^level)*2]);
+      ##print("factor_tree: ", 2^(level+1)+(i-2^level)*2+1, factor_tree[2^(level+1)+(i-2^level)*2+1]);
+
+      factor_tree[i] := TRDmerge_coprime_factor(factor_tree[2^(level+1)+(i-2^level)*2], factor_tree[2^(level+1)+(i-2^level)*2+1], var, p);
+   end do;
+
+   return convert(factor_tree[1], list);
+end proc;
+
+##----------------------------------------------------------
+##m, n set
+TRDmerge_coprime_factor := proc(m, n, var, p)
+   local i, j, r, s, g, alfa, beta, gama, delta, gcds, gcdr, facts, factlist, size;
+   
+   factlist := {};
+
+   r := nops(m);
+   s := nops(n);
+
+   g := TRDmulti_multi_gcd(m,n,var,p);
+   
+   ##print("after TRDmulti_multi_gcd");
+   ##print("mm m, n: ", m, n);
+   ##print("mm g: ", g);
+
+   gcds := Array(1..s);
+   gcdr := Array(1..r);
+   alfa := Array(1..s);
+   gama := Array(1..s);
+   beta := Array(1..r);
+   delta := Array(1..r);   
+
+   for i from 1 to r do
+      for j from 1 to s do
+         if degree(g[i,j], var) > 0 then
+            factlist := factlist union {g[i,j]};
+         end if; 
+      end do;
+   end do;
+
+   for j from 1 to s do
+      gama[j] := n[j];
+      for i from 1 to r do
+         gama[j] := TRDQuo_mod(gama[j], g[i,j], var, p);
+      end do;
+
+      if degree(gama[j], var) > 0 then
+         factlist := factlist union {gama[j]};
+      end if;          
+   end do;
+   
+   for i from 1 to r do
+      delta[i] := m[i];
+      for j from 1 to s do
+         delta[i] := TRDQuo_mod(delta[i], g[i,j], var, p); 
+      end do;
+
+      if degree(delta[i], var) > 0 then
+         factlist := factlist union {delta[i]};
+      end if;
+      ##print("after degree(delta[i], var) > 0");
+   end do;
+   return factlist;
+
+end proc;
+
+##----------------------------------------------------------
+TRDproduct_mod := proc(g, var, p)
+   local i, d, prod;
+   ##print("g",g);
+   d := ArrayNumElems(g);
+   if p > 1 then 
+      prod := 1 mod p;
+   else
+      prod := 1;
+   end if;
+
+   for i from 1 to d do
+       prod := TRDMultiply_mod(prod, g[i], p); 
+   end do;
+   ##print("prod",prod);
+   return prod;
+end proc;
+
+##----------------------------------------------------------
+#m, n set
+TRDmulti_multi_gcd := proc(m, n, var, p)
+   local i, j, r, s, allgcd, treem, treemNumElems, mroot, mrootgcdn, f, fgcdn, f1, f1gcdn, f2, f2gcdn, mp, np;
+   
+   r := nops(m);
+   s := nops(n);
+   if r = 0 then error "Zero number of polys in m"; end if;    
+   if s = 0 then error "Zero number of polys in n"; end if; 
+
+   mp := Array(1..r);
+   np := Array(1..s);
+
+   for i from 1 to r do
+      mp[i] := m[i];
+   end do;
+   for j from 1 to s do
+      np[j] := n[j];
+   end do;
+
+   allgcd := Array(1..r, 1..s);
+   treem := TRDsubproduct_tree(mp, var, p);
+
+   treemNumElems := 2*r-1;
+   mroot := treem[1];
+   
+   mrootgcdn := TRDmulti_gcd(mroot, np, var, p);
+   
+   treem[1] := Array([mroot, mrootgcdn]);
+   #print("treem[1]: ", treem[1]);
+   for i from 1 to treemNumElems do
+      #print("mm_gcd 1 to treemNumElems", i);
+      if 2*i < treemNumElems then
+         fgcdn := Array(1..s);
+         f1gcdn := Array(1..s);
+         f2gcdn := Array(1..s);
+       
+         fgcdn := treem[i][2]; ##problem is here!!!!!
+         
+         f1 := treem[2*i];
+         f1gcdn := TRDmulti_gcd(f1, fgcdn, var, p);
+         
+         treem[2*i] := Array([f1, f1gcdn]);
+        
+         f2 := treem[2*i+1];
+         for j from 1 to s do
+            f2gcdn[j] := TRDQuo_mod(fgcdn[j], f1gcdn[j], var, p); 
+         end do;
+         treem[2*i+1] := Array([f2, f2gcdn]);
+      end if;      
+   end do;
+   #print("treem: ", treem);
+   for i from 1 to r do
+      for j from 1 to s do
+         allgcd[i,j] := treem[treemNumElems-r+i][2][j];
+      end do;
+   end do;
+
+   return allgcd;       
+end proc;
+
+##----------------------------------------------------------
+#assume f, mi are Maple polynomials
+#should leave the elements in subproduct tree and rem tree as mod?
+TRDmulti_gcd := proc(f, m, var, p)
+   local i, r, frem, fgcd;
+   r := ArrayNumElems(m);
+   if r = 0 then error "Zero number of mudolis"; end if;
+   fgcd := Array(1..r);
+
+   frem := TRDfast_rem(f, m, var, p);
+
+   for i from 1 to r do
+      fgcd[i] := TRDGcd_mod(frem[i], m[i], var, p);
+   end do;    
+   return fgcd;
+end proc;
+
+##----------------------------------------------------------
+#assume f, mi are Maple polynomials
+TRDfast_rem := proc(f, m, var, p)
+   local i, r, mtree, remtree, numOfNodes, frem, fout;
+   r := ArrayNumElems(m);
+   frem := Array(1..r);
+
+   if p > 1 then 
+      fout := f mod p; 
+   else
+      fout := f;
+   end if;
+
+   if degree(fout, var) < 1 then
+      for i from 1 to r do 
+         frem[i] := f; 
+      end do;
+      return frem; 
+   end if;
+
+   numOfNodes := 2*r - 1;
+
+   mtree := TRDsubproduct_tree(m, var, p);
+
+##   for i from 1 to ArrayNumElems(mtree) do
+##      print(i, mtree[i]);
+##   end do;
+
+   remtree := TRDrem_subproduct_tree(f, r, mtree, var, p);
+
+   for i from 1 to r do
+      frem[i] := remtree[numOfNodes-r+i];
+   end do;
+   return frem;
+end proc;
+
+##----------------------------------------------------------
+#f is Maple polynomial
+TRDrem_subproduct_tree := proc(f, r, mtree, var, p)
+   local i, numOfNodes, remtree;
+   numOfNodes := 2*r - 1;
+   remtree := Array(1..numOfNodes);
+   #print("before remtree[1]: ", mtree[1]);
+   remtree[1] := TRDRem_mod(f, mtree[1], var, p);
+   #print("after remtree[1]: ", remtree[1]);
+   for i from 2 to numOfNodes by 2 do
+      remtree[i] := TRDRem_mod(remtree[i/2], mtree[i], var, p);
+      remtree[i+1] := TRDRem_mod(remtree[i/2], mtree[i+1], var, p);      
+   end do;
+   return remtree;
+end proc;
+
+##----------------------------------------------------------
+#assume m aready reduced wrt p
+TRDsubproduct_tree:=proc(m, var, p)
+   local i, j, r, numOfNodes, M, level, bottom;
+   r := ArrayNumElems(m);
+   level := round(log[2](r));
+   if r < 2^level then level:=level-1; end if;
+   numOfNodes := 2*r-1; 
+   M:=Array(1..numOfNodes);
+   if r = 1 then M[1] := m[1]; return M; end if;
+   bottom := (r-2^level)*2;
+   #print("num of nodes, bottom", numOfNodes, bottom);
+   #put the elements in the leaf level as the input order
+   for i from 1 to bottom do 
+      M[numOfNodes-bottom+i]:=m[r-bottom+i];
+   end do;
+   for i from r-bottom to 1 by -1 do
+      #print("sub tree r: ", r);
+      #print("array index r-i-1: ", r-i-1);
+      M[numOfNodes-bottom-i+1]:=m[r-bottom-i+1];
+   end do;
+   
+   for i from numOfNodes-r to 1 by -1 do
+      level := round(log[2](i));
+      if i < 2^level then level:=level-1; end if;
+      #print("before call Multiply_mod");
+      M[i] := TRDMultiply_mod(M[2^(level+1)+(i-2^level)*2], M[2^(level+1)+(i-2^level)*2+1], p);
+   end do; 
+   return M;
+end proc;
+
+##----------------------------------------------------------
+TRDQuo_mod := proc(a, b, var, p)
+  local q;
+  if p > 1 then
+      return Quo(a, b, var) mod p;
+   else
+     #print("quo b: ", b);
+      q := quo(a, b, var);
+     #print("after q=quo", q);
+      return q;
+   end if; 
+end proc;
+
+##----------------------------------------------------------
+TRDGcd_mod := proc(a, b, var, p)
+   if p > 1 then
+      return Gcd(a, b) mod p;
+   else
+      return gcd(a, b);
+   end if;
+end proc;
+
+##----------------------------------------------------------
+TRDRem_mod := proc(a, b, var, p)
+  
+   if p > 1 then
+      return Rem(a, b, var) mod p;
+   else
+      return rem(a, b, var);
+   end if;
+end proc;
+
+##----------------------------------------------------------
+TRDMultiply_mod := proc(a, b, p)
+   local ab;
+   if p > 1 then      
+      return expand(a*b) mod p; 
+   else
+      return expand(a*b);
+   end if;
+end proc;
+
+##----------------------------------------------------------
+random_polys := proc(n, r, var)
+   local m, i, p, dseq, lc, f, ran, deg;
+
+   m := Array(1..r);
+   f := Array(1..r);
+
+   for i from 1 to round(n/2) do
+      #print("before dseq");
+      dseq := randomPartition(n, r);
+      #print("after dseq");
+   end do;
+   for i from 1 to r do
+      #print("before randpoly");
+      p := randpoly(var, degree=dseq[i]);
+#      lc := lcoeff(p);
+#      p := p mod (lc-1);
+      #print("p:", p);
+      m[i] := p;
+      #print("after m[i]; ", m[i]);
+   end do;
+   return m;
+end proc;
+
+##----------------------------------------------------------
+randomPartition := proc(in_n, in_r)
+   local n, r, rp, rand1, r_rand, k;
+   if in_r < 1 then error "number of elements should be more than 1"; end if;
+   if in_n < 1 then error "sum of degrees should be more than 1"; end if;
+   if in_n < in_r then error "sum of degrees should not be less than number of elements"; end if;
+   if in_r = 1 then return [n]; end if;
+
+   n := in_n;
+   r := in_r;
+   rp := Array(1..r);
+
+   while r > 0 do
+      #print("r>0");
+      k := n - r + 1;
+      r_rand := rand(1..k):
+      rand1 := r_rand();
+      if rand1 = 1 then rand1 := r_rand(); end if;
+      rp[r] := rand1;
+      n := n - rand1;
+      r := r - 1;
+   end do;
+   return rp;   
+end proc;
+
+##----------------------------------------------------------
+randomSquareFreeFamily1 := proc(d, r, var, p)
+   local s, t, e, F, rp, rp1, rp2, np, Fs, i,j, l,f, fs, f1, td;
+   s:=0; t:=0; F:=[]; rp:=[]; rp2:=[]; td:=0;
+   e := ceil(1.0*d/r);
+
+   while s < d do
+      #print("s<d");
+      f := randpoly(var, dense, degree=e);
+      if lcoeff(f) < 0 then f := f*(-1); end if;
+      if lcoeff(f) > 1 then
+         f := f mod (lcoeff(f)-1);
+      end if;
+      if p > 1 then f:=f mod p; end if;
+#      fs := op(2, factors(f));
+#      if nops(fs) > 1 then
+#         for i from 1 to nops(fs) do
+#            f1 := op(1, op(i, fs));
+#            s := s + degree(f1, var);
+#            F := [op(F), f1]; 
+#            t := t + 1;
+#         end do;
+#      end if;
+      if irreduc(f) then
+         s := s + degree(f, var);
+         F := [op(F), f];
+         t := t + 1;
+      end if;
+   end do;
+
+   #print("t: ", t);
+   for i from 1 to ceil(d/r)+5 do
+      l := randomPartition(t, r);
+   end do;
+   ##print("l: ", l);
+   Fs := 1;
+   for i from 1 to ArrayNumElems(l) do
+      np := l[i];
+      rp1 := 1;
+      #print("np: ", np);
+      #print("Fs: ", Fs);
+      for j from Fs to Fs+np-1 do
+         #print("j: ", j);
+         rp1 := rp1*op(j, F);
+      end do;
+      rp1 := expand(rp1);
+      if p > 1 then rp1:=rp1 mod p; end if;
+      rp := [op(rp), rp1];
+      td := td + degree(rp1, var);
+      Fs := Fs+np;
+   end do;   
+
+   return rp;
+end proc;
+
+
+randomSquareFreeFamily := proc(d, r, var, p)
+local lp1, lp2, res;
+     lp1 := randomSquareFreeFamily1(d, r, var, p);
+     lp2 := randomSquareFreeFamily1(d, 5, var, p);
+     res :=[];
+     for i from 1 to nops(lp1) do
+         res := [op(res), expand(op(i, lp1)*op(i mod 5 +1, lp2))];
+     end do;
+     return res;
+end proc;
+

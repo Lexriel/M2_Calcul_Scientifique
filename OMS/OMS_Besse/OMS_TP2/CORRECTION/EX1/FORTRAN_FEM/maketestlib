@@ -1,0 +1,24 @@
+FC=ifort  # Compilateur
+LD=ifort  # Linker
+HOST=T    # Pour processeur Intel Core 2 Duo
+L=1       # Niveau d'optimisation
+FFLAGS = -O$(L) 
+LDFLAGS = $(FFLAGS) 
+LIBS=  -L./libraries -lsparsekit
+INCLUDE= -I./libraries 
+EXE=test_lib.exe
+
+OBJS = test_lib.o
+
+all:   $(OBJS) 
+	@echo "Edition de liens"
+	$(LD) $(INCLUDE) $(LDFLAGS) $(OBJS) $(LIBS)  -o $(EXE) 
+
+test_lib.o : test_lib.f90
+	$(FC) $(INCLUDE) $(FFLAGS) -c test_lib.f90
+
+clean: 
+	rm -f *.o *.mod $(EXE) 
+ 
+%.o : %.mod 
+

@@ -1,0 +1,49 @@
+ 
+/************** HELP: Maps Infos Window ***************
+/                     version 4.0
+/-------------------------------------------------------
+Please note that this help does not replace the
+user-guide, not the tutorial. Both can be found at
+/          http://spdbv.vital-it.ch/
+          http://www.expasy.org/spdbv/
+ 
+ 
+/General Information
+/-------------------
+The name of the currently active Electron Density Map or electrostatic
+potential appears in red, and clicking on a given name activates it.
+This will become the current Electron Density map.
+Each map can be contoured at two different sigmas (or potential values).
+The current map is the one that will be closed when the "Close Map"
+item of the File menu is invoked (or when the delete key is hit while the 
+Maps Info Window is the current Window).
+The current map is also the one that is used for best fitting during
+mutations or scan for compatible peptide fragments, and also the one
+whose sigma contouring values can be modified in real time with the top
+and bottom arrows keys. (note that for electron density maps, the SHIFT+arrow
+will alter the second contouring value).
+
+
+All other columns are toggles allowing to individually
+change the status of an EDM. From left to right:
+
+vis:   contour visible
+
+dot:   contour in dotted lines (might be easier to see the structure)
+
+sigma: sigma contouring value (click to enter a new value)
+
+corX:  Coarse Contouring along the X axis. Only one section out
+       of two will be used to do the contouring. Faster, but less
+       precise display.
+corY:  Same for Y axis.
+corZ:  Same along Z axis.
+
+cell:  Display unit cell. Unit cell axis abc are colored in red, green blue.
+
+col:   color of the map (click to select a new color)
+
+
+/-------------------------------------------------------
+
+

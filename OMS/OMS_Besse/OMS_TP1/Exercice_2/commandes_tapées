@@ -1,0 +1,11 @@
+Dans "Command Window":
+>> X=[0.1; 0.1; -0.1]
+>> f=f4
+>> df=Jacf4
+>> eps=0.001
+>> itermax=30
+>> qnewton(f,df,X,eps,itermax)
+??? Undefined function or variable 'f'.
+??? Input argument "X" is undefined.
+Error in ==> f4 at 2
+  x=X(1);

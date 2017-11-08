@@ -1,0 +1,27 @@
+xplus1 := proc(pp,x,prime)
+
+local p, L, d, i, j, res, st, cputime:
+  st := time():
+  p := collect(pp, x):
+  d := degree(p, x):
+  L := Array(1..d+1):
+
+  for i from d to 0 by -1 do
+    L[d+1-i] := coeff(p, x, i):
+  od:
+
+  for i from 1 to d do
+    for j from 2 to d-i+2 do
+      L[j] := (L[j-1] + L[j]) mod prime:
+    od:
+  od:
+
+  res := 0:
+  for i from 1 to d+1 do
+    res := (res + L[i]*x^(d+1-i)) mod prime:
+  od:
+
+  cputime := time() - st;
+  # return cputime:
+  return res;
+end:

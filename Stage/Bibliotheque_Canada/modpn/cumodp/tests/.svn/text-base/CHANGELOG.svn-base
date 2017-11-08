@@ -1,0 +1,15 @@
+[Fri Nov 18 00:05:35 EST 2011] TEST: [device_query] CREATED BY <jyang425>
+[Sun Nov 20 22:40:43 EST 2011] TEST: [uni_fft_tst] CREATED BY <jyang425>
+[Sun Nov 27 22:30:11 EST 2011] TEST: [naive_poly_mul] CREATED BY <jyang425>
+[Tue Nov 29 00:51:34 EST 2011] TEST: [list_inv_stockham] CREATED BY <jyang425>
+[Wed Nov 30 22:19:39 EST 2011] TEST: [naive_poly_mul_eff] CREATED BY <jyang425>
+[Fri Dec 2 14:30:37 EST 2011] TEST: [subproduct_tree] CREATED BY <jyang425>
+[Sun Dec 11 22:27:49 EST 2011] TEST: [list_naive_poly_mul] CREATED BY <jyang425>
+[Mon Dec 12 00:08:54 EST 2011] TEST: [list_pointwise_mul] CREATED BY <jyang425>
+[Mon Dec 12 03:31:49 EST 2011] TEST: [list_expand_to_fft] CREATED BY <jyang425>
+[Mon Dec 12 04:00:22 EST 2011] TEST: [list_shrink_poly] CREATED BY <jyang425>
+[Tue Dec 13 01:39:13 EST 2011] TEST: [list_fft_poly_mul] CREATED BY <jyang425>
+[Wed Dec 14 16:41:38 EST 2011] TEST: [list_plain_division] CREATED BY <jyang425>
+[Fri Dec 16 14:48:55 EST 2011] TEST: [power_inversion] CREATED BY <jyang425>
+[Sun Dec 18 12:08:40 EST 2011] TEST: [fast_evaluation] CREATED BY <jyang425>
+[Wed Dec 21 17:09:05 EST 2011] TEST: [list_fast_division] CREATED BY <jyang425>

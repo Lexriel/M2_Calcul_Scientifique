@@ -1,0 +1,1072 @@
+rm taylor_shift_cpu
+rm taylor_shift_gpu
+svn up
+g++ aleat_pol.cpp -O3 -o aleat_pol
+g++ taylor_shift_1.cpp -O3 -o taylor_shift_cpu
+nvcc taylor_shift.cu -O3 -o taylor_shift_gpu
+rm *.linkinfo
+./aleat_pol 15 20
+./taylor_shift_cpu Pol3.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                     TAYLOR_SHIFT ON CPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 8
+  * e = 3
+  * p = 5000011
+  * pinv = 0.00000019999956000097
+
+   --> horner_shift done
+
+Polynomial :
+
+Polynomial_shift (Horner's method) :
+
+  * cpu_time = 0.000108 s
+
+./taylor_shift_gpu Pol3.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                    TAYLOR_SHIFT ON GPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 8
+  * e = 3
+  * p = 5000011
+  * local_n = 2
+  * pinv = 0.00000019999956000097
+
+      --> identity_GPU done
+identity_GPU_time = 0.000094
+
+      --> create_factorial_GPU done
+fact_GPU_time = 0.000016
+
+      --> develop_xshift_GPU done
+develop_xshift_time = 0.000066
+
+
+Step 1 :
+-------- 
+
+      --> init_polynomial_shift_GPU done
+init_GPU_time = 0.000063
+
+
+Step 2 :
+-------- 
+
+  * local_n = 2
+  * B = 4
+  * polyOnLayerCurrent = 4
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000018
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000021
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000038
+
+
+Step 3 :
+-------- 
+
+  * local_n = 4
+  * B = 8
+  * polyOnLayerCurrent = 2
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000024
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000023
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+      --> cudaMemcpy on temp done
+
+      --> Polynomial_shift_device stored in Pol3.shiftGPU.dat done
+
+  * cpu_time = 0.000170 s
+  * gpu_time = 0.001032 s
+  * total_time = 0.001449 s
+
+./taylor_shift_cpu Pol4.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                     TAYLOR_SHIFT ON CPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 16
+  * e = 4
+  * p = 5000011
+  * pinv = 0.00000019999956000097
+
+   --> horner_shift done
+
+Polynomial :
+
+Polynomial_shift (Horner's method) :
+
+  * cpu_time = 0.000189 s
+
+./taylor_shift_gpu Pol4.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                    TAYLOR_SHIFT ON GPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 16
+  * e = 4
+  * p = 5000011
+  * local_n = 2
+  * pinv = 0.00000019999956000097
+
+      --> identity_GPU done
+identity_GPU_time = 0.000034
+
+      --> create_factorial_GPU done
+fact_GPU_time = 0.000016
+
+      --> develop_xshift_GPU done
+develop_xshift_time = 0.000068
+
+
+Step 1 :
+-------- 
+
+      --> init_polynomial_shift_GPU done
+init_GPU_time = 0.000062
+
+
+Step 2 :
+-------- 
+
+  * local_n = 2
+  * B = 4
+  * polyOnLayerCurrent = 8
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000019
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000023
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000013
+
+
+Step 3 :
+-------- 
+
+  * local_n = 4
+  * B = 8
+  * polyOnLayerCurrent = 4
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000021
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000053
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000013
+
+
+Step 4 :
+-------- 
+
+  * local_n = 8
+  * B = 16
+  * polyOnLayerCurrent = 2
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000019
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000024
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000015
+
+      --> cudaMemcpy on temp done
+
+      --> Polynomial_shift_device stored in Pol4.shiftGPU.dat done
+
+  * cpu_time = 0.000156 s
+  * gpu_time = 0.001107 s
+  * total_time = 0.001462 s
+
+./taylor_shift_cpu Pol5.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                     TAYLOR_SHIFT ON CPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 32
+  * e = 5
+  * p = 5000011
+  * pinv = 0.00000019999956000097
+
+   --> horner_shift done
+
+Polynomial :
+
+Polynomial_shift (Horner's method) :
+
+  * cpu_time = 0.000192 s
+
+./taylor_shift_gpu Pol5.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                    TAYLOR_SHIFT ON GPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 32
+  * e = 5
+  * p = 5000011
+  * local_n = 2
+  * pinv = 0.00000019999956000097
+
+      --> identity_GPU done
+identity_GPU_time = 0.000040
+
+      --> create_factorial_GPU done
+fact_GPU_time = 0.000020
+
+      --> develop_xshift_GPU done
+develop_xshift_time = 0.000084
+
+
+Step 1 :
+-------- 
+
+      --> init_polynomial_shift_GPU done
+init_GPU_time = 0.000077
+
+
+Step 2 :
+-------- 
+
+  * local_n = 2
+  * B = 4
+  * polyOnLayerCurrent = 16
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000024
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000028
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000017
+
+
+Step 3 :
+-------- 
+
+  * local_n = 4
+  * B = 8
+  * polyOnLayerCurrent = 8
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000026
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000025
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+
+Step 4 :
+-------- 
+
+  * local_n = 8
+  * B = 16
+  * polyOnLayerCurrent = 4
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000024
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000028
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000019
+
+
+Step 5 :
+-------- 
+
+  * local_n = 16
+  * B = 32
+  * polyOnLayerCurrent = 2
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000023
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000030
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000015
+
+      --> cudaMemcpy on temp done
+
+      --> Polynomial_shift_device stored in Pol5.shiftGPU.dat done
+
+  * cpu_time = 0.000213 s
+  * gpu_time = 0.001518 s
+  * total_time = 0.001963 s
+
+./taylor_shift_cpu Pol6.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                     TAYLOR_SHIFT ON CPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 64
+  * e = 6
+  * p = 5000011
+  * pinv = 0.00000019999956000097
+
+   --> horner_shift done
+
+Polynomial :
+
+Polynomial_shift (Horner's method) :
+
+  * cpu_time = 0.000239 s
+
+./taylor_shift_gpu Pol6.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                    TAYLOR_SHIFT ON GPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 64
+  * e = 6
+  * p = 5000011
+  * local_n = 2
+  * pinv = 0.00000019999956000097
+
+      --> identity_GPU done
+identity_GPU_time = 0.000040
+
+      --> create_factorial_GPU done
+fact_GPU_time = 0.000022
+
+      --> develop_xshift_GPU done
+develop_xshift_time = 0.000081
+
+
+Step 1 :
+-------- 
+
+      --> init_polynomial_shift_GPU done
+init_GPU_time = 0.000076
+
+
+Step 2 :
+-------- 
+
+  * local_n = 2
+  * B = 4
+  * polyOnLayerCurrent = 32
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000023
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000028
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+
+Step 3 :
+-------- 
+
+  * local_n = 4
+  * B = 8
+  * polyOnLayerCurrent = 16
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000025
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000058
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+
+Step 4 :
+-------- 
+
+  * local_n = 8
+  * B = 16
+  * polyOnLayerCurrent = 8
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000023
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000027
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000019
+
+
+Step 5 :
+-------- 
+
+  * local_n = 16
+  * B = 32
+  * polyOnLayerCurrent = 4
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000023
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000030
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000015
+
+
+Step 6 :
+-------- 
+
+  * local_n = 32
+  * B = 64
+  * polyOnLayerCurrent = 2
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000025
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000030
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000015
+
+      --> cudaMemcpy on temp done
+
+      --> Polynomial_shift_device stored in Pol6.shiftGPU.dat done
+
+  * cpu_time = 0.000211 s
+  * gpu_time = 0.001778 s
+  * total_time = 0.002226 s
+
+./taylor_shift_cpu Pol7.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                     TAYLOR_SHIFT ON CPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 128
+  * e = 7
+  * p = 5000011
+  * pinv = 0.00000019999956000097
+
+   --> horner_shift done
+
+Polynomial :
+
+Polynomial_shift (Horner's method) :
+
+  * cpu_time = 0.000276 s
+
+./taylor_shift_gpu Pol7.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                    TAYLOR_SHIFT ON GPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 128
+  * e = 7
+  * p = 5000011
+  * local_n = 2
+  * pinv = 0.00000019999956000097
+
+      --> identity_GPU done
+identity_GPU_time = 0.000010
+
+      --> create_factorial_GPU done
+fact_GPU_time = 0.000012
+
+      --> develop_xshift_GPU done
+develop_xshift_time = 0.000081
+
+
+Step 1 :
+-------- 
+
+      --> init_polynomial_shift_GPU done
+init_GPU_time = 0.000074
+
+
+Step 2 :
+-------- 
+
+  * local_n = 2
+  * B = 4
+  * polyOnLayerCurrent = 64
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000022
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000025
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000019
+
+
+Step 3 :
+-------- 
+
+  * local_n = 4
+  * B = 8
+  * polyOnLayerCurrent = 32
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000022
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000061
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+
+Step 4 :
+-------- 
+
+  * local_n = 8
+  * B = 16
+  * polyOnLayerCurrent = 16
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000025
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000024
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+
+Step 5 :
+-------- 
+
+  * local_n = 16
+  * B = 32
+  * polyOnLayerCurrent = 8
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000024
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000030
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000015
+
+
+Step 6 :
+-------- 
+
+  * local_n = 32
+  * B = 64
+  * polyOnLayerCurrent = 4
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000024
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000030
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000018
+
+
+Step 7 :
+-------- 
+
+  * local_n = 64
+  * B = 128
+  * polyOnLayerCurrent = 2
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000023
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000047
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+      --> cudaMemcpy on temp done
+
+      --> Polynomial_shift_device stored in Pol7.shiftGPU.dat done
+
+  * cpu_time = 0.000244 s
+  * gpu_time = 0.002121 s
+  * total_time = 0.002630 s
+
+./taylor_shift_cpu Pol8.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                     TAYLOR_SHIFT ON CPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 256
+  * e = 8
+  * p = 5000011
+  * pinv = 0.00000019999956000097
+
+   --> horner_shift done
+
+Polynomial :
+
+Polynomial_shift (Horner's method) :
+
+  * cpu_time = 0.000605 s
+
+./taylor_shift_gpu Pol8.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                    TAYLOR_SHIFT ON GPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 256
+  * e = 8
+  * p = 5000011
+  * local_n = 2
+  * pinv = 0.00000019999956000097
+
+      --> identity_GPU done
+identity_GPU_time = 0.000049
+
+      --> create_factorial_GPU done
+fact_GPU_time = 0.000023
+
+      --> develop_xshift_GPU done
+develop_xshift_time = 0.000293
+
+
+Step 1 :
+-------- 
+
+      --> init_polynomial_shift_GPU done
+init_GPU_time = 0.000080
+
+
+Step 2 :
+-------- 
+
+  * local_n = 2
+  * B = 4
+  * polyOnLayerCurrent = 128
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000022
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000029
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000018
+
+
+Step 3 :
+-------- 
+
+  * local_n = 4
+  * B = 8
+  * polyOnLayerCurrent = 64
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000024
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000035
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+
+Step 4 :
+-------- 
+
+  * local_n = 8
+  * B = 16
+  * polyOnLayerCurrent = 32
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000026
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000025
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+
+Step 5 :
+-------- 
+
+  * local_n = 16
+  * B = 32
+  * polyOnLayerCurrent = 16
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000025
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000031
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+
+Step 6 :
+-------- 
+
+  * local_n = 32
+  * B = 64
+  * polyOnLayerCurrent = 8
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000023
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000031
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000019
+
+
+Step 7 :
+-------- 
+
+  * local_n = 64
+  * B = 128
+  * polyOnLayerCurrent = 4
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000023
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000051
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+
+Step 8 :
+-------- 
+
+  * local_n = 128
+  * B = 256
+  * polyOnLayerCurrent = 2
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000026
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000053
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+      --> cudaMemcpy on temp done
+
+      --> Polynomial_shift_device stored in Pol8.shiftGPU.dat done
+
+  * cpu_time = 0.000309 s
+  * gpu_time = 0.002566 s
+  * total_time = 0.003122 s
+
+./taylor_shift_cpu Pol9.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                     TAYLOR_SHIFT ON CPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 512
+  * e = 9
+  * p = 5000011
+  * pinv = 0.00000019999956000097
+
+   --> horner_shift done
+
+Polynomial :
+
+Polynomial_shift (Horner's method) :
+
+  * cpu_time = 0.001590 s
+
+./taylor_shift_gpu Pol9.dat 5000011
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                    TAYLOR_SHIFT ON GPU
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+PARAMETERS :
+------------
+
+  * n = 512
+  * e = 9
+  * p = 5000011
+  * local_n = 2
+  * pinv = 0.00000019999956000097
+
+      --> identity_GPU done
+identity_GPU_time = 0.000008
+
+      --> create_factorial_GPU done
+fact_GPU_time = 0.000025
+
+      --> develop_xshift_GPU done
+develop_xshift_time = 0.000086
+
+
+Step 1 :
+-------- 
+
+      --> init_polynomial_shift_GPU done
+init_GPU_time = 0.000079
+
+
+Step 2 :
+-------- 
+
+  * local_n = 2
+  * B = 4
+  * polyOnLayerCurrent = 256
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000031
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000029
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000017
+
+
+Step 3 :
+-------- 
+
+  * local_n = 4
+  * B = 8
+  * polyOnLayerCurrent = 128
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000022
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000073
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+
+Step 4 :
+-------- 
+
+  * local_n = 8
+  * B = 16
+  * polyOnLayerCurrent = 64
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000025
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000027
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+
+Step 5 :
+-------- 
+
+  * local_n = 16
+  * B = 32
+  * polyOnLayerCurrent = 32
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000024
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000034
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000018
+
+
+Step 6 :
+-------- 
+
+  * local_n = 32
+  * B = 64
+  * polyOnLayerCurrent = 16
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000022
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000036
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000016
+
+
+Step 7 :
+-------- 
+
+  * local_n = 64
+  * B = 128
+  * polyOnLayerCurrent = 8
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000023
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000052
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000015
+
+
+Step 8 :
+-------- 
+
+  * local_n = 128
+  * B = 256
+  * polyOnLayerCurrent = 4
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000024
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000072
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000015
+
+
+Step 9 :
+-------- 
+
+  * local_n = 256
+  * B = 512
+  * polyOnLayerCurrent = 2
+
+      --> transfert_array_GPU2 on Mgpu done
+transfert_GPU_time = 0.000024
+
+      --> listPlainMulGpu_and_right_shift_GPU done
+listPlainMulGpu_time = 0.000122
+
+      --> semi_add_GPU done
+semi_add_GPU_time = 0.000018
+
+      --> cudaMemcpy on temp done
+
+      --> Polynomial_shift_device stored in Pol9.shiftGPU.dat done
+
+  * cpu_time = 0.000384 s
+  * gpu_time = 0.002663 s
+  * total_time = 0.003434 s
+

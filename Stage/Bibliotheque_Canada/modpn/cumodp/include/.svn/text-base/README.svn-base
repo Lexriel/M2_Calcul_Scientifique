@@ -1,0 +1,72 @@
+GPU/code/cumodp/include/README
+
+
+types.h
+=======
+o The arch part is common with Modpn 
+o fprime_t
+  data-structure for Montgomery trick
+o error messages
+
+POT -> Power Of Two
+
+defines.h
+=========
+o INFOLEVE goes from 0 to 10 (probably)
+  0 means no printing
+
+montmulmod.h
+============
+o Simplied version of the Montgomery trick
+o  mul_hi_lo can be run on both device and host
+
+cudautils.h 
+===========
+o start_timer
+o stop_timer
+o checkCudaError
+o printDeviceProperty
+o get_dev_val -> CS4402
+o getDeviceValue -> CS4402
+o printDeviceArray -> CS4402
+o host_to_device -> CS4402
+
+cumodp.h 
+========
+Functions exported by the library
+
+inlines.h
+=========
+o Z/pZ arithmetic, primitive_root generation
+o thread index calculation
+o cut_negative 
+o approx_factor -> CS4402
+o Gentleman-Sande (serial naive FFT)
+
+fft_aux.h 
+=========
+get_powers_of_roots
+pointwise_mul_dev
+expand_to_fft_dev (univ input)
+expand_to_fft2_dev (bivariate input)
+plain_polymul_uni_host
+is_the_same_poly_host (equality test)
+has_zero_in_vector
+matrix_transposition -> CS4402
+right_nonzero_ind_blk_ker -> CS4402
+
+unipoly.h
+=========
+univariate poly arithmetic
+div_poly_uni_ip (in place)
+
+stockham.h
+===========
+
+CONVENTIONS
+
+A function called foo__dev (resp. foo_host) assumes that
+the main arguments  (the "data") reside on the device
+(resp. host).
+
+In the comments, @ stands for the tensor product

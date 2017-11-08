@@ -1,0 +1,171 @@
+
+\begin{frame}
+%%\frametitle{Background: fast polynomial arithmetic over finite fields}
+\frametitle{Background}
+\begin{block}{Goal}
+Accelerate dense polynomial arithmetic using GPUs   
+\end{block}
+\begin{block}{Polynomial multiplication over finite fields}
+%%The building block of symbolic computation
+\begin{itemize}
+\item many algorithms rely on polynomial multiplications
+\item \textcolor{red}{modular methods} reduce the computations to finite fields
+\item fast algorithms like FFT exist
+\end{itemize}
+\end{block}
+\begin{block}{Fast Fourier Transform (FFT) over finite fields}
+$$f \times g = \FFT^{-1} (\FFT(f) \cdot \FFT(g))$$
+Challenges comparing to $\FFT$s over \textcolor{red}{complex numbers}:
+\begin{itemize}
+\item radix 2 $\FFT$ is desirable, keeping other primes invertible 
+\item lack of primitive roots of unity, (when the degree is high)
+\item modular multiplication is expensive
+\end{itemize}
+\end{block}
+\end{frame}
+
+%% ============================================================================
+%% ============================================================================
+\begin{frame}
+\frametitle{Discrete Fourier Transform (DFT)}
+
+
+
+\begin{block}{Definition}
+Given a primitive $n$-th root of unity $\omega$ (i.e. $\omega^{n/2} = -1$), 
+and $$f(t) = x_0 + x_1t + \cdots + x_{n-1}t^{n-1},$$
+${\mathrm{{DFT}}}_n^{\omega}(f) $ is $\mathbf{y} = (y_0, \ldots, y_{n-1})$ with 
+\textcolor{blue}{$y_k = f(\omega^{k})$ for $0 \leq k < n$}. 
+As a matrix-vector product, it is
+\begin{equation}
+\mathbf{y} = {\mathrm{DFT}}_n\, \mathbf{x},\quad 
+\mathrm{DFT}_n = [\omega^{k\ell}]_{0\leq k,\, \ell < n}. 
+\end{equation}
+\end{block}
+
+
+\begin{block}{Example}
+$$\left\{ 
+    \begin{array}{ccc} 
+        y_0 & = & x_0 + x_1 \\ 
+        y_1 & = & x_0 - x_1 
+  \end{array}\right.
+\Longleftrightarrow
+\begin{bmatrix} y_0 \\ y_1 \end{bmatrix} 
+= \begin{bmatrix} 1 & 1 \\ 1 & -1
+\end{bmatrix}
+\begin{bmatrix} x_0 \\ x_1 \end{bmatrix}$$
+That is, $\DFT_2 = \left[\begin{array}{cr} 1 & 1\\ 1 & -1 \end{array}\right]$.
+\end{block}
+
+\end{frame}
+%% ============================================================================
+
+%% ============================================================================
+\begin{frame}
+\frametitle{FFT-based multiplication}
+
+\textcolor{darkred}{M(d)}  number of coefficient operations in degree less than  \textcolor{darkred}{d}.
+
+\begin{tabular}[t]{|l|l|}
+\hline
+Classical Multiplication & \textcolor{darkred}{$\M(d)~=~2d^2$}\\
+\hline
+Karatsuba Multiplication & \textcolor{darkred}{$\M(d)~=~9d^{1.59}$} \\
+\hline
+FFT over appropriate ring & \textcolor{darkred}{$\M(d)~=~9/2 d\,\log d + 3 \, d$} \\  \hline
+\end{tabular}
+
+\bigskip 
+
+\fbox{
+\begin{minipage}{10 cm}
+\begin{description}
+\item[{\bf Input:}] $f, g \in {\K}[x]$ and ${\omega}$ a $s$-primitive
+                    root of unity for $s > {\deg}(f) + {\deg}(g)$
+                    and $s$ is a power of $2$.
+\item[{\bf Output:}] the product $fg$
+\end{description}
+\begin{tabbing} 
+\quad \= \quad \= \quad \= \quad \kill
+(1) \> \> Evaluate $f$ and $g$ at ${\omega}^i$ for $i = 0 \cdots s-1$ \\
+(2) \> \> Evaluate $fg$ at ${\omega}^i$ for $i = 0 \cdots s-1$ \\
+(3) \> \> Interpolate and {\bf return} $fg$
+\end{tabbing}
+\end{minipage}
+}
+See (M.M.M. Yuzhen Xie 2009) for implementation techniques.
+
+\end{frame}
+%% ============================================================================
+
+%% ============================================================================
+\begin{frame}
+\frametitle{The fast division trick (1/2)}
+
+
+\begin{itemize}
+\item Let $a, b \in {\A}[x]$ with $n := {\deg}(a) \geq m := {\deg}(b) > 0$,
+\red{$b$ monic} and {\A} any commutative ring with 1.
+\medskip
+\item<2-> We want the \blue{\sf  quotient} $q$ 
+and the \blue{\sf  remainder} $r$ of $a$ w.r.t. $b$:
+\begin{center}
+$a(x) \ = \ q(x) \, b(x) + r(x)$
+\end{center}
+\medskip
+\item<3-> Replacing $x$ by $1/x$ and multiplying the equation by $x^n$:
+$$x^n \, a(1/x) \ = \ \left(x^{n-m} q(1/x) \right) \ 
+                    \left(x^m \, b(1/x) \right) \ + \ x^{n-m+1} \left( x^{m-1} \,  r(1/x) \right) $$
+That is:
+\begin{center}
+\red{$ {\rm rev}_n (a) \ = \ {\rm rev}_{n-m}(q) \ {\rm rev}_m (b) +  x^{n-m+1} \ {\rm rev}_{m-1}(r) $}
+\end{center}
+\medskip
+\item<4-> Computing 
+\red{$( {\rm rev}_m (b))^{-1} \mod{  x^{n-m+1}}$} 
+is a \blue{\sf truncated inverse of a power series}.
+(S. Cook, 1966) (H. T.  Kung, 1974) and (M. Sieveking, 1972)
+\end{itemize}
+
+\end{frame}
+%% ============================================================================
+\ifshow
+\fi
+
+%% ============================================================================
+\begin{frame}
+\frametitle{The fast division trick (2/2)}
+
+\fbox{
+\begin{minipage}{10 cm}
+\begin{description}
+\item[{\bf Input:}] $f \in {\A}[x]$ such that $f(0) = 1$ and ${\ell} \in {\N}$.
+\item[{\bf Output:}] $g \in {\A}[x]$ such that $f \, g \equiv 1 \mod{ \ x^{\ell}}$
+\end{description}
+\begin{tabbing} 
+\quad \= \quad \= \quad \= \quad \kill
+\> $g_0$ := $1$ \\
+\> $r$ := $\lceil {\log}_2({\ell}) \rceil$ \\
+\> {\bf for} $i = 1 \cdots r$ {\bf repeat} \\
+\> \> $g_i$ := $\left( 2 g_{i-1} - f \, {g_{i-1}}^2 \right) \ \mod{ \ x^{2^i}} $ \\
+\> {\bf return} $g_r$
+\end{tabbing}
+\end{minipage}
+}
+
+\medskip
+
+\begin{itemize}
+\item  This algorithm runs in $3 {\M}(\ell) + 0(\ell)$ 
+operations in ${\A}$. 
+\item Improved versions run in $2\,{\M}(\ell) + O({\ell})$ 
+operations in ${\A}$. 
+\item Finally, the \blue{\sf  quotient} $q$ 
+and the \blue{\sf remainder} $r$ are computed 
+in $3 \, {\M}(n - m) + {\M}({\max}(n-m,m)) + {\cal O}(n)$
+operations in ${\A}$
+\item {\em Modern Computed Algebra} (Gathen Gerhard 99)
+\end{itemize}
+
+\end{frame}

@@ -1,0 +1,20 @@
+As we saw in Section 4, we cannot use the Plain Multiplication for polynomials of size more than $512$. And step by step, we increase the size of the polynomials considered we want to multiply. We need to think another way to do a fast multiplication. The previous section explains the idea we want to use for this new case. \\
+
+Since the step when we need to multiply polynomials of size more than $512$ (which is the limit size of the number of threads per thread block), we will proceed to the FFT. The procedures and functions I will use for FFT (\textit{primitive\_root}, \textit{list\_stockham\_dev} and \textit{list\_pointwise\_mul}) were implemented by a Wei Pan, a previous PhD student in the laboratory. The thesis he made put in evidence that some prime numbers improve performances of FFT, see \cite{Wei} for more details. We will talk about these prime numbers in the part "Next works". \\
+
+\subsection{The array for FFT operations}
+
+Even though we need to think the multiplication differently, the other procedures we have done for the smallest size of the polynomials considered are still used. Indeed, first of all, we use again \textit{transfert\_array\_GPU} to put the polynomials we want to be computed in the array \textit{Mgpu}. \\
+
+But now, this array is not sufficient to be used for FFT. Indeed, we saw before that to compute the product of two polynomials $f$ and $g$ of size $n$ using FFT, we need to know the values of $f(w^i)$ and $g(w^i)$ for $i \in \mbox{\textlbrackdbl} 0, 2n-2\mbox{\textrbrackdbl}$. We first need to convert \textit{Mgpu} in another array twice bigger than it, this array is called \textit{fft\_device}. This array is the same than \textit{Mgpu} but contains some zeros between all the polynomials of this array. \textit{fft\_device} is created thanks to the procedure \textit{transfert\_array\_fft\_GPU}.
+
+\subsection{Multiplication using FFT}
+Now, we need to do the multiplication like explained in the previous section, but first of all, we need to define the value of $\omega$ ($w$ in my code) which has to be a $2^{i+1}$-th root of unity in $\mathbb{Z}/p\mathbb{Z}$ at the step $i$, this is done by the function \textit{primitive\_root}.\\
+
+We need then to evaluate with the procedure \textit{list\_stockham\_dev} thanks to this $\omega$ and its powers the polynomials we have stored in \textit{transfert\_array\_fft\_GPU}. Then the positions of the array \textit{fft\_device} where there were zeros contain now the evaluation of the polynomials for some values of $\omega^{j}$. We follow exactly the scheme at the end of the previous section concerning FFT, we need then to do the pointwise multiplication which is just a multiplication coefficient per coefficient of the pairwise polynomials considered, done by \textit{list\_pointwise\_mul}. \\
+
+Then, we need to transform again our polynomial doing the inverse operation of the FFT we have done. To do that we need this time to consider another $\omega$ which is the invert of the one we use for the FFT.\\
+
+We don't really obtain the products we want, but we have them up to a multiplicative factor, so we just need to divide all the coefficients of the polynomials obtained by $\omega$ being the inverse of $2^{i+1} \mod p$. The reason is explained in \cite{FastMulMMM}. Moreover, we have a array twice bigger than we want, the parts of the array where there were zeros before the FFT are know values which are useless. So we can come back again to an array of the size of the input polynomial.\\
+
+To finish the step, we do a \textit{semi\_add} as we did for small degree.

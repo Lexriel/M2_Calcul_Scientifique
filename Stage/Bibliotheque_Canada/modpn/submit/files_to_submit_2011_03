@@ -1,0 +1,29 @@
+## files for modpn
+## U stands for update
+## N stands for new
+
+U modpn/src.32.2011.03/MapleCConverter.c
+U modpn/src.32.2011.03/TEST.c
+U modpn/src.32.2011.03/solve2.c
+
+## files for cumodp
+## U stands for update
+## N stands for new
+N cumodp/src/README
+U cumodp/src/fft_aux.cu
+U cumodp/src/main.c
+U cumodp/src/subres_p.cu
+
+N cumodp/include/README
+U cumodp/include/inlines.h
+U cumodp/include/list_stockham.h
+U cumodp/include/montmulmod.h
+U cumodp/include/rdr_poly.h
+U cumodp/include/scube.h
+
+## files for modpn interface 
+## U stands for update
+## N stands for new
+U mpl/modpn.mpl
+
+## build script

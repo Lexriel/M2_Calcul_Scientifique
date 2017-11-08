@@ -1,0 +1,119 @@
+
+				This is version 4.0.4
+                             http://spdbv.vital-it.ch/ 
+
+
+NEWS FOR VERSION 4.0.4 
+====================================================
+
+- Updated the Blast against Uniprot function.
+
+NEWS FOR VERSION 4.0.3 
+====================================================
+
+- Measuring a distance already measured will clear it.
+- Improved 3D motifs generation.
+
+NEWS FOR VERSION 4.0.2 
+====================================================
+
+Bugs fixed:
+
+- The Select AAkind menu is now working correctly.
+- Improved the motif searching capabilities.
+- Fixed the URL used to import Uniprot sequences from the import menu.
+
+NEWS FOR VERSION 4.0.1 
+====================================================
+
+Bugs fixed:
+
+- The C6 atom of Thymine is now correctly loaded.
+- Fixed the POV-Ray output endless loop on the PC version.
+- The occasional crash while saving PDB files (such as 2i37) on the PC has been fixed.
+- Updated the address of the Uppsala Electron Density Map Server.
+
+NEWS FOR VERSION 4.0 
+====================================================
+
+- First of all, and most importantly, PC and Mac versions have been resynchronized.
+  It means that the same features are available on both platforms.
+- This version supports direct login and modelling submissions to the SwissModel Workspace
+  as well as retrieval of projects and template identification from the workspace.
+  Thanks to Prof. Torsten Schwede and Konstantin Arnold for adapting the workspace to allow for
+  direct communication!
+- The import menu has been enhanced and can be used to import results of past modelling requests,
+  sequences from both UNIPROT and NCBI, nucleotide sequences, electron density maps and compounds. 
+- The NCBI taxonomy is supported.
+- Saved files retain most of the PDB header information.
+- The interface provides new alignment functions, in particular the possibility to realign a 
+  section of an alignment using an external server running MUSCLE.
+- Using two "guiding" sequences, it is now possible to merge two preexisting alignments.
+  This is particularly useful to merge a sequence alignment with a structural alignment.
+- It is now possible to mutate nucleotides (DNA).
+- It is possible to Save/Restore selections.
+- There is a better support for copy/paste operations:
+   - It is possible to copy the rendered image into the clipboard
+   - It is possible to paste a raw sequence into the workspace.
+   - It is possible to copy sections of model and paste coordinates (all, backbone or sidechain) onto
+     an other layer.
+- Vertical Scrollbars have been added to the LayerInfo and Alignment Window.
+- Brought Help files up-to-date with current version (see Help Menu).
+- Better integration with the SWISSMODEL workspace: possibility to submit and retrieve projects
+  directly from  the interface.
+- Possibility to search a selected subset of PDB for 3D motifs.
+- Fixed several stability issues on Intel Macs.
+- Added a script directory, that allows to quickly access new functions added via external scripts.
+- I also would like to thank Prof. van Aalten and Alexander Schuettelkopf for the possibility to
+  use there PRODRG server to obtain 3D coordinated from the 2D compounds downloaded from Pubchem.
+- Finally, I like to point out that once again Prof. Gale Rhodes is testing the new version and
+  updating his tutorial to fit the new functionalities. He has been using and testing Swiss-PdbViewer
+  since its first release in early 1995!
+
+NEWS FOR VERSION 3.9b2 (Mac)
+====================================================
+
+It seems that a lot of macintosh users had been using the latest OS9 version under classic for their work. Unfortunately, with the transition to the intel based platform, classic is no longer supported. Therefore, it became urgent to produce a version that would run natively on the new hardware. I spent some time fixing the numerous problems present in the native OSX alpha version, and, at the same time produced a universal binary.
+
+This version has a few features that are not yet documented in either the manual or Gale Rhodes' tutorial (mostly differences in the Layers info and alignment windows behaviors see below). Although those features are not fully polished, given the number of requests for the native OSX version and the start of the new academic year, I felt it was more important to release a usable OSX universal beta version now than to wait for a polished version. So please remember it is a beta.
+
+
+- The Magic Fit problem affecting OSX Intel-based machines was actually not fixed. Apparently it was only working in the debug version but not when compiled with optimizations turned on.
+I upgraded my compiler and it is now working well. Thanks to Gale for testing the version.
+- Several display glitches when openGL solid rendering was turned on have been fixed.
+- Depth cuing is now turned on when the slab is enabled (Display Menu) during 3D rendering, which makes it easier to perceive perspective. The depth cuing will start at the centered atom and beyond. Therefore, everything which is in front of centered atom is bright, whereas everything which is behind it will be progressively darker. As always, moving the mouse left or right while the Shift key is held down will narrow/enlarge the slab section. Moving the mouse up or down will push/pull the visible slab away/toward the viewpoint.
+- The Export image function when solid rendering is enabled is fixed.
+
+
+VERSION 3.9b1 KEY DIFFERENCES WITH PREVIOUS VERSIONS
+====================================================
+
+- The default button of the import dialog (ie hitting return after having typed a name) will now connect to the remove spdbv server to fetch files instead of the local disk.
+
+- Support for two mouse button has been enabled:
+  It is still possible to use tab to cycle among tools and use only the left button, but otherwise, if the rotation tool is selected then:
+
+   left button  = rotation
+   right button = move
+   left + right = zoom.
+   which corresponds to the PC version.
+
+- It is now possible to move and rotate the view during the seleciton of atoms
+
+- When one of the picking tool is enabled, the name and coordinates of the atom the mouse is over will be displayed in real time in the toolbar, which is useful to ensure that the correct atom is picked.
+
+- The control panel now contains a new column 'sel' which determine which layers will be affected when (most) commands are invoked while the SHIFT key is held down.
+
+- It is possible to load gapped fasta files (from amino-acids or nucleotides) using the Swissmodel menu (or by drag and drop)
+
+- Checkboxes in the alignment window preferences will allow showing secondary structure and/or nucleotides in addition to the protein sequences.
+
+- When the graphic window is active, using the edit:copy function will copy the image to the clipboard and thus can be pasted in other applications
+
+- When the alignment window (or control panel) are active, the edit:copy function will copy the one letter code amino-acid sequence of selected residues of the current active layer to the clipboard
+ 
+- Likewise, when the alignment window is active, the edit:paste command will paste the content of the clipboard as a protein sequence which will appear as a new layer.
+
+- In the alignment window, it is now possible to copy/paste selections across layers. This will essentially replace the selected target residues (coordinates, kind etc...) with source ones.
+
+

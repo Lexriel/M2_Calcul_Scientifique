@@ -1,0 +1,24 @@
+#! /bin/sh
+
+
+if [ ! -d ~/.trash ]
+then mkdir $HOME/.trash
+fi
+
+A=`ls $HOME/.trash`
+B=$HOME/.trash
+
+   if   [ $1 = -l ]
+   then  echo $A
+
+   elif [ $1 = -r ]
+   then rm $B/*
+
+   elif [ $1 = -x ]
+   then 
+        shift
+        rm -r $@
+
+   else mv $@ ~/.trash/
+  
+   fi

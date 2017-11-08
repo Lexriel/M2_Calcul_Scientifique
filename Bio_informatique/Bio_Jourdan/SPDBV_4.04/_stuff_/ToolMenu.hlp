@@ -1,0 +1,187 @@
+ 
+/***************** HELP: Tools Menu *****************
+/                     version 4.0
+/----------------------------------------------------
+Please note that this help does not replace the
+user-guide, nor the tutorial. Both can be found at
+/          http://spdbv.vital-it.ch/
+          http://www.expasy.org/spdbv/ 
+
+
+/Compute H-bonds
+---------------
+H-bonds can be estimated even if no H atoms are present in the file.
+Please note that H-bonds are evaluated for the current molecule only.
+To change the current molecule, see the control panel section.
+H-bonds are computed only between different groups, which means that
+intramolecular H-bonds are not detected.
+H-bonds are detected on the basis of distance, atom type and angle.
+When a same group is at H-bond distance of several other atoms, all
+putative possible H-bonds are drawn, with no attempt to choose the best one.
+By default, H-bonds are detected if an H is in a 1.2 up to 2.76 A range
+of a "compatible" donor atom. If the PDB file does not include H atoms
+coordinates, H-bond are detected using a donor and acceptor distance
+from 2.35 up to 3.2 A. H-bonds that are within this distance range are
+drawn as green dotted lines, weaker H-bonds (extra allowed distance: 0.05 A by default)
+appear in grey. Those distances settings can be modified using the H-Bonds Preferences
+menu item (H-bonds detection threshold).
+Note: HETATM atom types are not defined and are at best assigned as "plain" N, O, H
+(and so on...) This means that no difference is made between a "N" type group (that can H-bond)
+and a "NT" type atom (that cannot H-bond): all "N" atoms are noted "N_" and flagged
+internally as H-bond capable. A direct consequence is that some impossible H-bonds
+can be drawn from or to HETATM.
+
+/Compute Molecular Surface
+-------------------------
+The probe size is 1.4 , and all atoms have a fixed radius. It is currently not possible
+to change this. The only value that can be altered is the smoothness (quality)
+See the Surface Preferences Menu.
+Quality 1 and 2 use one grid point every 1.4 Angstrom, as does Quality 0.
+Quality 3 and 4 use a grid twice as dense.
+Quality 5 and 6 use a grid three times finer than quality 1 and 2.
+Note that a finer triangulation (resulting in more triangles) is done for
+Qualities 2 4 and 6 than for Quality 1,3 and 5.
+Note that Hydrogens atoms are currently ignored during the surface computations.
+Depending on the Preferences Settings, selected residues might also be ignored form the
+computation, which is useful to have a closer look at active sites, or protein-protein
+interaction surfaces.
+
+/Compute Electrostatic Potential
+-------------------------------
+Use the Electrostatic Potential Preference Menu to define how it should be computed.
+Once it is computed, if it has been kept, it will be possible to alter the potential
+contouring value using the keyboard up and down arrows. Parameters can also be adjusted
+using the 'Electron Density and Potential Maps' window accessible from the Wind Menu.
+
+/Triangulate Maps
+----------------
+This  tool can be used to convert an electron density map (or potential) into a
+triangulated surface. The current contouring level will be used.
+The advantage is that it will be much faster to display, but the tradeoff is that 
+it will no longer be possible to alter the contouring values in real time.
+
+/Compute Threading Energy
+------------------------
+Update the mean force potential energy, whose individual results are displayed in
+the Align Window as a curve (click on the little arrow located at the top of the
+Align Window to view the curve). See the User Guide for more information on this tool.
+
+/Compute Energy (Force Field).
+-----------------------------
+The Energy is computed with a partial implementation of the GROMOS96 force-Field.
+You can choose what kind of interaction you want to compute (bond, angles, improper,
+electrostatic... however, Unless you are just interested to identify bad geometry,
+all parameters should be checked for proper meaningful computation).
+In  addition, make sure that  the "Show Report" option is checked to obtain a full
+text report with detailed energy for each residue. Residues with obvious problems will
+be highlighted in red, and clicking on any line will center the view on the faulty
+residue and display only immediate neighbors. Note that a '*' in front  of a line
+means that there are bad non-bonded interactions (that is two residues are bumping into
+each other) whereas a '>' in front of a line means distorted geometry.
+Note that it is also possible to color the protein by energy using a gradient from
+blue (good) to green and green to red  (bad) to quickly highlight regions of the protein
+with  issues.
+The Energy report is saved in Swiss-PdbViewer 'temp' directory, so if you want to keep
+it for later, make a copy of it before Quitting Swiss-PdbViewer (Quitting erases temp. files)
+
+/Energy Minimization.
+---------------------
+Energy Minimization is performed with the partial implementation of the GROMOS96 force-Field.
+(see Compute Energy above). In this implementation, all computations are done in vacuo,
+without reaction field. It is recommended to enable the non-bonded interaction computation,
+unless  you just want to quickly regularize the geometry of a residue. Note that it is
+currently not possible to minimize compounds  within Swiss-PdbViewer.
+
+/Energy Minimization (for one compound).
+---------------------------------------
+This is performed by submitting the selected compound (only one at a time) to the PRODRG
+server maintained at the  University of Dundee by Alexander Schuettelkopf and Prof. van
+Aalten who kindly allowed direct submission from Swiss-PdbViewer to their service.
+Typically, compounds can be loaded as .SDF files, or imported from PubChem using the
+File:Import Menu
+
+/Fix selected sidechains
+-----------------------
+Quick and Dirty: This will browse the rotamer library and replace the sidechain of
+any selected amino-acid by the best rotamer accordingly to the same simple scoring
+scheme used as when residues are mutated (see user guide for details).
+Exhaustive Search: This will assess all rotamer combinations with the Gromos96 force field.
+Do not select too many residues at the same time, as this can result in a combinatorial
+explosion. To cancel the operation, hold down the 'esc' key until the process stops.
+Simulated Annealing. This will assess a sample of all rotamer combinations, using a
+simulated annealing function which combines the simple scoring scheme with the Gromos96
+forcefield. Contrarily to the exhaustive search, it is not guarantee to reach the minimum
+energy configuration but will be much faster when several residues are selected.
+
+/Apply Transformation
+--------------------
+This will let you enter a transformation matrix. This can be useful when you want to
+precisely translate or rotate a molecule. Note that only selected groups are transformed.
+Usually such matrices are present in PDB files (for example 4mdh) and describe a specific
+transformation. In the 4mdh case, it is the transformation needed to superpose the chain B
+onto the chain A. Note: You don't have to retype the matrix values, all you need to do is
+click on the ORIGX, MTRX line of a pdb file (or the SMTRY or BIOMT lines of REMARK 290 or 350)
+to "feed" the values into this dialog.
+Note: To display the pdb file as text, click on the small text icon of the toolbar.
+Note: there is no check that the matrix you enter is valid.
+Note: You can undo a transformation by enabling the "reverse transfomration" checkbox
+      (however this will not let you undo a projection! So be careful.
+
+/Build Crystallographic Symmetry
+-------------------------------
+This will open the "crystsim.txt" file present in the "_stuff_" directory.
+If Swiss-PdbViewer cannot guess your space group, you might have to locate it yourself.
+Then click on the header of your space group (that is displayed in red) if you want to build
+all symmetries, or just on the crystallographic operator you want to use. A new layer with
+the transformed protein will be created. This tool is useful for crystallographers, to
+inspect crystalline contacts. This is best used in conjunction with the "select Groups
+Close to an other layer" item of the select menu.
+Note: invoking this tool with the Control Key down will let you enter a symmetry operator
+from a text window.
+Note, you might want to check the 'Draw Unit Cell' option of the Electron Densit Maps
+Preferences. If this is not drawn, Click on the CRYST line of the PDB file to force the
+use of those  parameters. 
+
+/Translate Along Unit Cell Axis.
+-------------------------------
+The previous menu will not necessarily create a symmetric protein contained within the unit
+cell. Use this menu to translate it into your unit cell.
+Note: invoking this tool with the Control Key down will translate a copy of the layer,
+leaving the current layer untouched instead of moving the current one.
+
+/Detect Secondary Structure
+--------------------------
+This tool will force the reevaluation of the secondary structure for the current layer.
+This can be useful after a modification of a Phi/Psi angle (for example from
+altering points from the Ramachandran Plot)
+
+/Generate 3D Motifs From Selection
+---------------------------------
+This menu,  together with the two following 'Search3D Motifs' Menu items will allow
+to define 3D search queries and identify other proteins that might contain those motifs.
+See the User Guide at http://spdbv.vital-it.ch/ for a turorial.
+
+/Randomize Atoms Positions Of Selected Groups
+--------------------------------------------
+This will randomly translate all atoms of the selected groups by the desired amount (Angstroms)
+This can be used before an energy minimisation, or simply for teaching purposes, but be
+warned that it cannot be undone.
+
+/Set as Alpha Helix
+------------------
+This will set the Phi/Psi angles of the selected aminoacids to 60 deg. and 40 deg. respectively
+
+/Set as Beta Sheet
+-----------------
+This will set the Phi/Psi angles of the selected aminoacids to 120 deg and 120 deg respectively
+
+/Set Phi/Psi
+-----------
+This will let you set arbitrary Phi/Psi angles for the selected aminoacids.
+Note that you can also modify Phi/Psi angles directly by dragging points around on the Ramachandran plot.
+
+/Move C-term part during Phi/Psi Changes
+---------------------------------------
+When checked, this option will move all downstream amino-acids from the one whose Phi or Psi
+angle is modified, leaving the N-term part of the protein untouched.
+

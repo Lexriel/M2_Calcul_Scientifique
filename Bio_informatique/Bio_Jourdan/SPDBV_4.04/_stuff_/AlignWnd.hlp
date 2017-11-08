@@ -1,0 +1,105 @@
+ 
+/***************** HELP: Align Window *****************
+/                       version 4.0
+/-------------------------------------------------------
+Please note that this help does not replace the
+user-guide, nor the tutorial. Both can be found at
+/          http://spdbv.vital-it.ch/
+          http://www.expasy.org/spdbv/
+ 
+ 
+/General Information
+/-------------------
+The Alignment window primary objective is to display the 
+amino acid sequences present in each layer. DNA and compounds
+sequences are not displayed and can be accessed through the
+control Panel Window.
+By default, the sequences of all layers are displayed, although
+it is possible to hide some sequences from the alignment by removing
+the corresponding check-mark in the 'AlnW' column of the Layer Info Window.
+Other more general display options like showing or hiding codons can be
+accessed from the Alignment Preference menu.
+
+
+/Layout
+/------
+
+The left section of the alignment shows the name of each layer.
+The name of the currently active layer appears in red,
+and clicking on a protein name activates its layer.
+CONTROL+click will activate the layer and show the Rename Layer dialog.
+
+At the right of the layer name there are values showing the percent
+identity between the currently active layer (in red) and other sequences.
+The first value concerns the whole alignment, whereas the second value reflects
+the percent identity for the selected residues only. Both values are
+updated dynamically when the alignment is altered.
+
+Placing the mouse pointer on any amino-acid will make it blink on the screen,
+and a feedback is with the amino acid chain name and number is provided on the
+bottom left of the window. The backbone RMSd relative to the corresponding  residue
+of the 'Reference Layer' (the first layer drawn below the divider line) is also provided.
+
+You can see a preview of structural alignment by clicking on the little text icon
+located at the top left corner or the window. The presentation of the multiple sequence
+alignment can be altered in the Alignment Preferences Menu.
+Alignments can be saved as text files with the appropriate item of the File Menu.
+
+
+/Selection
+/---------
+clicking on a residue will select it. Discontinuous
+Control+Click will add/remove residues from the selection thus allowing discontinuous selections.
+Shift+Click   will extended the selection to all selected layers (use the 'sel' column of the 
+              LayerInfos Window to select/deselect specific layers).
+              If no layer is selected, or if the layer used to prime the selection is not selected,
+              the selection will act on sequences belonging to the same group ('grp' in LayerInfo)
+              as the layer used to select residues.
+
+
+/Centering the view on a residue
+/-------------------------------
+option click on a residue (right mouse button for PC users)
+will center the view around its alpha carbon.
+
+
+/Modification of the Alignment
+/-----------------------------
+
+Spacebar Key:  A gap will be inserted before the first selected residue of each selected sequence.
+               (use the LayerInfos window to select specific layers). 
+               Note that if no residue of a selected  layer are selected the gap will be inserted
+               at the beginning of the sequence.
+               Note that if no layer is selected, it will behaave as if all layers were selected.
+Backspace Key: This will delete the gap before the first selected residue of each selected sequence.
+               Note that if it is not possible to do it because there is no gap in front of any of the
+               selected layers, nothing will be moved and the user is alerted with a beep.
+
+Left Arrow:    This will slide the selected residues of each selected Layer to the left, provided there
+               is enough space (gaps) to the left to do it for each selected sequence.
+Right Arrow:   This will slide the selected residues of each selected Layer to the right, provided there
+               is enough space (gaps) to the left to do it for each selected sequence.
+
+Control+Spacebar:   This will override the selection status and insert a gap only in the current Layer.
+Control+Backspace:  This will override the selection status and delete a gap only in the current Layer.
+Control+LeftArrow:  This will override the selection status and slide the selected residues of the
+                    current layer only to the left.
+Control+RightArrow: This will override the selection status and slide the selected residues of the
+                    current layer only to the right.
+
+
+Top Arrow   : This will move the current sequence above the previous one in the alignment.
+Bottom Arrow: This will move the current sequence below the previous one in the alignment.
+
+
+/Other
+/----- 
+Control+Click on a layer name will allow to rename the clicked layer.
+
+Hitting the "*" key when cursor is on an amino-acid will initiate
+the possibility to browse the rotamer library (same as mutate tool used to mutate to itself).
+Once the mutation has been initiated, the arrows under the Mutate button of the
+toolbar can be used to browse the library. Once you're done with, you will still need
+to click on the rotamer tool in the Toolbar to decide whether to accept or reject your choice.
+
+

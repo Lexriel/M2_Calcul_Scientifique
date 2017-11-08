@@ -1,0 +1,29 @@
+#!/bin/sh
+#-----------------------------------------------------------------------
+
+# MODPN_FILES
+
+FILELIST="$FILELIST \
+  \$(KMODPN)/src/generalFuncs \
+  \$(KMODPN)/src/FMUL \
+  \$(KMODPN)/src/FDIV \
+  \$(KMODPN)/src/GCD  \
+  \$(KMODPN)/src/HGCD \
+  \$(KMODPN)/src/matrix \
+  \$(KMODPN)/src/MultiDFFT \
+  \$(KMODPN)/src/MPMMTS \
+  \$(KMODPN)/src/HashTable \
+  \$(KMODPN)/src/UniHensel \
+  \$(KMODPN)/src/MapleCConverter \
+  \$(KMODPN)/src/FINTERP \
+  \$(KMODPN)/src/Factorization \
+  \$(KMODPN)/src/SubResultantSeq \
+  \$(KMODPN)/src/IteratedResultant \
+  \$(KMODPN)/src/LinkedList \
+  \$(KMODPN)/src/IsInvertible \
+  \$(KMODPN)/src/RegularGcd \
+  \$(KMODPN)/src/CONSTANTS \
+  \$(KMODPN)/src/solve2 \
+  "
+
+#-----------------------------------------------------------------------

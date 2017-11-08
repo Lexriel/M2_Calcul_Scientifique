@@ -1,0 +1,14 @@
+# files related to the build script
+build
+
+# Development source files for cumodp
+cumodp
+
+# Maple source files for modpn and cumodp
+modpn
+
+# source files for modpn maple library
+mpl
+
+# submission history
+submit

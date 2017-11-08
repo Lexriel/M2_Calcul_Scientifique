@@ -1,0 +1,54 @@
+\subsection{University of Western Ontario of London (UWO)}
+
+The University of Western Ontario, located in the city of London and generally called UWO, is among the top 10 Canadian universities.
+Renowned for the quality of its students' life,
+this university is also worldly ranked between 150 and 300,
+from various sources.
+
+\subsection{Departments of Computer Science and Applied Mathematics}
+These departments are located in the building called Middlesex College we can see in the presentation page.
+
+\subsection{My supervisor, professor Marc Moreno Maza}
+
+Marc Moreno Maza is an associate professor in the department of Computer Sciences and in the department of Applied Mathematics at the University of Western Ontario. He is also a Principal Scientist in the Ontario Research Centre for Computer Algebra (ORCCA).
+
+Marc Moreno Maza's research activities have four directions :
+\begin{itemize}
+\item[\textbullet] Study theoretical aspects of systems of polynomial equations and try to answer the question ``what is the best form for the set of solutions?''
+\item[\textbullet] Study algorithmic answers to the question ``how to compute this form of the set of solutions at the lowest cost?''
+\item[\textbullet] Study implementation techniques for algorithms to make the best use of today's computers.
+\item[\textbullet] Apply it to unsolved problems when the prototype solver is ready.
+\end{itemize}
+
+\subsection{Maple}
+
+Conforming to the research activities of my supervisor and of the departments of Computer Science and Applied Mathematics, we work in close cooperation with the software company {\it Maplesoft}, which is developing and distributing the computer algebra system {\sc Maple}. Our main purpose is to provide {\sc Maple}'s end-users with symbolic computation tools 
+that make best use of computer resources and take advantage of hardware acceleration technologies, in particular graphics processing units (GPUs) and multicores. Marc Moreno Maza's team is currently working on a library called \textit{cumodp} which will be integrated into {\sc Maple} so as to do fast arithmetic operations over prime fields (that is, modulo a prime number).
+
+\subsection{Purpose of my internship}
+
+I participate to the elaboration of the library \textit{cumodp}. My objective is to develop code for the exact calculation of the real roots of  univariate polynomials. Stating this problem is very easy. However, as one dives into the details, one realizes that there are lots of challenges in order to reach highly efficient algorithmic and software solutions.
+
+The first challenge is that of representation. Traditionally, scientific software provide numerical approximations to the roots (real or complex) 
+of a univariate polynomial which coefficients might themselves 
+be known inaccurately. Nevertheless, in many applications 
+polynomial systems 
+result from a mathematical model and their coefficients are known exactly.  In this case, it is desirable to obtain closed form formulas for the roots of such polynomials, like $x = \cfrac{1 +/- \sqrt{5}}{2}$
+It is well know, however, from Galois Theory, that the roots of
+univariate polynomials of degree higher than $4$ cannot
+be expressed by radicals.
+In this context,
+computing the real roots of such a polynomial $f(x) \in {\R}[x]$ means
+determining pairwise disjoint intervals with rational end points
+and an effective one-to-one map between those intervals and 
+the  real roots of $f(x)$.
+
+Algorithms realizing this task are highly demanding in computer
+resources. In addition, the most efficient such algorithms
+combine different mathematical tools such as Descartes rule
+of signs,  Fast Fourier Transforms (FFTs),
+continued fractions, computing by homomorphic images, etc.
+Therefore, one of my first tasks  when I arrived in London, 
+was to learn these techniques which are at the core
+of the problem which is proposed to me.
+

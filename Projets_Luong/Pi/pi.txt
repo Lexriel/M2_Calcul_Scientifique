@@ -1,0 +1,2 @@
+An approximation of Pi with 8 decimals is given by : 
+pi = 3.14159265

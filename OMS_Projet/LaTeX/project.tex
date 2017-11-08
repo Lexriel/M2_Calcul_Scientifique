@@ -1,0 +1,1254 @@
+\documentclass[10pt]{article}
+
+
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{epsfig}
+\usepackage{verbatim}
+\usepackage{fancybox}
+\usepackage{moreverb}
+\usepackage{graphicx}
+\usepackage{psfrag}
+\usepackage{hyperref}
+\usepackage[all]{xy}
+\usepackage[toc,page]{appendix}
+\usepackage[subnum]{cases}
+\usepackage{bm}
+\usepackage{framed}
+
+\textheight 22cm    \textwidth 16cm
+\voffset=-1cm
+\hoffset=-1.2cm
+
+
+\newcommand{\C}{{\mathbb C}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\N}{{\mathbb N}}
+\newcommand{\Z}{{\mathbb Z}}
+\newcommand{\Q}{{\mathbb Q}}
+\newcommand{\T}{{\mathbb T}}
+\newcommand{\E}{{\mathbb E}}
+\newcommand{\di}{{\mathbb D}}
+\newcommand{\Y}{{\mathbf Y}}
+\newcommand{\D}{{\partial}}
+\newcommand{\Cl}{{\mathcal C}}
+\newcommand{\Pa}{{\mathcal P}}
+\newcommand{\Flux}{{\mathcal F}}
+\newcommand{\B}{{\mathfrak B}}
+\newcommand{\M}{{\mathcal M}}
+\newcommand{\dis}{{\mathcal D}}
+\newcommand{\A}{{\mathcal{A}}}
+\newcommand{\fin}{\rule{1ex}{1ex}}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{hypothesis}[theorem]{Hypothesis}
+
+
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thelemma}{\thesection\arabic{lemma}}
+\renewcommand{\theproposition}{\thesection\arabic{proposition}}
+\renewcommand{\thecorollary}{\thesection\arabic{corollary}}
+\renewcommand{\thedefinition}{\thesection\arabic{definition}}
+\renewcommand{\theexample}{\thesection\arabic{example}}
+\renewcommand{\theremark}{\thesection\arabic{remark}}
+\renewcommand{\thenotation}{\thesection\arabic{notation}}
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\def\commutatif{\ar@{}[rd]|{\circlearrowleft}}
+
+
+\title{Numerical simulation of charged particle beams in an electro-magnetic focusing field}
+
+\author{'Mathematical Tools for Simulation' project}
+
+\date{}
+
+
+
+
+\begin{document}
+
+\maketitle
+
+The aim of the present project is to build a parallelized code for the simulation of charged particle beam submitted to external electric and magnetic forces. Such a phenomenon can be described by a kinetic model in which the particle cloud is modelized thanks to a distribution function $f = f(t,\mathbf{x},\mathbf{v})$ which depends on the time $t \geq 0$, the spatial position $\mathbf{x} \in \R^{3}$ and the speed $\mathbf{v} \in \R^{3}$. The particles being charged and submitted to some external electric and magnetic field (denoted by $\mathbf{E}^{e} = \mathbf{E}^{e}(t,\mathbf{x})$ and $\mathbf{B}^{e} = \mathbf{B}^{e}(t,\mathbf{x})$ respectively), they generates themselves some \textit{self-consistent} electric and magnetic fields denoted by $\mathbf{E}^{s}=\mathbf{E}^{s}(t,\mathbf{x})$ and $\mathbf{B}^{s}=\mathbf{B}^{s}(t,\mathbf{x})$. Thus, the considered model is a 3D Vlasov-Maxwell model. Such a model being written in 6D in the \textit{phase space} (\textit{i.e.} position and speed space) plus the time dimension, it is necessary to simplify it before thinking about the discretization step and numerical tests. \\
+
+\indent The project will be decomposed into several parts: \\
+\begin{itemize}
+\item \textbf{The first part} is devoted to the presentation of the Vlasov-Maxwell system which is chosen as the starting point. Thanks to some reasonable hypotheses which are made on the physical context, this Vlasov-Maxwell system will be simplified into a \textit{paraxial approximation},
+\item \textbf{The second part} is devoted to the study of the envelope equations which can be associated to the paraxial model if we consider certain external forces,
+\item \textbf{The third part} treats the time semi-discretization of the Vlasov equation through the resolution of the characteristics which are associated to it,
+\item \textbf{The fourth part} describes an interpolation method based on local splines which can be easily parallelized,
+\item \textbf{The fifth part} is devoted to the resolution of the 2D Laplacian equation,
+\item \textbf{The last part} summarizes the different methods and contains a list of test cases which have to be run for validating the code which solve the paraxial model.
+\end{itemize}
+
+
+
+\textbf{\underline{To be done:}}
+\begin{itemize}
+\item \textit{A report} which summarize the answers to the asked questions and some pictures from the numerical tests which are suggested. This report must be typed in english. Using LaTeX is recommanded but other formats are accepted.
+\item \textit{A Fortran-90 code} which allows to simulate all test cases which are proposed. The code has to be parallelized and every part of it should be tested before being released. The code should be sent with a documentation written in english: this documentation should contain some instructions for the user to run the code and visualize the results which are produced.
+\item Both report and code must be transmitted \textbf{\underline{before Friday, January $\mathbf{6^{\textbf{th}}}$ 2012, 12:00pm}} to Alexandre MOUTON\footnote{Office: M3-212; Mail: alexandre.mouton@math.univ-lille1.fr}.
+\end{itemize}
+
+
+
+
+\section{Modelization}
+\setcounter{equation}{0}
+
+\indent In the whole document, we denote by $x,y,z$ the components of the spatial position variable $\mathbf{x}$, and by $v_{x},v_{y},v_{z}$ the components of the speed variable $\mathbf{v}$. This notation convention is also applied on external and self-consistent focusing fields. We assume that the spatial $z$-direction is aligned with the longitudinal direction of the particle accelerator. \\
+
+\indent We consider a beam constituted of one species of charged particles with unit charge $q$, unit mass $m$ and which propagate in $z$-direction. We assume that the particles can be relativistic in $v_{z}$-direction but not in $(v_{x},v_{y})$-directions. Then, the modelization starting point is the following Vlasov-Maxwell model:
+\begin{subnumcases}{\label{VM3D}}
+\cfrac{\D f}{\D t} + \mathbf{v} \cdot \nabla_{\mathbf{x}} f + \cfrac{q}{\gamma_{z}\,m}\, ( \mathbf{E} + \mathbf{v} \times \mathbf{B}) \cdot \nabla_{\mathbf{v}}f = 0 \, , & \textnormal{(Vlasov)} \label{Vlasov3D} \\
+f(t=0,\mathbf{x},\mathbf{v}) = f^{0}(\mathbf{x},\mathbf{v}) \, , & \textnormal{(initial data)} \label{initial3D} \\
+\cfrac{\D \mathbf{B}}{\D t} + \nabla_{\mathbf{x}} \times \mathbf{E} = 0 \, , & \textnormal{(Faraday)} \label{Faraday3D} \\
+\cfrac{1}{c^{2}}\,\cfrac{\D \mathbf{E}}{\D t} + \mu_{0}\,\mathbf{J} = \nabla_{\mathbf{x}} \times \mathbf{B} \, , & \textnormal{(Amp\`ere)} \label{Ampere3D} \\
+\nabla_{\mathbf{x}} \cdot \mathbf{E} = \cfrac{\rho}{\varepsilon_{0}} \, , & \textnormal{(Gauss)} \label{Gauss3D} \\
+\nabla_{\mathbf{x}} \cdot \mathbf{B} = 0 \, , & \textnormal{(Maxwell)} \label{Thomson3D}
+\end{subnumcases}
+in which the coupling between Vlasov equation and Maxwell equations is insured by computing the charge density $\rho$ and the current density $\mathbf{J}$ as
+\begin{equation}
+\rho(t,\mathbf{x}) = q \, \int_{\R^{3}} f(t,\mathbf{x},\mathbf{v}) \, d\mathbf{v} \, , \qquad \mathbf{J}(t,\mathbf{x}) = q\, \int_{\R^{3}} \mathbf{v} \, f(t,\mathbf{x},\mathbf{v}) \, d\mathbf{v} \, .
+\end{equation}
+The physical constants $c$, $\varepsilon_{0}$ and $\mu_{0}$ are the light speed in vacuum, the vacuum permittivity and magnetic permeability respectively, and they are linked by the relation $c^{2}\,\mu_{0}\,\varepsilon_{0} = 1$. The parameter $\gamma_{z}$ is computed from $v_{z}$ by the following relation
+\begin{equation}
+\gamma_{z} = \Big( 1 - \cfrac{v_{z}^{2}}{c^{2}} \Big)^{-1/2} \, .
+\end{equation}
+
+From now, we consider the following hypotheses:
+\begin{itemize}
+\item[(i)] The beam has reached its stationary state,
+\item[(ii)] The particles propagate at a constant longitudinal velocity $v_{z}$,
+\item[(iii)] The longitudinal parts of the self-consistent electric and magnetic fields are neglected,
+\item[(iv)] The space domain in the $z$-direction is of the form $[0,L_{z}]$, $z = 0$ corresponding to the source of the beam.
+\end{itemize}
+
+\newpage
+
+\begin{leftbar}
+\textbf{Question 1.1.} Prove that, under hypotheses (i), (ii) and (iii), the 3D Vlasov-Maxwell model (\ref{VM3D}) can be reduced to a 2D Vlasov-Poisson model of the form
+\begin{subnumcases}{\label{paraxial}}
+\cfrac{\D f}{\D z} + \cfrac{\mathbf{v}}{v_{z}} \cdot \nabla_{\mathbf{x}}f + \mathbf{F}^{e} \cdot \nabla_{\mathbf{v}}f + \cfrac{q}{v_{z}\,\gamma_{z}^{3}\,m} \, \mathbf{E}^{s} \cdot \nabla_{\mathbf{v}}f = 0 \, , & \label{Vlasov_paraxial}\\
+f(z = 0,\mathbf{x},\mathbf{v}) = f_{p}^{0}(\mathbf{x},\mathbf{v}) \, , & \label{initial_paraxial} \\
+\mathbf{F}^{e} = \cfrac{q}{v_{z}\,\gamma_{z}\,m}\, \left(
+\begin{array}{c}
+E_{x}^{e} + v_{y}\,B_{z}^{e} - v_{z}\,B_{y}^{e} \\
+E_{y}^{e} + v_{z}\,B_{x}^{e} - v_{x}\,B_{z}^{e}
+\end{array}
+\right) \, , & \label{external_paraxial} \\
+\mathbf{E}^{s} = \left(
+\begin{array}{c}
+E_{x}^{s} \\ E_{y}^{s}
+\end{array}
+\right) = -\nabla_{\mathbf{x}}\phi^{s} \, , \label{Faraday_paraxial} \\
+-\Delta_{\mathbf{x}}\phi^{s} = \cfrac{q}{\varepsilon_{0}}\,\int_{\R^{2}}f\,d\mathbf{v} \, , & \label{Gauss_paraxial}
+\end{subnumcases}
+where $\mathbf{x} = (x,y) \in \R^{2}$, $\mathbf{v} = (v_{x},v_{y}) \in \R^{2}$, and $f_{p}^{0}$ is linked to $f^{0}$ by the relation
+\begin{equation}
+f_{p}^{0}(\mathbf{x},\mathbf{v}) = f^{0}(\mathbf{x},0,\mathbf{v},v_{z}) \, .
+\end{equation}
+This 2D model is said to be a \textit{paraxial approximation} of the full 3D Vlasov-Maxwell problem (\ref{VM3D}).
+\end{leftbar}
+
+\textit{ \\ }
+
+\indent We recall that the transport equation (\ref{Vlasov_paraxial}) can be written under the following form
+\begin{equation}
+\cfrac{\D}{\D z} \Big( f\big( z, \mathbf{X}(z; \mathbf{x},\mathbf{v}, \zeta), \mathbf{V}(z; \mathbf{x},\mathbf{v}, \zeta) \big) \Big) = 0 \, ,
+\end{equation}
+where $\mathbf{X} = (X,Y)$ and $\mathbf{V} = (V_{x},V_{y})$ are the \textit{characteristics functions} linked with the variables $\mathbf{x} = (x,y)$ and $\mathbf{v} = (v_{x},v_{y})$ and which are the solutions of
+\begin{equation} \label{characteristics_paraxial}
+\left\{
+\begin{array}{rcl}
+\cfrac{\D \mathbf{X}}{\D z}(z;\mathbf{x},\mathbf{v},\zeta) &=& \cfrac{1}{v_{z}} \, \mathbf{V}(z;\mathbf{x},\mathbf{v},\zeta) \, , \\
+\cfrac{\D \mathbf{V}}{\D z}(z;\mathbf{x},\mathbf{v},\zeta) &=& \mathbf{F}^{e}\big(z,\mathbf{X}(z;\mathbf{x},\mathbf{v},\zeta),\mathbf{V}(z;\mathbf{x},\mathbf{v},\zeta)\big) + \cfrac{q}{v_{z}\,\gamma_{z}^{3}\,m}\, \mathbf{E}^{s}\big(z,\mathbf{X}(z;\mathbf{x},\mathbf{v},\zeta)\big) \, , \\
+\mathbf{X}(\zeta;\mathbf{x},\mathbf{v},\zeta) &=& \mathbf{x} \, , \\
+\mathbf{V}(\zeta;\mathbf{x},\mathbf{v},\zeta) &=& \mathbf{v} \, .
+\end{array}
+\right.
+\end{equation}
+
+\textit{ \\ }
+
+\begin{leftbar}
+\textbf{Question 1.2.} Deduce from (\ref{characteristics_paraxial}) some second order ODEs in z for $X(z) = X(z;\mathbf{x},\mathbf{v},\zeta)$ and $Y(z) = Y(z;\mathbf{x},\mathbf{v},\zeta)$.
+\end{leftbar}
+
+
+
+
+
+
+\section{Envelope equations and K-V distribution}
+\setcounter{equation}{0}
+
+
+We define the \textit{envelope equations} linked with the paraxial model as
+\begin{equation} \label{envelope}
+\left\{
+\begin{array}{l}
+\cfrac{\D^{2}a}{\D z^{2}}(z) + \kappa_{x}(z) \, a(z) - \cfrac{2K}{a(z)+b(z)} - \cfrac{\epsilon_{x}^{2}}{a^{3}(z)} = 0 \, , \\
+\cfrac{\D^{2}b}{\D z^{2}}(z) + \kappa_{y}(z) \, b(z) - \cfrac{2K}{a(z)+b(z)} - \cfrac{\epsilon_{y}^{2}}{b^{3}(z)} = 0 \, ,
+\end{array}
+\right.
+\end{equation}
+In this system, $a = a(z)$ and $b = b(z)$ are 2 functions which are $S$-periodic and linked with the characteristics $\mathbf{X}$. $\kappa_{x} = \kappa_{x}(z)$ and $\kappa_{y} = \kappa_{y}(z)$ are computed from the external electric and magnetic fields, $\epsilon_{x}$ and $\epsilon_{y}$ are some fixed parameters called \textit{emittances} in $x$ and $y$ respectively, and $K$ is the \textit{perveance} parameter which only depends on the initial distribution $f_{p}^{0}$ as follows:
+\begin{equation}
+K = \cfrac{q^{2}\,N^{0}}{2\pi\,\varepsilon_{0}\,\gamma_{z}^{3}\,m\,v_{z}^{2}} \, , \qquad N^{0} = \int_{\R^{4}} f_{p}^{0}(\mathbf{x},\mathbf{v}) \, d\mathbf{x} \, d\mathbf{v} \, .
+\end{equation}
+
+\indent The main use of these envelope equations is that we can exhibit an analytic solution of the paraxial model (\ref{paraxial}). This is the aim of the following theorem which is admitted:
+
+\begin{theorem}[Kapchinsky \& Vladimirsky]
+Assume that the functions $\kappa_{x}$ and $\kappa_{y}$ are known and that there exists a constant $C > 0$ such that
+\begin{equation}
+\forall\, z \, , \qquad \cfrac{\D \kappa_{x}}{\D z}(z) \leq C \, \kappa_{x}(z) \, , \quad \cfrac{\D \kappa_{y}}{\D z}(z) \leq C \, \kappa_{y}(z) \, .
+\end{equation}
+Considering the solutions $a$ and $b$ of the envelope equations (\ref{envelope}) with fixed emittances $\epsilon_{x}$ and $\epsilon_{y}$, the couple $(f_{KV},\mathbf{E}_{KV}^{s})$ defined as
+\begin{equation} \label{def_KV}
+\left\{
+\begin{array}{l}
+f_{KV}(z,x,y,v_{x},v_{y}) = \cfrac{N^{0}}{\pi^{2}\,\epsilon_{x}\,\epsilon_{y}} \, \delta_{0}\Big( r^{2}(z,x,y) + v_{r}^{2}(z,x,y) - 1\Big) \, , \\
+\mathbf{E}_{KV}^{s}(z,x,y) = \left\{
+\begin{array}{ll}
+\cfrac{q\,N^{0}}{\pi\,\varepsilon_{0}\,(a(z)+b(z))}\, \left(
+\begin{array}{c}
+\cfrac{x}{a(z)} \\ \cfrac{y}{b(z)}
+\end{array}
+\right) \, , & \textit{if $r^{2}(z,x,y) \leq 1$,} \\
+0 & \textit{else,}
+\end{array}
+\right. \\
+r^{2}(z,x,y) = \cfrac{x^{2}}{a^{2}(z)} + \cfrac{y^{2}}{b^{2}(z)} \, , \\
+v_{r}^{2}(z,v_{x},v_{y}) = \cfrac{\big(a(z)\,v_{x} - \frac{\D a}{\D z}(z) \, x\big)^{2}}{\epsilon_{x}^{2}} + \cfrac{\big(b(z)\,v_{y} - \frac{\D b}{\D z}(z) \, y\big)^{2}}{\epsilon_{y}^{2}} \, ,
+\end{array}
+\right.
+\end{equation}
+where $\delta_{0}$ is the Dirac measure in 0, is a solution of the paraxial model (\ref{paraxial}).
+\end{theorem}
+
+As a consequence, in order to use this result, we choose some external electric and magnetic fields and we assume that the self-consistent electric field is is of the form $\mathbf{E}_{KV}^{s}$ even if we do not know $a$ and $b$ yet. Then we start from the differential equations which are satisfied by the characteristics $X$ and $Y$ and we modify them in order to obtain a couple of equations of the same type as (\ref{envelope}) in which $\kappa_{x}$ and $\kappa_{y}$ are fully identified. Then, solving these envelope equations provides us some useful data which will be used through the \textit{Sacherer-Lapostolle principle of equivalent particle beams} (see paragraph 2.2).
+
+\subsection{Numerical resolution of the envelope equations}
+
+
+\begin{leftbar}
+\textbf{Question 2.1.} Assuming that $a(0),\cfrac{\D a}{\D z}(0),b(0),\cfrac{\D b}{\D z}(0)$ are given, write the envelope equations (\ref{envelope}) under the form
+\begin{equation}
+\left\{
+\begin{array}{ll}
+\cfrac{\D \mathbf{A}}{\D z}(z) = \bm{\varphi}\big(z,\mathbf{A}(z)\big) \, , & \textnormal{$z \in [0,S]$,} \\ \\
+\mathbf{A}(0) = \mathbf{A}^{0} \, ,
+\end{array}
+\right.
+\end{equation}
+with $\mathbf{A} = (A_{1},A_{2},A_{3},A_{4}) \in \R^{4}$ and $\bm{\varphi} : [0,S] \times \R^{4} \to \R^{4}$. \\
+Describe the following numerical methods for approaching the solution of the envelope equations:
+\begin{itemize}
+\item Explicit Euler method,
+\item Second order explicit Runge-Kutta method,
+\item Fourth order explicit Runge-Kutta method.
+\end{itemize}
+\end{leftbar}
+
+
+\begin{leftbar}
+\textbf{Question 2.2.} Since we aim to compute a $S$-periodic solution of the envelope equations, describe a procedure for correcting the initial data $a(0),\cfrac{\D a}{\D z}(0),b(0),\cfrac{\D b}{\D z}(0)$ in order to obtain such a result.
+\end{leftbar}
+
+
+
+
+\subsection{K-V adaptation of the particle beam}
+
+The main use of the K-V distribution is obtaining some useful parameters for simulating $(f,\mathbf{E}^{s})$. For this purpose, we invoke the \textit{Sacherer-Lapostolle principle of equivalent particle beams}: this principle indicates that two particle beams are equivalent if
+\begin{itemize}
+\item Both beams are constituted of the same kind of particle,
+\item They have the same kinetic energy $E_{k} = m\,c^{2}(\gamma_{z}-1)$,
+\item They have the same total number of particles $N^{0} = \cfrac{I}{q\,v_{z}}$ where $I$ is the intensity of the electric current imposed on the source of particles,
+\item Their distribution functions have identical second order momenta.
+\end{itemize}
+
+
+
+\begin{leftbar}
+\textbf{Question 2.3.} For any distribution function $(x,y,v_{x},v_{y}) \mapsto f(x,y,v_{x},v_{y})$, we define its RMS values $x_{RMS}(f)$, $y_{RMS}(f)$, ${v_{x}}_{RMS}(f)$ and ${v_{y}}_{RMS}(f)$ with the following formula:
+\begin{equation}
+\chi_{RMS}(f) = \sqrt{\cfrac{\displaystyle \int_{\R^{4}} \chi^{2}(x,y,v_{x},v_{y})\, f(x,y,v_{x},v_{y})\, dx\, dy\,dv_{x}\, dv_{y}}{\displaystyle \int_{\R^{4}} f(x,y,v_{x},v_{y})\, dx\, dy\,dv_{x}\, dv_{y}}} \, .
+\end{equation}
+Prove that if $f(x,y,v_{x},v_{y}) = \tilde{f}\big(\cfrac{x}{x_{0}},\cfrac{y}{y_{0}},\cfrac{v_{x}}{{v_{x}}_{0}}, \cfrac{v_{y}}{{v_{y}}_{0}}\big)$, we have
+\begin{equation}
+\begin{array}{rclrcl}
+x_{RMS}(f) &=& x_{0}\,x_{RMS}(\tilde{f}) \, , & {v_{x}}_{RMS}(f) &=& {v_{x}}_{0}\,{v_{x}}_{RMS}(\tilde{f}) \, , \\
+y_{RMS}(f) &=& y_{0}\,y_{RMS}(\tilde{f}) \, , & {v_{y}}_{RMS}(f) &=& {v_{y}}_{0}\,{v_{y}}_{RMS}(\tilde{f}) \, .
+\end{array}
+\end{equation}
+\end{leftbar}
+
+
+\begin{leftbar}
+\textbf{Question 2.4.} Prove that 
+\begin{equation}
+\begin{array}{rclrcl}
+x_{RMS}\big(f_{KV}(z)\big) &=& \cfrac{a(z)}{2} \, , & {v_{x}}_{RMS}\big(f_{KV}(z)\big) &=& \cfrac{1}{2}\,\sqrt{\cfrac{\epsilon_{x}^{2}}{a^{2}(z)}+\big(\cfrac{\D a}{\D z}(z)\big)^{2}} \, , \\ y_{RMS}\big(f_{KV}(z)\big) &=& \cfrac{b(z)}{2} \, , & {v_{y}}_{RMS}\big(f_{KV}(z)\big) &=& \cfrac{1}{2}\,\sqrt{\cfrac{\epsilon_{y}^{2}}{b^{2}(z)}+\big(\cfrac{\D b}{\D z}(z)\big)^{2}} \, .
+\end{array}
+\end{equation}
+\end{leftbar}
+
+
+We assume from now that the initial distribution $f_{p}^{0}$ is of the form
+\begin{equation} \label{rescaled_f0}
+f_{p}^{0}(x,y,v_{x},v_{y}) = N\,\tilde{f}^{0}\big( \cfrac{x}{x_{0}}, \cfrac{y}{y_{0}}, \cfrac{v_{x}}{{v_{x}}_{0}}, \cfrac{v_{y}}{{v_{y}}_{0}} \big) \, ,
+\end{equation}
+where $N,x_{0},y_{0},{v_{x}}_{0},{v_{y}}_{0} > 0$ and where $\tilde{f}^{0} : \R^{4} \to \R$ is a given function such that
+\begin{equation} \label{sum1}
+\int_{\R^{4}} \tilde{f}^{0}(x,y,v_{x},v_{y})\, dx \, dy \, dv_{x} \, dv_{y} = 1 \, .
+\end{equation}
+
+\begin{leftbar}
+\textbf{Question 2.5.} Describe a procedure for computing $x_{0},y_{0},v_{x_{0}},v_{y_{0}}$ from the functions $\tilde{f}^{0}$, $a$ and $b$.
+\end{leftbar}
+
+
+As a consequence, the adaptation procedure is the following:
+\begin{enumerate}
+\item We consider the fixed parameters $q$, $m$, $I$, $E_{k}$, $\epsilon_{x}$, $\epsilon_{y}$, and a function $\tilde{f}^{0}:\R^{4} \to \R$ which satisfies (\ref{sum1}),
+\item We solve the envelope equations (\ref{envelope}) for obtaining $S$-periodic approximations of $a$, $\cfrac{\D a}{\D z}$, $b$, $\cfrac{\D b}{\D z}$,
+\item We compute $x_{0},y_{0},v_{x_{0}},v_{y_{0}}$ from $\tilde{f}^{0}$, $a$ and $b$,
+\item $(f_{KV},\mathbf{E}_{KV}^{s})$ is entirely defined and modelizes a particle beam which is equivalent to the beam modelized by the solution $(f,\mathbf{E}^{s})$ of (\ref{paraxial}) with $f_{p}^{0}$ defined in (\ref{rescaled_f0}).
+\end{enumerate}
+
+
+
+\subsection{Some examples of envelope equations}
+
+\subsubsection{Alternating gradient focusing with an external magnetic field}
+In this paragraph, the focusing channel is defined by
+\begin{equation} \label{alternate_gradient_magnetic}
+\mathbf{E}^{e} = 0 \, ,\qquad \mathbf{B}^{e}(z,x,y) = \left(
+\begin{array}{c}
+B'(z)\,y \\ B'(z)\,x \\ 0
+\end{array}
+\right) \, ,
+\end{equation}
+where $z \mapsto B'(z)$ is the derivative of a function $B$ which only depends on $z$ and which is $S$-periodic. Such a definition gives an \textit{alternating gradient focusing channel} since the sign of eigenvalues of the matrix $\nabla_{\mathbf{x}}\mathbf{B}^{e}$ changes periodically in $z$ according to the sign of $B'$. The envelope equations associated to this focusing channel are the equations (\ref{envelope}) with 
+\begin{equation}
+\kappa_{x}(z) = -\kappa_{y}(z) = \cfrac{q\,B'(z)}{\gamma_{z}\,m\,v_{z}} \, .
+\end{equation}
+\begin{leftbar}
+\textbf{Question 2.6.\footnotemark[2]} Prove this result (Hint: assume that $\mathbf{E}^{s} = \mathbf{E}_{KV}^{s}$ where $\mathbf{E}_{KV}^{s}$ is defined in (\ref{def_KV})).
+\end{leftbar}
+
+
+\subsubsection{Alternating gradient focusing with an external electric field}
+
+
+In this paragraph, we assume that the focusing of the particle beam is obtained by taking
+\begin{equation} \label{alternating_gradient_electric}
+\mathbf{E}^{e}(z,x,y) = \left(
+\begin{array}{c}
+E'(z)\,x \\ -E'(z)\,y
+\end{array}
+\right) \, , \qquad \mathbf{B}^{e} = 0 \, ,
+\end{equation}
+where $E'$ is the derivative of a function $E = E(z)$ which is $S$-periodic. The envelope equations associated to such a focusing channel are (\ref{envelope}) with
+\begin{equation}
+\kappa_{x}(z) = -\kappa_{y}(z) = -\cfrac{q\,E'(z)}{\gamma_{z}\,m\,v_{z}^{2}} \, .
+\end{equation}
+
+
+\begin{leftbar}
+\textbf{Question 2.7.\footnotemark[2]} Prove this result.
+\end{leftbar}
+
+
+
+
+\subsubsection{Uniform focusing with an external electric field}
+
+In this paragraph, we assume that the focusing of the particle beam is obtained by taking
+\begin{equation} \label{uniform_electric}
+\mathbf{E}^{e}(z,\mathbf{x}) = -\cfrac{\gamma_{z}\,m\,\omega_{0}^{2}}{q}\, \mathbf{x} \, , \qquad \mathbf{B}^{e} = 0 \, ,
+\end{equation}
+where $\omega_{0}$ is a positive constant. The envelope equations associated to this focusing channel are (\ref{envelope}) with
+\begin{equation}
+\kappa_{x}(z) = \kappa_{y}(z) = \cfrac{\omega_{0}^{2}}{v_{z}^{2}} \, .
+\end{equation}
+
+\begin{leftbar}
+\textbf{Question 2.8.\footnotemark[2]} Prove this result.
+\end{leftbar}
+
+
+
+
+
+\subsubsection{Periodic focusing with an external magnetic field}
+
+In this paragraph, we assume that the focusing of the particle beam is obtained by taking
+\begin{equation} \label{periodic_magnetic}
+\mathbf{E}^{e} = 0 \, , \qquad \mathbf{B}^{e}(z,x,y) = \left(
+\begin{array}{c}
+-\cfrac{1}{2}\,B'(z)\,x \\
+-\cfrac{1}{2}\,B'(z)\,y \\
+B(z)
+\end{array}
+\right) \, ,
+\end{equation}
+where $B = B(z)$ is a function which only depends on $z$ with first order derivative denoted by $B'$, and which is $S$-periodic. Assuming that the beam is axisymmetric, meaning that $a = b$ and $\epsilon_{x} = \epsilon_{y}$, the envelope equations which are associated to this focusing channel are
+\begin{equation}
+\cfrac{\D^{2}a}{\D z^{2}}(z) + \kappa_{x}(z) \, a(z) - \cfrac{K}{a(z)} - \cfrac{\epsilon_{x}^{2}}{a^{3}(z)} = 0 \, ,
+\end{equation}
+with
+\begin{equation}
+\kappa_{x}(z) = \cfrac{\omega_{L}^{2}(z)}{v_{z}^{2}} \, , \qquad \omega_{L}(z) = \cfrac{q\,B(z)}{2m\,\gamma_{z}} \, .
+\end{equation}
+
+\begin{leftbar}
+\textbf{Question 2.9.\footnotemark[2]} Prove this result.
+\end{leftbar}
+
+
+\footnotetext[2]{These questions are quite difficult so they are not taken into account for the evaluation. However, proposing a correct proof can induce a bonus.}
+
+
+
+
+\section{Semi-lagrangian scheme}
+\setcounter{equation}{0}
+
+\subsection{Strang time splitting}
+In this section, we define the numerical scheme which be use for discretizing the following transport equation
+\begin{equation} \label{transport_SL}
+\left\{
+\begin{array}{l}
+\cfrac{\D u}{\D z}(z,\mathbf{x},\mathbf{v}) + \bm{\mathcal{F}}(\mathbf{v}) \cdot \nabla_{\mathbf{x}}u(z,\mathbf{x},\mathbf{v}) + \Big( \mathbb{M}(z,\mathbf{x})\,\mathbf{v} + \bm{\mathcal{G}}(z,\mathbf{x})\Big) \cdot \nabla_{\mathbf{v}}u(z,\mathbf{x},\mathbf{v}) = 0 \, , \\
+u(z=0,\mathbf{x},\mathbf{v}) = u^{0}(\mathbf{x},\mathbf{v}) \, ,
+\end{array}
+\right.
+\end{equation}
+where $\bm{\mathcal{F}}$, $\mathbb{M}$ and $\bm{\mathcal{G}}$ are given and must satisfy
+\begin{equation}
+\begin{split}
+& \bm{\mathcal{F}}, \bm{\mathcal{G}} \in \big(\Cl^{2}\big([0,L_{z}] \times \R^{2})\big)^{2} \, , \\
+& \textnormal{Tr}(\mathbb{M}(z,\mathbf{x})) = 0 \, , \qquad \forall\,(z,\mathbf{x}) \in [0,L_{z}] \times \R^{2} \, ,\\
+& \mathbb{M} \in \Cl^{2}\big([0,L_{z}] \times \R^{2}; \mathcal{M}_{2}(\R)\big) \, .
+\end{split}
+\end{equation}
+Considering a uniform sequence $z^{n} = n\,\Delta z$ with a fixed $\Delta z$ and a subdomain $\Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}} \subset \R^{4}$, the \textit{semi-lagrangian} scheme is based on \textit{Strang time splitting} which writes as follows:
+\begin{equation}
+\forall\, (z,\mathbf{x},\mathbf{v}) \in [z^{n},z^{n+1}[ \times \Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}} \, , \qquad u(z,\mathbf{x},\mathbf{v}) \approx u_{h}(z,\mathbf{x},\mathbf{v}) = u^{n}(\mathbf{x},\mathbf{v}) \, , 
+\end{equation}
+where $u^{n}$ is recurrently defined by
+\begin{enumerate}
+\item Solve the transport equation
+\begin{equation} \label{advection_v}
+\left\{
+\begin{array}{l}
+\cfrac{\D \tilde{u}^{*}}{\D z}(z,\mathbf{x},\mathbf{v}) + \Big( \mathbb{M}(z,\mathbf{x})\,\mathbf{v} + \bm{\mathcal{G}}(z,\mathbf{x})\Big) \cdot \nabla_{\mathbf{v}}\tilde{u}^{*}(z,\mathbf{x},\mathbf{v}) = 0  \, , \\
+\tilde{u}^{*}(z=z^{n},\mathbf{x},\mathbf{v}) = u^{n}(\mathbf{x},\mathbf{v}) \, ,
+\end{array}
+\right.
+\end{equation}
+on $[z^{n},z^{n+1/2}] \times \Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}}$, then write
+\begin{equation}
+u^{*}(\mathbf{x},\mathbf{v}) = \tilde{u}^{*}(z^{n+1/2},\mathbf{x},\mathbf{v}) \, ,
+\end{equation}
+\item Solve the transport equation
+\begin{equation} \label{advection_x}
+\left\{
+\begin{array}{l}
+\cfrac{\D \tilde{u}^{**}}{\D z}(z,\mathbf{x},\mathbf{v}) + \bm{\mathcal{F}}(\mathbf{x}) \cdot \nabla_{\mathbf{x}}\tilde{u}^{**}(z,\mathbf{x},\mathbf{v}) = 0  \, , \\
+\tilde{u}^{**}(z=z^{n},\mathbf{x},\mathbf{v}) = u^{*}(\mathbf{x},\mathbf{v}) \, ,
+\end{array}
+\right.
+\end{equation}
+on $[z^{n},z^{n+1}] \times \Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}}$, then write
+\begin{equation}
+u^{**}(\mathbf{x},\mathbf{v}) = \tilde{u}^{**}(z^{n+1},\mathbf{x},\mathbf{v}) \, ,
+\end{equation}
+\item Solve the transport equation
+\begin{equation} \label{advection_v2}
+\left\{
+\begin{array}{l}
+\cfrac{\D \tilde{u}^{***}}{\D z}(z,\mathbf{x},\mathbf{v}) + \Big( \mathbb{M}(z,\mathbf{x})\,\mathbf{v} + \bm{\mathcal{G}}(z,\mathbf{x})\Big) \cdot \nabla_{\mathbf{v}}\tilde{u}^{***}(z,\mathbf{x},\mathbf{v}) = 0  \, , \\
+\tilde{u}^{***}(z=z^{n+1/2},\mathbf{x},\mathbf{v}) = u^{**}(\mathbf{x},\mathbf{v}) \, ,
+\end{array}
+\right.
+\end{equation}
+on $[z^{n+1/2},z^{n+1}] \times \Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}}$, then write
+\begin{equation}
+u^{n+1}(\mathbf{x},\mathbf{v}) = \tilde{u}^{***}(z^{n+1},\mathbf{x},\mathbf{v}) \, .
+\end{equation}
+\end{enumerate}
+
+
+\begin{leftbar}
+\textbf{Question 3.1.} Prove that the the solutions of (\ref{advection_v}), (\ref{advection_x}) and (\ref{advection_v2}) write
+\begin{equation}
+\begin{split}
+\tilde{u}^{*}(z,\mathbf{x},\mathbf{v}) &= u^{n}\big(\mathbf{x},\mathbf{V}(z^{n};\mathbf{x},\mathbf{v},z)\big) \, , \\
+\tilde{u}^{**}(z,\mathbf{x},\mathbf{v}) &= u^{*}\big(\mathbf{X}(z^{n};\mathbf{x},\mathbf{v},z),\mathbf{v}\big) \, , \\
+\tilde{u}^{***}(z,\mathbf{x},\mathbf{v}) &= u^{**}\big(\mathbf{x},\mathbf{V}(z^{n+1/2};\mathbf{x},\mathbf{v},z)\big) \, ,
+\end{split}
+\end{equation}
+with
+\begin{equation} \label{charac_solutions}
+\begin{split}
+\mathbf{V}(z;\mathbf{x},\mathbf{v},\zeta) &= \exp\Big( \int_{\zeta}^{z}\mathbb{M}(\theta,\mathbf{x})\,d\theta \Big)\, \Bigg[ \mathbf{v} + \int_{\zeta}^{z} \exp\Big(-\int_{\zeta}^{\theta} \mathbb{M}(\sigma,\mathbf{x})\,d\sigma \Big) \, \bm{\mathcal{G}}(\theta,\mathbf{x}) \, d\theta \Bigg] \, , \\
+\mathbf{X}(z;\mathbf{x},\mathbf{v},\zeta) &= \mathbf{x} + (z-\zeta)\,\bm{\mathcal{F}}(\mathbf{v}) \, .
+\end{split}
+\end{equation}
+\end{leftbar}
+
+
+\subsection{The semi-lagrangian scheme}
+
+\indent From now, we consider two given interpolation operators which are $\pi_{\mathbf{x}} : \R^{2} \times \R$, and $\pi_{\mathbf{v}} : \R^{2} \to \R$. We also consider a uniform mesh $(x_{i},y_{j},{v_{x}}_{k},{v_{y}}_{l})$ of the simulation domain $\Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}}$ with
+\begin{equation}
+x_{i} = i\,\Delta x \, , \quad y_{j} = j\,\Delta y \, , \quad {v_{x}}_{k} = k\,\Delta v_{x} \, , \quad {v_{y}}_{l} = l\,\Delta v_{y} \, ,
+\end{equation}
+such that $(x_{i},y_{j})$ (respectively $({v_{x}}_{k},{v_{y}}_{l})$) are the interpolations points of $\pi_{\mathbf{x}}$ (respectively $\pi_{\mathbf{v}}$). We assume that these operators satisfy at least
+\begin{equation}
+\begin{split}
+\forall\,f \in \Cl^{2}(\Omega_{\mathbf{x}}) \, ,  \qquad \| f-\pi_{\mathbf{x}}f\|_{L^{\infty}(\Omega_{\mathbf{x}})} \leq C_{\mathbf{x}} \, h^{2} \, , \qquad \| \pi_{\mathbf{x}}f\|_{L^{\infty}(\Omega_{\mathbf{x}})} \leq \| f\|_{L^{\infty}(\Omega_{\mathbf{x}})} \, , \\
+\forall\,g \in \Cl^{2}(\Omega_{\mathbf{y}}) \, ,  \qquad \| g-\pi_{\mathbf{v}}g\|_{L^{\infty}(\Omega_{\mathbf{v}})} \leq C_{\mathbf{v}} \, h^{2} \, , \qquad \| \pi_{\mathbf{v}}f\|_{L^{\infty}(\Omega_{\mathbf{v}})} \leq \| f\|_{L^{\infty}(\Omega_{\mathbf{v}})} \, ,
+\end{split}
+\end{equation}
+where $h = \max(\Delta x,\Delta y,\Delta v_{x},\Delta v_{y})$ and $C_{\mathbf{x}},C_{\mathbf{v}}$ are two positive constant which only depend on the mesh and the interpolation operators. Then, we define the following \textit{semi-lagrangian} scheme for the transport equation (\ref{transport_SL}) as follows:
+\begin{equation}
+\forall\, (z,\mathbf{x},\mathbf{v}) \in [z^{n},z^{n+1}[ \times \Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}} \, , \qquad u(z,\mathbf{x},\mathbf{v}) \approx u_{h}(z,\mathbf{x},\mathbf{v}) = u^{n}(\mathbf{x},\mathbf{v}) \, , 
+\end{equation}
+where the $u^{n}$ are computed as follows:
+\begin{enumerate}
+\item Half-advection in $\mathbf{v}$:
+\begin{equation} \label{adv_v_1}
+u^{*}(\mathbf{x},\mathbf{v}) = \pi_{\mathbf{v}}u^{n}\big(\mathbf{x}, \mathbf{V}(z^{n};\mathbf{x},\mathbf{v},z^{n+1/2}) \big) \, ,
+\end{equation}
+\item Advection in $\mathbf{x}$:
+\begin{equation} \label{adv_x}
+u^{**}(\mathbf{x},\mathbf{v}) = \pi_{\mathbf{x}}u^{*}\big(\mathbf{X}(z^{n};\mathbf{x},\mathbf{v},z^{n+1}),\mathbf{v}\big) \, ,
+\end{equation}
+\item Half-advection in $\mathbf{v}$:
+\begin{equation} \label{adv_v_2}
+u^{n+1}(\mathbf{x},\mathbf{v}) = \pi_{\mathbf{v}}u^{**}\big(\mathbf{x}, \mathbf{V}(z^{n+1/2};\mathbf{x},\mathbf{v},z^{n+1}) \big) \, .
+\end{equation}
+\end{enumerate}
+In these advections, $\mathbf{X}(z;\mathbf{x},\mathbf{v},\zeta)$ and $\mathbf{V}(z;\mathbf{x},\mathbf{v},\zeta)$ are computed by using the formulae (\ref{charac_solutions}). However, in most of cases, the integrals within (\ref{charac_solutions}) can be quite hard to be computed. In such a case, the semi-lagrangian scheme above is replaced by
+\begin{enumerate}
+\item Half-advection in $\mathbf{v}$:
+\begin{equation}
+u^{*}(\mathbf{x},\mathbf{v}) = \pi_{\mathbf{v}}u^{n}\Big(\mathbf{x}, \big(\mathbb{I} + \cfrac{\Delta z}{2}\,\mathbb{M}(z^{n},\mathbf{x})\big)^{-1} \, \big(\mathbf{v} - \cfrac{\Delta z}{2}\,\bm{\mathcal{G}}(z^{n},\mathbf{x})\big) \Big) \, ,
+\end{equation}
+\item Advection in $\mathbf{x}$:
+\begin{equation}
+u^{**}(\mathbf{x},\mathbf{v}) = \pi_{\mathbf{x}}u^{*}\big(\mathbf{x} - \Delta z \, \bm{\mathcal{F}}(\mathbf{v}),\mathbf{v}\big) \, ,
+\end{equation}
+\item Half-advection in $\mathbf{v}$:
+\begin{equation}
+u^{n+1}(\mathbf{x},\mathbf{v}) = \pi_{\mathbf{v}}u^{**}\Big(\mathbf{x}, \big(\mathbb{I} - \cfrac{\Delta z}{2}\,\mathbb{M}(z^{n+1},\mathbf{x})\big) \, \mathbf{v} - \cfrac{\Delta z}{2}\,\bm{\mathcal{G}}(z^{n+1},\mathbf{x}) \Big) \, .
+\end{equation}
+\end{enumerate}
+
+
+\begin{leftbar}
+\textbf{Question 3.2.} Defining the operators
+\begin{equation}
+\begin{array}{rcccl}
+\tau_{1}(z,\Delta z) & : & u(\mathbf{x},\mathbf{v}) & \longmapsto & u\Big(\mathbf{x}, \big(\mathbb{I} + \Delta z\,\mathbb{M}(z,\mathbf{x})\big)^{-1} \, \big(\mathbf{v} - \Delta z\,\bm{\mathcal{G}}(z,\mathbf{x})\big) \Big) \, , \\ \\
+\tau_{1}^{h}(z,\Delta z) & : & u(\mathbf{x},\mathbf{v}) & \longmapsto & \pi_{\mathbf{v}}u\Big(\mathbf{x}, \big(\mathbb{I} + \Delta z\,\mathbb{M}(z,\mathbf{x})\big)^{-1} \, \big(\mathbf{v} - \Delta z \, \bm{\mathcal{G}}(z,\mathbf{x})\big) \Big) \, , \\ \\
+\tau_{2}(\Delta z) & : & u(\mathbf{x},\mathbf{v}) & \longmapsto & u\big(\mathbf{x} - \Delta z \, \bm{\mathcal{F}}(\mathbf{v}),\mathbf{v}\big) \, , \\ \\
+\tau_{2}^{h}(\Delta z) & : & u(\mathbf{x},\mathbf{v}) & \longmapsto & \pi_{\mathbf{x}}u\big(\mathbf{x} - \Delta z \, \bm{\mathcal{F}}(\mathbf{v}),\mathbf{v}\big) \, , \\ \\
+\tau_{3}(z,\Delta z) & : & u(\mathbf{x},\mathbf{v}) & \longmapsto & u\Big(\mathbf{x}, \big(\mathbb{I} - \Delta z\,\mathbb{M}(z,\mathbf{x})\big) \, \mathbf{v} - \Delta z \, \bm{\mathcal{G}}(z,\mathbf{x}) \Big) \, , \\ \\
+\tau_{3}^{h}(z,\Delta z) & : & u(\mathbf{x},\mathbf{v}) & \longmapsto & \pi_{\mathbf{v}}u\Big(\mathbf{x}, \big(\mathbb{I} - \Delta z\,\mathbb{M}(z,\mathbf{x})\big) \, \mathbf{v} - \Delta z \, \bm{\mathcal{G}}(z,\mathbf{x}) \Big) \, ,
+\end{array}
+\end{equation}
+prove that there exists 2 constants $C_{1},C_{2} > 0$ which do not depend on $n$, $\Delta z$ nor $h$ and such that
+\begin{equation}
+\big\|u(z^{n+1},\cdot,\cdot)-\tau_{3}(z^{n+1},\cfrac{\Delta z}{2}) \circ \tau_{2}(\Delta z) \circ \tau_{1}(z^{n},\cfrac{\Delta z}{2}) \, u(z^{n},\cdot,\cdot)\big\|_{L^{\infty}(\Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}})} \leq C_{1}\,\Delta z^{3} \, ,
+\end{equation}
+\begin{equation}
+\begin{split}
+\Big\|\tau_{3}(z^{n+1},\cfrac{\Delta z}{2}) \circ &\tau_{2}(\Delta z) \circ \tau_{1}(z^{n},\cfrac{\Delta z}{2}) \, u(z^{n},\cdot,\cdot) \\
+&- \tau_{3}^{h}(z^{n+1},\cfrac{\Delta z}{2}) \circ \tau_{2}^{h}(\Delta z) \circ \tau_{1}^{h}(z^{n},\cfrac{\Delta z}{2}) \, u(z^{n},\cdot,\cdot) \Big\|_{L^{\infty}(\Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}})} \\
+&\qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad \leq C_{2}\, h^{2} \, \big\|u(z^{n},\cdot,\cdot) \big\|_{L^{\infty}(\Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}})} \, .
+\end{split}
+\end{equation}
+and
+\begin{equation}
+\Big\|\tau_{3}^{h}(z^{n+1},\cfrac{\Delta z}{2}) \circ \tau_{2}^{h}(\Delta z) \circ \tau_{1}^{h}(z^{n},\cfrac{\Delta z}{2}) \, \big(u(z^{n},\cdot,\cdot)-u^{n}\big) \Big\|_{L^{\infty}(\Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}})} \leq \big\|u(z^{n},\cdot,\cdot)-u^{n}\big\|_{L^{\infty}(\Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}})} \, .
+\end{equation}
+Conclude that there exists a positive constant $C$ which does not depend on $\Delta z$ nor $h$ and such that
+\begin{equation}
+\forall\, n\, , \qquad \big\|u(z^{n},\cdot,\cdot)-u^{n}\big\|_{L^{\infty}(\Omega_{\mathbf{x}} \times \Omega_{\mathbf{v}})} \leq C \, \big( \Delta z^{2} + \cfrac{h^{2}}{\Delta z}\big) \, .
+\end{equation}
+\end{leftbar}
+
+
+
+\section{Local cubic spline interpolation}
+\setcounter{equation}{0}
+
+In this section, we focus on the construction of the interpolations operators $\pi_{\mathbf{x}}$ and $\pi_{\mathbf{v}}$ we have mentioned in the previous lines. We choose them as \textit{local cubic spline} interpolation operators.
+
+\subsection{The 1D case}
+
+Assume we are given a uniform mesh $x_{0},\dots,x_{N}$ of the 1D interval $[x_{0},x_{N}]$, such that $x_{i} = i\,\Delta x$ with $\Delta x = \cfrac{x_{N}-x_{0}}{N+1}$. The cubic spline interpolation method on $[x_{0},x_{N}]$ which is based on the points $x_{i}$ is the following: fixing a function $f \in \Cl^{2}\big([x_{0},x_{N}]\big)$, we approach $f$ by the spline function $s$ defined by
+\begin{equation}
+\forall\,x \in [x_{0},x_{N}]\, , \qquad f(x) \approx s(x) = \sum_{i\,=\,-1}^{N+1} \eta_{i}\,B\big(\cfrac{x-x_{i}}{\Delta x}\big) \, ,
+\end{equation}
+where the function $B$ is the reference cubic spline defined by
+\begin{equation}
+B(x) = \left\{
+\begin{array}{ll}
+\cfrac{(2-|x|)^{3}}{6} \, , & \textnormal{if $1 \leq |x| \leq 2$,} \\
+\cfrac{2}{3}-x^{2} + \cfrac{|x|^{3}}{2} \, , & \textnormal{if $0 \leq |x| < 1$,} \\
+0 & \textnormal{else,}
+\end{array}
+\right.
+\end{equation}
+and where the weights $\eta_{i}$ are completely defined by the conditions
+\begin{equation} \label{interpolation_1D}
+f(x_{i}) = s(x_{i}) \, , \qquad \forall\, i=0,\dots,N \, ,
+\end{equation}
+and the Hermite boundary conditions
+\begin{equation} \label{Hermite_1D}
+f'(x_{0}) = s'(x_{0}) \, , \qquad f'(x_{N}) = s'(x_{N}) \, .
+\end{equation}
+
+
+\begin{leftbar}
+\textbf{Question 4.1.} Denoting by $\bm{\eta} \in \R^{N+3}$ the vector $(\eta_{-1},\dots,\eta_{N+1})^{T}$, prove that $\bm{\eta}$ satisfies $\mathbb{A}(\Delta x)\,\bm{\eta} = \mathbf{F}$ with
+\begin{equation}
+\mathbf{F} = \big( f'(x_{0}),f(x_{0}),\dots,f(x_{N}),f'(x_{N})\big)^{T} \, ,
+\end{equation}
+and
+\begin{equation}
+\mathbb{A}(\Delta x) = \cfrac{1}{6}\,\left(
+\begin{array}{cccccccccc}
+-\cfrac{3}{\Delta x} & 0      & \cfrac{3}{\Delta x} & 0      & \dots  & \dots  & \dots  & \dots                & \dots  & 0 \\
+1                    & 4      & 1                   & 0      &        &        &        &                      &        & \vdots \\
+0                    & 1      & 4                   & 1      & 0      &        &        &                      &        & \vdots \\
+\vdots               & \ddots & \ddots              & \ddots & \ddots & \ddots &        &                      &        & \vdots \\
+\vdots               &        & \ddots              & \ddots & \ddots & \ddots & \ddots &                      &        & \vdots \\
+\vdots               &        &                     & \ddots & \ddots & \ddots & \ddots & \ddots               &        & \vdots \\
+\vdots               &        &                     &        & \ddots & \ddots & \ddots & \ddots               & \ddots & \vdots \\
+\vdots               &        &                     &        &        & \ddots & \ddots & \ddots               & \ddots & 0 \\
+\vdots               &        &                     &        &        &        & 0      & 1                    & 4      & 1 \\
+0                    & \dots  & \dots               & \dots  & \dots  & \dots  & 0      & -\cfrac{3}{\Delta x} & 0      & \cfrac{3}{\Delta x}
+\end{array}
+\right) \, .
+\end{equation}
+\end{leftbar}
+
+
+\begin{leftbar}
+\textbf{Question 4.2.} Prove that the $LU$ decomposition of $\mathbb{A}(\Delta x)$ writes
+\begin{equation}
+L = \left(
+\begin{array}{ccccccccc}
+1                    & 0     & 0      & \dots  & \dots  & \dots  & \dots                     & \dots                      & 0 \\
+-\cfrac{\Delta x}{3} & 1     & 0      &        &        &        &                           &                            & \vdots \\
+0                    & l_{1} & 1      & 0      &        &        &                           &                            & \vdots \\
+0                    & 0     & l_{2}  & 1      & 0      &        &                           &                            & \vdots \\
+\vdots               &       & \ddots & \ddots & \ddots & \ddots &                           &                            & \vdots \\
+\vdots               &       &        & \ddots & \ddots & \ddots & \ddots                    &                            & \vdots \\
+\vdots               &       &        &        & \ddots & \ddots & \ddots                    & \ddots                     & \vdots \\
+\vdots               &       &        &        &        & 0      & l_{N}                     & 1                          & 0 \\
+0                    & \dots & \dots  & \dots  &  \dots & 0      & -\cfrac{3l_{N}}{\Delta x} & \cfrac{3l_{N+1}}{\Delta x} & 1
+\end{array}
+\right) \, ,
+\end{equation}
+\begin{equation}
+U = \cfrac{1}{6} \, \left(
+\begin{array}{ccccccccc}
+-\cfrac{3}{\Delta x} & 0     & \cfrac{3}{\Delta x} & 0      & \dots  & \dots  & \dots   & \dots   & 0 \\
+0                    & d_{1} & 2                   & 0      &        &        &         &         & \vdots \\
+0                    & 0     & d_{2}               & 1      & 0      &        &         &         & \vdots \\
+\vdots               &       & \ddots              & \ddots & \ddots & \ddots &         &         & \vdots \\
+\vdots               &       &                     & \ddots & \ddots & \ddots & \ddots  &         & \vdots \\
+\vdots               &       &                     &        & \ddots & \ddots & \ddots  & \ddots  & \vdots \\
+\vdots               &       &                     &        &        & \ddots & \ddots  & \ddots  & 0 \\
+\vdots               &       &                     &        &        &        & 0       & d_{N+1} & 1 \\
+0                    & \dots & \dots               & \dots  & \dots  & \dots  & 0       & 0       & \cfrac{3d_{N+2}}{\Delta x}
+\end{array}
+\right) \, ,
+\end{equation}
+where $l_{1},\dots,l_{N+1}$ and $d_{1},\dots,d_{N+2}$ satisfy
+\begin{equation}
+\left\{
+\begin{array}{l}
+d_{1} = 4 \, , \quad d_{2} = \cfrac{7}{2} \, , \\
+l_{i} = \cfrac{1}{d_{i}} \, , \quad \forall\,i=1,\dots,N \, , \\
+d_{i+1} = 4-l_{i} \, , \quad \forall\, i=2,\dots,N \, , \\
+l_{N+1} = \cfrac{1}{d_{N}\,d_{N+1}} \, , \\
+d_{N+2} = 1-l_{N+1} \, .
+\end{array}
+\right.
+\end{equation}
+\end{leftbar}
+
+
+\begin{leftbar}
+\textbf{Question 4.3.} Prove that, $\forall\,i=8,\dots,N-8$,
+\begin{equation}
+\begin{split}
+s'(x_{i}) &= \cfrac{15126}{18817\Delta x}\,\big(f(x_{i+1})-f(x_{i-1})\big) - \cfrac{4053}{18817\Delta x}\,\big(f(x_{i+2})-f(x_{i-2})\big) \\
+&\quad + \cfrac{1086}{18817\Delta x}\,\big(f(x_{i+3})-f(x_{i-3})\big) - \cfrac{291}{18817\Delta x}\,\big(f(x_{i+4})-f(x_{i-4})\big) \\
+&\quad + \cfrac{78}{18817\Delta x}\,\big(f(x_{i+5})-f(x_{i-5})\big) - \cfrac{21}{18817\Delta x}\,\big(f(x_{i+6})-f(x_{i-6})\big) \\
+&\quad + \cfrac{6}{18817\Delta x}\,\big(f(x_{i+7})-f(x_{i-7})\big) - \cfrac{3}{37634\Delta x}\,\big(f(x_{i+8})-f(x_{i-8})\big) \\
+&\quad + \cfrac{1}{37634}\,\big(s'(x_{i+8})+s'(x_{i-8})\big) \, .
+\end{split}
+\end{equation}
+\end{leftbar}
+
+
+
+\begin{leftbar}
+\textbf{Question 4.4.} Prove that we have the following expansion:
+\begin{equation}
+s'(x_{i}) = \cfrac{-f(x_{i+2})+8 f(x_{i+1})- 8 f(x_{i-1}) + f(x_{i-2})}{12\Delta x} + \mathcal{O}(\Delta x^{3})\, ,
+\end{equation}
+and deduce from that a third order approximation of $s'(x_{i})$ of the form
+\begin{equation}
+s'(x_{i}) \approx \cfrac{1}{\Delta x}\, \sum_{j\,=\,1}^{10} \, \omega_{j}\,\big(f(x_{i+j}-f(x_{i-j})\big) \, ,
+\end{equation}
+with
+\begin{equation}
+\begin{array}{lllll}
+\omega_{1} = \cfrac{15126}{18817} \, , & \omega_{2} = -\cfrac{4053}{18817} \, , & \omega_{3} = \cfrac{1086}{18817} \, , & \omega_{4} = -\cfrac{291}{18817} \, , & \omega_{5} = \cfrac{78}{18817} \, , \\
+\omega_{6} = -\cfrac{503}{415608} \, , & \omega_{7} = \cfrac{17}{56451} \, , & \omega_{8} = -\cfrac{3}{37634} \, , & \omega_{9} = \cfrac{1}{56451} \, , & \omega_{10} = -\cfrac{1}{415608} \, .
+\end{array}
+\end{equation}
+\end{leftbar}
+
+
+\subsection{The 2D case}
+
+Assume we are given a uniform mesh $(x_{i},y_{j})$ of the domain $[x_{0},x_{N_{x}}] \times [y_{0},y_{N_{y}}]$ such that $x_{i} = i\,\Delta x$ and $y_{j} = j\,\Delta y$ with $\Delta x = \cfrac{x_{N_{x}}-x_{0}}{N_{x}+1}$ and $\Delta y = \cfrac{y_{N_{y}}-y_{0}}{N_{y}+1}$. The 2D cubic spline interpolation on $[x_{0},x_{N_{x}}] \times [y_{0},y_{N_{y}}]$ which is based on $(x_{i},y_{j})$ is the following: fixing $f \in \Cl^{2}\big([x_{0},x_{N_{x}}] \times [y_{0},y_{N_{y}}]\big)$, we approach $f$ by the spline $s$ defined by
+\begin{equation}
+\forall\, (x,y) \in [x_{0},x_{N_{x}}] \times [y_{0},y_{N_{y}}] \, , \qquad f(x,y) \approx s(x,y) = \sum_{i\,=\,-1}^{N_{x}+1} \sum_{j\,=\,-1}^{N_{y}+1} \eta_{i,j}\,B\big(\cfrac{x-x_{i}}{\Delta x}\big) \, B\big(\cfrac{y-y_{j}}{\Delta y}\big) \, ,
+\end{equation}
+where the weights $\eta_{i,j}$ are computed by using the conditions
+\begin{equation} \label{conditions_interpolation_2D}
+f(x_{i},y_{j}) = s(x_{i},y_{j}) \, , \qquad \forall\, i=0,\dots,N_{x}\,, \quad \forall\,j=0,\dots,N_{y} \, ,
+\end{equation}
+and the Hermite boundary conditions
+\begin{equation} \label{conditions_Hermite_2D}
+\begin{array}{rcll}
+\cfrac{\D f}{\D x}(x_{i},y_{j}) &=& \cfrac{\D s}{\D x}(x_{i},y_{j}) \, , & \forall\, j=0,\dots,N_{y} \, , \quad i=0,N_{x} \, , \\
+\cfrac{\D f}{\D y}(x_{i},y_{j}) &=& \cfrac{\D s}{\D y}(x_{i},y_{j}) \, , & \forall\, i=0,\dots,N_{x} \, , \quad j=0,N_{y} \, , \\
+\cfrac{\D^{2}f}{\D x\,\D y}(x_{i},y_{j}) &=& \cfrac{\D^{2}s}{\D x\,\D y}(x_{i},y_{j}) \, , & (i,j) \in \Big\{(0,0),(0,N_{y}),(N_{x},0),(N_{x},N_{y})\Big\}\, .
+\end{array}
+\end{equation}
+
+\begin{leftbar}
+\textbf{Question 4.5.} Describe a procedure for computing all the $\eta_{i,j}$ by using the conditions (\ref{conditions_interpolation_2D}) and (\ref{conditions_Hermite_2D}).
+\end{leftbar}
+
+
+
+
+\subsection{Towards a parallel implementation of the 2D interpolation}
+
+We consider a 2D domain $\Omega = [x_{min},x_{max}] \times [y_{min},y_{max}]$ which is decomposed into a set of subdomains $\Omega^{(I,J)} = [x^{(I)},x^{(I+1)}] \times [y^{(J)},y^{(J+1)}]$, $I = 0,\dots,P_{x}-1$, $J = 0,\dots,P_{y}-1$, such that
+\begin{equation}
+x^{(I)} = x_{min} + I\,\cfrac{x_{max}-x_{min}}{P_{x}} \, , \qquad y^{(J)} = y_{min} + J\,\cfrac{y_{max}-y_{min}}{P_{y}} \, ,
+\end{equation}
+where $P_{x}, P_{y} > 0$ are respectively the numbers of CPUs which are used in $x$-direction and $y$-direction. Then, we can associate to each CPU a couple $(I,J) \in \{0,\dots,P_{x}-1\} \times \{0,\dots,P_{y}-1\}$ and a subdomain $\Omega^{(I,J)}$. \\
+\indent We assume that each subdomain $\Omega^{(I,J)}$ is meshed by $(x_{i}^{(I)},y_{j}^{(J)})$ with
+\begin{equation}
+\begin{split}
+x_{i}^{(I)} = x^{(I)} + i\,\Delta x \, , \qquad \forall\, i=0,\dots,N_{x} \, , \\
+y_{j}^{(J)} = y^{(J)} + j\,\Delta j \, , \qquad \forall\, j=0,\dots,N_{y} \, , 
+\end{split}
+\end{equation}
+where $\Delta x$ and $\Delta y$ are defined by
+\begin{equation}
+\Delta x = \cfrac{x_{max}-x_{min}}{P_{x}\,(N_{x}+1)} \, , \qquad \Delta y = \cfrac{y_{max}-y_{min}}{P_{y}\,(N_{y}+1)} \, ,
+\end{equation}
+where $N_{x},N_{y} \in \N_{\geq \,10}$. \\
+
+\indent The goal is to build an interpolation operator $\pi$ on the whole domain $\Omega$ such that, for any function $f \in \Cl^{2}(\Omega)$, $\pi f$ is a cubic spline $s^{(I,J)}$ when it is restricted to a subdomain $\Omega^{(I,J)}$. We also assume that the interpolation operator $\pi$ is periodic on $\Omega$. Since the final goal is to use it on advected points like in (\ref{adv_v_1}), (\ref{adv_x}) and (\ref{adv_v_2}), it would be useful that the interpolation area of $s^{(I,J)}$ be $[x_{0}^{(I)}-\Delta x, x_{N_{x}}^{(I)}+\Delta x] \times [y_{0}^{(J)}-\Delta y, y_{N_{y}}^{(J)}+\Delta y]$ instead of $\Omega^{(I,J)}$. As a consequence, for any $(I,J)$, the cubic spline $s^{(I,J)}$ will write
+\begin{equation}
+s^{(I,J)}(x,y) = \sum_{k\,=\,-2}^{N_{x}+2} \sum_{l\,=\,-2}^{N_{y}+2} \eta_{k,l}^{(I,J)}\,B\big(\cfrac{x-x_{k}^{(I)}}{\Delta x}\big) \, B\big(\cfrac{y-y_{l}^{(J)}}{\Delta y}\big) \, ,
+\end{equation}
+and the coefficients $\eta_{k,l}$ are computed thanks to
+\begin{equation}
+\hspace{-0.5cm} \left\{
+\begin{array}{rcll}
+s^{(I,J)}(x_{i}^{(I)},y_{j}^{(J)}) &=& f(x_{i}^{(I)},y_{j}^{(J)}) \, , & \forall\, (i,j) \in \{-1,\dots,N_{x}+1\} \times \{-1,\dots,N_{y}+1\} \, , \\ \\
+\cfrac{\D s^{(I,J)}}{\D x}(x_{i}^{(I)},y_{j}^{(J)}) &=& \cfrac{\D f}{\D x}(x_{i}^{(I)},y_{j}^{(J)}) \, , & \forall\, (i,j) \in \{ -1,N_{x}+1\} \times \{-1,\dots,N_{y}+1\} \, , \\ \\
+\cfrac{\D s^{(I,J)}}{\D y}(x_{i}^{(I)},y_{j}^{(J)}) &=& \cfrac{\D f}{\D y}(x_{i}^{(I)},y_{j}^{(J)}) \, , & \forall\, (i,j) \in \{ -1,\dots,N_{x}+1\} \times \{-1,N_{y}+1\} \, , \\ \\
+\cfrac{\D^{2}s^{(I,J)}}{\D x\,\D y}(x_{i}^{(I)},y_{j}^{(J)}) &=& \cfrac{\D^{2}f}{\D x\,\D y}(x_{i}^{(I)},y_{j}^{(J)}) \, , & \forall\, (i,j) \in \{ -1,N_{x}+1\} \times \{ -1,N_{y}+1\} \, .
+\end{array}
+\right.
+\end{equation}
+
+\textit{ \\ }
+
+\begin{leftbar}
+\textbf{Question 4.6.} Assuming that, for all couple $(I,J) \in \{0,\dots,P_{x}-1\}\times\{0,\dots,P_{y}-1\}$, the CPU $(I,J)$ only knows the values $f(x_{i}^{(I)},y_{j}^{(J)})$ for $i=0,\dots,N_{x}$ and $j=0,\dots,N_{y}$, describe a parallelized procedure which allows the CPU $(I,J)$ to compute the following approximations:
+\begin{itemize}
+\item For any $(i,j) \in \{-1,N_{x}+1\} \times \{-1,\dots,N_{y}+1\}$, 
+\begin{equation} \label{conditions_Hermite_2D_local_1}
+\cfrac{\D f}{\D x}(x_{i}^{(I)},y_{j}^{(J)}) \approx \cfrac{1}{\Delta x}\, \sum_{k\,=\,1}^{10} \omega_{k}\,\big(f(x_{i+k}^{(I)},y_{j}^{(J)}) - f(x_{i-k}^{(I)},y_{j}^{(J)}) \big) \, ,
+\end{equation}
+\item For any $(i,j) \in \{-1,\dots,N_{x}+1\} \times \{-1,N_{y}+1\}$,
+\begin{equation} \label{conditions_Hermite_2D_local_2}
+\cfrac{\D f}{\D y}(x_{i}^{(I)},y_{j}^{(J)}) \approx \displaystyle \cfrac{1}{\Delta y}\, \sum_{l\,=\,1}^{10} \omega_{l}\,\big(f(x_{i}^{(I)},y_{j+l}^{(J)}) - f(x_{i}^{(I)},y_{j-l}^{(J)}) \big) \, ,
+\end{equation}
+\item For any $(i,j) \in \{-1,N_{x}+1\} \times \{-1,N_{y}+1\}$,
+\begin{equation} \label{conditions_Hermite_2D_local_3}
+\begin{split}
+\cfrac{\D^{2}f}{\D x\,\D y}(x_{i}^{(I)},y_{j}^{(J)}) \approx \cfrac{1}{\Delta x\,\Delta y} \, \sum_{k\,=\,1}^{10} \sum_{l\,=\,1}^{10} \omega_{k}\,\omega_{l}\, \big(&f(x_{i+k}^{(I)},y_{j+l}^{(J)}) - f(x_{i-k}^{(I)},y_{j+l}^{(J)}) \\
+&- f(x_{i+k}^{(I)},y_{j-l}^{(J)}) + f(x_{i-k}^{(I)},y_{j-l}^{(J)}) \big)\, .
+\end{split}
+\end{equation}
+\end{itemize}
+In particular, we will pay attention to the data which are transfered between the CPUs.
+\end{leftbar}
+
+
+
+\begin{leftbar}
+\textbf{Question 4.7.} Assuming that
+\begin{displaymath}
+\left\{
+\begin{array}{ll}
+f(x_{i}^{(I)},y_{j}^{(J)}) \, , & \forall\, (i,j) \in \{-1,\dots,N_{x}+1\} \times \{-1,\dots,N_{y}+1\} \, , \\ \\
+\cfrac{\D f}{\D x}(x_{i}^{(I)},y_{j}^{(J)}) \, , & \forall\, (i,j) \in \{ -1,N_{x}+1\} \times \{-1,\dots,N_{y}+1\} \, , \\ \\
+\cfrac{\D f}{\D y}(x_{i}^{(I)},y_{j}^{(J)}) \, , & \forall\, (i,j) \in \{ -1,\dots,N_{x}+1\} \times \{-1,N_{y}+1\} \, , \\ \\
+\cfrac{\D^{2}f}{\D x\,\D y}(x_{i}^{(I)},y_{j}^{(J)}) \, , & \forall\, (i,j) \in \{ -1,N_{x}+1\} \times \{ -1,N_{y}+1\} \, ,
+\end{array}
+\right.
+\end{displaymath}
+are known, write the procedure leading to the complete definition of $s^{(I,J)}$ on $[x_{0}^{(I)}-\Delta x, x_{N_{x}}^{(I)}+\Delta x] \times [y_{0}^{(J)}-\Delta y, y_{N_{y}}^{(J)}+\Delta y]$.
+\end{leftbar}
+
+
+
+
+
+\section{Resolution of the Laplace equation}
+\setcounter{equation}{0}
+
+In this paragraph, we focus on the numerical resolution of
+\begin{equation} \label{Laplace}
+-\Delta_{\mathbf{x}}\phi = \rho \, , \qquad -\nabla_{\mathbf{x}}\phi = \mathbf{E} \, ,
+\end{equation}
+coupled with periodic boundary conditions for $\phi$ and $\mathbf{E}$. In this system, $\rho$ is analytically given, and $\Omega = [x_{min},x_{max}] \times [y_{min},y_{max}]$ is meshed by $(x_{i},y_{j})_{i,j}$ defined by \\
+\begin{equation}
+x_{i} = x_{min} + i\, \Delta x \, , \qquad y_{j} = y_{min} + j\, \Delta y \, .
+\end{equation}
+with $\Delta x = \cfrac{x_{max}-x_{min}}{n_{x}+1}$ and $\Delta y = \cfrac{y_{max}-y_{min}}{n_{y}+1}$
+
+\begin{leftbar}
+\textbf{Question 5.1.} Describe the numerical approximation of $\phi$ by a finite difference method based on the expansion:
+\begin{equation}
+f''(x) = \cfrac{f(x+\Delta x)-2f(x)+f(x-\Delta x)}{\Delta x^{2}} + \mathcal{O}(\Delta x^{2}) \, ,
+\end{equation}
+and on the periodic boundary conditions. Write this method under the form $\mathbb{A}\,\bm{\phi} = \bm{\rho}$ with
+\begin{equation}
+\bm{\phi} = \left(
+\begin{array}{c}
+\phi_{0,0} \\ \vdots \\ \phi_{n_{x},0} \\ \vdots \\ \phi_{0,n_{y}} \\ \vdots \\ \phi_{n_{x},n_{y}}
+\end{array}
+\right) \in \R^{(n_{x}+1)(n_{y}+1)} \, , \qquad \bm{\rho} = \left(
+\begin{array}{c}
+\rho(x_{0},y_{0}) \\ \vdots \\ \rho(x_{n_{x}},y_{0}) \\ \vdots \\ \rho(x_{0},y_{n_{y}}) \\ \vdots \\ \rho(x_{n_{x}},y_{n_{y}})
+\end{array}
+\right) \in \R^{(n_{x}+1)(n_{y}+1)} \, ,
+\end{equation}
+and prove that the matrix $\mathbb{A}$ is invertible.
+\end{leftbar}
+
+
+\begin{leftbar}
+\textbf{Question 5.2.} Describe a second order accurate finite difference method for obtaining an approximation of $\mathbf{E}$ from $\phi$.
+\end{leftbar}
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Numerical results}
+\setcounter{equation}{0}
+
+
+\subsection{Description of the whole numerical scheme}
+
+Consider a 4D simulation domain $\Omega = [x_{min},x_{max}] \times [y_{min},y_{max}] \times [{v_{x}}_{min},{v_{x}}_{max}] \times [{v_{y}}_{min},{v_{y}}_{max}]$ which is subdivided into a family of 4D subdomains $\Omega^{(I,J,K,L)} = [x^{(I)},x^{(I+1)}] \times [y^{(J)},y^{(J+1)}] \times [v_{x}^{(K)},v_{x}^{(K+1)}] \times [v_{y}^{(L)},v_{y}^{(L+1)}]$ with
+\begin{equation}
+\begin{split}
+x^{(I)} = x_{min} + I\,\cfrac{x_{max}-x_{min}}{P_{x}} \, &, \quad y^{(J)} = y_{min} + J\,\cfrac{y_{max}-y_{min}}{P_{y}} \, , \\
+v_{x}^{(K)} = {v_{x}}_{min} + K\,\cfrac{{v_{x}}_{max}-{v_{x}}_{min}}{P_{v_{x}}} \, &, \quad v_{y}^{(L)} = {v_{y}}_{min} + L\,\cfrac{{v_{y}}_{max}-{v_{y}}_{min}}{P_{v_{y}}} \, .
+\end{split}
+\end{equation}
+We consider the 4D mesh constituted of the quadruplets $(x_{i}^{(I)},y_{j}^{(J)},{v_{x}}_{k}^{(K)},{v_{y}}_{l}^{(L)})$ where
+\begin{equation}
+\begin{split}
+x_{i}^{(I)} = x^{(I)} + i\,\Delta x \, &, \quad y_{j}^{(J)} = y^{(J)} + j\,\Delta y \, , \\
+{v_{x}}_{k}^{(K)} = {v_{x}}^{(K)} + k\,\Delta v_{x} \, &, \quad {v_{y}}_{l}^{(L)} = {v_{y}}^{(L)} + l\,\Delta v_{y} \, ,
+\end{split}
+\end{equation}
+with
+\begin{equation}
+\Delta x = \cfrac{x_{max}-x_{min}}{P_{x}\,(N_{x}+1)}\, , \quad \Delta y = \cfrac{y_{max}-y_{min}}{P_{y}\,(N_{y}+1)} \, , \quad \Delta v_{x} = \cfrac{{v_{x}}_{max}-{v_{x}}_{min}}{P_{v_{x}}\,(N_{v_{x}}+1)} \, , \quad \Delta v_{y} = \cfrac{{v_{y}}_{max}-{v_{y}}_{min}}{P_{v_{y}}\,(N_{v_{y}}+1)} \, .
+\end{equation}
+We also consider a sequence $z^{n} = n\,\Delta z$. The whole semi-lagrangian scheme which will be used for solving (\ref{paraxial}) is the following:
+
+\begin{enumerate}
+\item Assuming that all $f^{n}(x_{i}^{(I)},y_{j}^{(J)},{v_{x}}_{k}^{(K)},{v_{y}}_{l}^{(L)})$ and $\mathbf{E}^{s,n}(x_{i}^{(I)},y_{j}^{(J)})$ are known, we compute
+\begin{equation}
+\begin{split}
+f^{*}(x_{i}^{(I)},y_{j}^{(J)},{v_{x}}_{k}^{(K)},&{v_{y}}_{l}^{(L)}) \\
+&= \pi_{\mathbf{v}}f^{n}\Big(x_{i}^{(I)},y_{j}^{(J)},(\mathbb{I}+\cfrac{\Delta z}{2}\,\mathbb{M}_{i,j}^{n,(I,J)})^{-1}\,\big( \left(
+\begin{array}{c}
+{v_{x}}_{k}^{(K)} \\ {v_{y}}_{l}^{(L)}
+\end{array}
+\right) - \cfrac{\Delta z}{2}\, \bm{\mathcal{G}}_{i,j}^{n,(I,J)}\big) \Big) \, ,
+\end{split}
+\end{equation}
+with $\mathbb{M}_{i,j}^{n,(I,J)}$ and $\bm{\mathcal{G}}_{i,j}^{n,(I,J)}$ defined by
+\begin{equation}
+\begin{split}
+\mathbb{M}_{i,j}^{n,(I,J)} &= \cfrac{q}{v_{z}\,\gamma_{z}\,m} \, B_{z}^{e}(z^{n},x_{i}^{(I)},y_{j}^{(J)})\, \left(
+\begin{array}{cc}
+0 & 1 \\ -1 & 0
+\end{array}
+\right) \, , \\
+\bm{\mathcal{G}}_{i,j}^{n,(I,J)} &= \cfrac{q}{v_{z}\,\gamma_{z}\,m}\,\Big[ \mathbf{E}^{e}(z^{n},x_{i}^{(I)},y_{j}^{(J)}) + v_{z}\,\left(
+\begin{array}{c}
+-B_{y}^{e}(z^{n},x_{i}^{(I)},y_{j}^{(J)}) \\ B_{x}^{e}(z^{n},x_{i}^{(I)},y_{j}^{(J)})
+\end{array}
+\right) \Big] \\
+&\qquad \qquad + \cfrac{q}{v_{z}\,\gamma_{z}^{3}\,m} \, \mathbf{E}^{s,n}(x_{i}^{(I)},y_{j}^{(J)}) \, ,
+\end{split}
+\end{equation}
+
+\item We compute $f^{**}(x_{i}^{(I)},y_{j}^{(J)},{v_{x}}_{k}^{(K)},{v_{y}}_{l}^{(L)})$ as
+\begin{equation}
+f^{**}(x_{i}^{(I)},y_{j}^{(J)},{v_{x}}_{k}^{(K)},{v_{y}}_{l}^{(L)}) = \pi_{\mathbf{x}}f^{*}(x_{i}^{(I)}-\Delta z \, \cfrac{{v_{x}}_{k}^{(K)}}{v_{z}}, y_{j}^{(J)}-\Delta z \, \cfrac{{v_{y}}_{l}^{(L)}}{v_{z}}, {v_{x}}_{k}^{(K)},{v_{y}}_{l}^{(L)}) \, ,
+\end{equation}
+
+
+\item We compute $\mathbf{E}^{s,n+1}$ by approaching the solution of
+\begin{equation}
+\left\{
+\begin{array}{l}
+\displaystyle -\Delta_{\mathbf{x}}\phi^{s,n+1}(x,y) = \cfrac{q}{\varepsilon_{0}}\,\int_{\Omega_{\mathbf{v}}} f^{**}(x,y,v_{x},v_{y}) \, dv_{x}\,dv_{y} \, , \\
+\displaystyle \mathbf{E}^{s,n+1} = -\nabla_{\mathbf{x}}\phi^{s,n+1} \, ,
+\end{array}
+\right.
+\end{equation}
+
+\item We finally compute $f^{n+1}(x_{i}^{(I)},y_{j}^{(J)},{v_{x}}_{k}^{(K)},{v_{y}}_{l}^{(L)})$ as
+\begin{equation}
+\begin{split}
+f^{n+1}(x_{i}^{(I)},y_{j}^{(J)},&{v_{x}}_{k}^{(K)},{v_{y}}_{l}^{(L)}) \\
+&= \pi_{\mathbf{v}}f^{**}\Big(x_{i}^{(I)},y_{j}^{(J)},(\mathbb{I}-\cfrac{\Delta z}{2}\,\mathbb{M}_{i,j}^{n+1,(I,J)})\, \left(
+\begin{array}{c}
+{v_{x}}_{k}^{(K)} \\ {v_{y}}_{l}^{(L)}
+\end{array}
+\right) - \cfrac{\Delta z}{2}\, \bm{\mathcal{G}}_{i,j}^{n+1,(I,J)} \Big) \, ,
+\end{split}
+\end{equation}
+with $\mathbb{M}_{i,j}^{n+1,(I,J)}$ and $\bm{\mathcal{G}}_{i,j}^{n+1,(I,J)}$ defined by
+\begin{equation}
+\begin{split}
+\mathbb{M}_{i,j}^{n+1,(I,J)} &= \cfrac{q}{v_{z}\,\gamma_{z}\,m} \, B_{z}^{e}(z^{n+1},x_{i}^{(I)},y_{j}^{(J)})\, \left(
+\begin{array}{cc}
+0 & 1 \\ -1 & 0
+\end{array}
+\right) \, , \\
+\bm{\mathcal{G}}_{i,j}^{n+1,(I,J)} &= \cfrac{q}{v_{z}\,\gamma_{z}\,m}\,\Big[ \mathbf{E}^{e}(z^{n+1},x_{i}^{(I)},y_{j}^{(J)}) + v_{z}\,\left(
+\begin{array}{c}
+-B_{y}^{e}(z^{n+1},x_{i}^{(I)},y_{j}^{(J)}) \\ B_{x}^{e}(z^{n+1},x_{i}^{(I)},y_{j}^{(J)})
+\end{array}
+\right) \Big] \\
+&\qquad \qquad + \cfrac{q}{v_{z}\,\gamma_{z}^{3}\,m} \, \mathbf{E}^{s,n+1}(x_{i}^{(I)},y_{j}^{(J)}) \, .
+\end{split}
+\end{equation}
+\end{enumerate}
+
+In this loop, $\pi_{\mathbf{x}}$ and $\pi_{\mathbf{v}}$ are two 2D local spline interpolation operators defined as in paragraph 4.3, and the resolution of the Poisson equation can be performed with the finite difference method which as be described in section 5. \\
+
+
+
+
+\subsection{Some test cases}
+
+
+In this paragraph, we suggest some examples of initial distributions $f_{p}^{0}$ and of external focusing fields. It is expected that all these analytical functions be implemented such that the user can combine them as he want. Furthermore, we suggest 2 physical test cases which are 
+\begin{itemize}
+\item A semi-gaussian beam focused by an alternating gradient magnetic field,
+\item A semi-gaussian beam focused by a uniform electric field.
+\end{itemize}
+
+
+\subsubsection{Diagnostics}
+
+\indent Since the simulated distribution function depends on $x,y,v_{x},v_{y}$ and $z$, it is not recommanded to save the complete array of $f^{n}(x_{i},y_{j},{v_{x}}_{k},{v_{y}}_{l})$ for each $n$ because it can be very costly in terms of memory space. For this reason, we choose to save the following 2D projections for any $n$:
+\begin{equation}
+\begin{array}{rcl}
+(x,y) & \longmapsto & \rho^{n}(x,y) \, , \\
+(x,y) & \longmapsto & \phi^{s,n}(x,y) \, , \\
+(x,y) & \longmapsto & \mathbf{E}^{s,n}(x,y) \, , \\
+(x,y) & \longmapsto & \mathbf{J}^{s,n}(x,y) = \displaystyle q \, \int_{\R^{2}} \left(
+\begin{array}{c}
+v_{x} \\ v_{y}
+\end{array}
+\right) \, f^{n}(x,y,v_{x},v_{y}) \, dv_{x} \, dv_{y} \, , \\
+(v_{x},v_{y}) & \longmapsto & \displaystyle \int_{\R^{2}} f^{n}(x,y,v_{x},v_{y}) \, dx\, dy \, , \\
+(x,v_{x}) & \longmapsto & \displaystyle \int_{\R^{2}} f^{n}(x,y,v_{x},v_{y}) \, dy\, dv_{y} \, , \\
+(y,v_{y}) & \longmapsto & \displaystyle \int_{\R^{2}} f^{n}(x,y,v_{x},v_{y}) \, dx\, dv_{x} \, .
+\end{array}
+\end{equation}
+As a complement of these results, it is expected to save the evolution of the $L^{p}$-norms $(p = 1,2,\infty$) and RMS values of the distribution function $f$ at any step $z^{n}$. Furthermore, it is excepted that the RMS values of $f_{KV}$ would be saved (see paragraph 2.2 for computing them from $a$ and $b$). Indeed, these diagnostics will allow us to study the K-V adaptation of the beam initialized with $f$ over several periods of length $S$.
+
+
+\subsubsection{Initial distributions}
+
+\begin{itemize}
+\item \underline{Semi-Gaussian distribution:}
+\begin{equation}
+f_{p}^{0}(x,y,v_{x},v_{y}) = \cfrac{N^{0}}{2\pi^{2}\,x_{0}\,y_{0}\,{v_{x}}_{0}\,{v_{y}}_{0}}\, \times \left\{
+\begin{array}{ll}
+\exp\big(-\cfrac{v_{x}^{2}}{2{v_{x}}_{0}^{2}}-\cfrac{v_{y}^{2}}{2{v_{y}}_{0}^{2}}\big) \, , & \textnormal{if $\cfrac{x^{2}}{x_{0}^{2}}+\cfrac{y^{2}}{y_{0}^{2}} \leq 1$,} \\
+0 & \textnormal{else.}
+\end{array}
+\right.
+\end{equation}
+
+\begin{leftbar}
+\textbf{Question 6.2.} Prove that
+\begin{equation}
+\int_{\R^{4}} f_{0}^{p}(x,y,v_{x},v_{y}) \, dx \, dy \, dv_{x} \, dv_{y} = N^{0} \, ,
+\end{equation}
+and
+\begin{equation}
+\begin{array}{rclrcl}
+x_{RMS}(f_{p}^{0}) &=& \cfrac{x_{0}}{2}\, , \qquad & {v_{x}}_{RMS}(f_{p}^{0}) &=& {v_{x}}_{0} \, , \\
+y_{RMS}(f_{p}^{0}) &=& \cfrac{y_{0}}{2}\, , \qquad & {v_{y}}_{RMS}(f_{p}^{0}) &=& {v_{y}}_{0} \, .
+\end{array}
+\end{equation}
+\end{leftbar}
+
+
+
+
+\item \underline{Gaussian distribution:}
+\begin{equation}
+f_{p}^{0}(x,y,v_{x},v_{y}) = \cfrac{N^{0}}{4\pi^{2}\,x_{0}\,y_{0}\,{v_{x}}_{0}\,{v_{y}}_{0}} \, \exp\big(-\cfrac{x^{2}}{2x_{0}^{2}} - \cfrac{y^{2}}{2y_{0}^{2}} - \cfrac{v_{x}^{2}}{2{v_{x}}_{0}^{2}} - \cfrac{v_{y}^{2}}{2{v_{y}}_{0}^{2}} \big) \, .
+\end{equation}
+
+
+\begin{leftbar}
+\textbf{Question 6.3.} Prove that 
+\begin{equation}
+\int_{\R^{4}} f_{0}^{p}(x,y,v_{x},v_{y}) \, dx \, dy \, dv_{x} \, dv_{y} = N^{0} \, ,
+\end{equation}
+and
+\begin{equation}
+\begin{array}{rclrcl}
+x_{RMS}(f_{p}^{0}) &=& x_{0} \, , \qquad & {v_{x}}_{RMS}(f_{p}^{0}) &=& {v_{x}}_{0} \, , \\
+y_{RMS}(f_{p}^{0}) &=& y_{0} \, , \qquad & {v_{y}}_{RMS}(f_{p}^{0}) &=& {v_{y}}_{0} \, .
+\end{array}
+\end{equation}
+\end{leftbar}
+
+\end{itemize}
+
+
+\subsubsection{External forces}
+
+\begin{itemize}
+\item \underline{Uniform focusing with an external electric field:}
+\begin{equation}
+\mathbf{E}^{e}(z,\mathbf{x}) = -\cfrac{\gamma_{z}\,m\,\omega_{0}^{2}}{q}\, \mathbf{x} \, , \qquad \mathbf{B}^{e} = 0 \, ,
+\end{equation}
+where $\omega_{0}$ is a positive constant.
+
+\item \underline{Alternating gradient focusing with an external magnetic field:}
+\begin{equation}
+\mathbf{E}^{e} = 0 \, ,\qquad \mathbf{B}^{e}(z,x,y) = \left(
+\begin{array}{c}
+B'(z)\,y \\ B'(z)\,x \\ 0
+\end{array}
+\right) \, ,
+\end{equation}
+with $z \mapsto B'(z)$ $S$-periodic. We can consider the \textit{FODO I} focusing by defining $B'(z)$ on one period $[0,S]$ by
+\begin{equation}
+B'(z) = \left\{ 
+\begin{array}{ll}
+B_{p} \, , & \textnormal{if $z \in [0,\frac{\eta\,S}{4}] \cup [(1-\frac{\eta}{4})\,S,S]$,} \\ \\
+-B_{p} \, , & \textnormal{if $z \in [(1-\frac{\eta}{2})\frac{S}{2}, (1+\frac{\eta}{2})\frac{S}{2}]$,} \\ \\
+0 \, , & \textnormal{else,}
+\end{array}
+\right.
+\end{equation}
+or the \textit{FODO II} focusing by defining $B'(z)$ as
+\begin{equation}
+B'(z) = \left\{ 
+\begin{array}{ll}
+B_{p} \, , & \textnormal{if $z \in [(1-\eta)\,\frac{S}{4},(1+\eta)\,\frac{S}{4}]$,} \\ \\
+-B_{p} \, , & \textnormal{if $z \in [(3-\eta)\,\frac{S}{4},(3+\eta)\,\frac{S}{4}]$,} \\ \\
+0 \, , & \textnormal{else,}
+\end{array}
+\right.
+\end{equation}
+for some fixed constants $B_{p} \geq 0$ and $\eta \in \, ]0,1[$.
+
+
+\item \underline{Alternating gradient focusing with an external electric field:}
+\begin{equation}
+\mathbf{E}^{e}(z,x,y) = \left(
+\begin{array}{c}
+E'(z)\,x \\ -E'(z)\,y
+\end{array}
+\right) \, , \qquad \mathbf{B}^{e} = 0 \, ,
+\end{equation}
+with $E'(z)$ $S$-periodic. We can choose $E'(z)$ defined by
+\begin{equation}
+E'(z) = \left\{
+\begin{array}{ll}
+E_{p} \, , & \textnormal{if $z \in [0,\frac{S}{8}] \cup [\frac{7S}{8},S]$,} \\ \\
+-E_{p} \, , & \textnormal{if $z \in [\frac{3S}{8},\frac{5S}{8}]$,} \\ \\
+0 \, , & \textnormal{else,}
+\end{array}
+\right.
+\end{equation}
+for some fixed constants $E_{p} \geq 0$.
+
+\item \underline{Periodic focusing with an external magnetic field:}
+\begin{equation}
+\mathbf{E}^{e} = 0 \, , \qquad \mathbf{B}^{e}(z,x,y) = \left(
+\begin{array}{c}
+-\cfrac{1}{2}\,B'(z)\,x \\
+-\cfrac{1}{2}\,B'(z)\,y \\
+B(z)
+\end{array}
+\right) \, ,
+\end{equation}
+where $B(z)$ is $S$-periodic and can defined in various ways:
+\begin{itemize}
+\item Uniform focusing with $B(z) = B_{p}$ where $B_{p} \geq 0$ is a fixed constant,
+\item Sinusoidal focusing with $B(z) = \frac{B_{p}}{2}\, (1+\cos(\frac{2\pi z}{S}))$ and $B_{p} \geq 0$ fixed,
+\item Piecewise uniform focusing with 
+\begin{equation}
+B(z) = \left\{
+\begin{array}{ll}
+B_{max} \, , & \textnormal{if $z \in [\frac{\eta\,S}{2},(1-\frac{\eta}{2})\,S]$,} \\ \\
+B_{min} \, , & \textnormal{else,}
+\end{array}
+\right. 
+\end{equation}
+or
+\begin{equation}
+B(z) = \left\{
+\begin{array}{ll}
+B_{max} \, , & \textnormal{if $z \in [0,\frac{\eta\,S}{4}] \cup [(1-\frac{\eta}{4})\,S,S]$,} \\ \\
+B_{min} \, , & \textnormal{if $z \in [(1-\frac{\eta}{2})\,\frac{S}{2},(1+\frac{\eta}{2})\,\frac{S}{2}]$,} \\ \\
+0 \, , & \textnormal{else,}
+\end{array}
+\right.
+\end{equation}
+where $B_{max}$, $B_{min}$ are some fixed and $\eta \in \, ]0,1[$.
+\end{itemize}
+\end{itemize}
+
+
+
+
+
+
+
+
+
+\subsection{Test 1: focusing a semi-gaussian beam with an alternating gradient magnetic field}
+
+We consider the following conditions\footnotemark[3]:
+\begin{itemize}
+\item The focusing is insured by an alternating gradient magnetic field $\mathbf{B}^{e}$ of type FODO 2 with $\eta = 0.5$, $S = 1 \, (m)$, $B_{p} = 1\, (T)$,
+\item The intensity of the imposed current is $I = 0.1 \, (A)$ and the kinetic energy is $E_{k} = 5\times 10^{6}\,eV$,
+\item The emittances are $\epsilon_{x} = \epsilon_{y} = 2.36 \times 10^{-5} \, \,(rad\, m)$,
+\item The initial distribution is a semi-gaussian distribution,
+\item The beam is constituted of protons so the unit charge is $q = 1.60217653 \times 10^{-19} \, (C)$ and the unit mass is $m = 1.672623 \times 10^{-27} \, (kg)$,
+\item We perform the simulation on the $z$-domain $[0,L_{z}]$ with $L_{z} = 5\, (m)$, $\textit{i.e.}$ on 5 periods of the magnetic field,
+\item The phase space simulation domain is $[x_{min},x_{max}] \times [y_{min},y_{max}] \times [{v_{x}}_{min},{v_{x}}_{max}] \times [{v_{y}}_{min},{v_{y}}_{max}]$ with
+\begin{equation}
+\begin{array}{ll}
+x_{max} = -x_{min} = 4 \times |x_{0}| \, ,\quad & y_{max} = -y_{min} = 4 \times |y_{0}| \, , \\
+{v_{x}}_{max} = -{v_{x}}_{min} = 8 \times v_{z}\times |{v_{x}}_{0}| \, ,\quad & {v_{y}}_{max} = -{v_{y}}_{min} = 8 \times v_{z}\times |{v_{y}}_{0}| \, ,
+\end{array}
+\end{equation}
+where $x_{0}$, $y_{0}$, ${v_{x}}_{0}$ and ${v_{y}}_{0}$ are obtained from the KV-adaptation procedure (see paragraph 2.2),
+\item The step is $z$-direction is $\Delta z = \cfrac{S}{75}$ and the number of points in $x$, $y$, $v_{x}$ and $v_{y}$ directions\footnotemark[4] has to be larger than 32.
+\end{itemize}
+
+
+
+
+\subsection{Test 2: focusing a semi-gaussian beam with a uniform electric field}
+
+We consider the following conditions\footnotemark[3]:
+\begin{itemize}
+\item The focusing is insured by a uniform electric field $\mathbf{E}^{e}$ with $\omega_{0} = 10^{4}\, (Hz)$, and $S = 1 \, (m)$,
+\item The intensity of the imposed current is $I = 2 \, (A)$ and the kinetic energy is $E_{k} = 10^{6}\,eV$,
+\item The emittances are $\epsilon_{x} = \epsilon_{y} = 2.36 \times 10^{-5} \, \,(rad\, m)$,
+\item The initial distribution is a semi-gaussian distribution,
+\item The beam is constituted of protons so the unit charge is $q = 1.60217653 \times 10^{-19} \, (C)$ and the unit mass is $m = 1.672623 \times 10^{-27} \, (kg)$,
+\item We perform the simulation on the $z$-domain $[0,L_{z}]$ with $L_{z} = 5\, (m)$, $\textit{i.e.}$ on 5 periods of the electric field,
+\item The phase space simulation domain is $[x_{min},x_{max}] \times [y_{min},y_{max}] \times [{v_{x}}_{min},{v_{x}}_{max}] \times [{v_{y}}_{min},{v_{y}}_{max}]$ with
+\begin{equation}
+\begin{array}{ll}
+x_{max} = -x_{min} = 3 \times |x_{0}| \, ,\quad & y_{max} = -y_{min} = 3 \times |y_{0}| \, , \\
+{v_{x}}_{max} = -{v_{x}}_{min} = 8 \times v_{z}\times |{v_{x}}_{0}| \, ,\quad & {v_{y}}_{max} = -{v_{y}}_{min} = 8 \times v_{z}\times |{v_{y}}_{0}| \, ,
+\end{array}
+\end{equation}
+where $x_{0}$, $y_{0}$, ${v_{x}}_{0}$ and ${v_{y}}_{0}$ are obtained from the KV-adaptation procedure (see paragraph 2.2),
+\item The step is $z$-direction is $\Delta z = \cfrac{S}{75}$ and the number of points in $x$, $y$, $v_{x}$ and $v_{y}$ directions\footnotemark[4] has to be larger than 32.
+\end{itemize}
+
+
+
+\footnotetext[3]{Reminder: $c = 299792458 \, (ms^{-1})$, $\varepsilon_{0} = 8.85418782 \times 10^{-12} \, (m^{-3}kg^{-1}s^{4}A^{2})$, $\pi = 4\,\arctan(1)$, $1\,eV = 1.60217653 \times 10^{-19}\, J$.}
+
+\footnotetext[4]{Reminder: use the parallelization properties of the interpolation operators to speed up the code by sharing the points over several CPUs.}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

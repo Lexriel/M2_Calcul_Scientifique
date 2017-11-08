@@ -1,0 +1,64 @@
+9
+
+dir
+607
+svn+ssh://atemperville@tedium.scl.csd.uwo.ca/home/svn/modpn/modpn
+svn+ssh://atemperville@tedium.scl.csd.uwo.ca/home/svn/modpn/modpn
+
+
+
+2012-06-18T23:57:48.911208Z
+607
+atemperville
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+c22c0bd6-5691-0410-a3fe-d57a1563a474
+
+build
+dir
+
+slides
+dir
+
+submit
+dir
+
+euclideanCUDA
+dir
+
+cumodp
+dir
+
+mpl
+dir
+
+RealRootIsolation
+dir
+
+modpn
+dir
+
+README
+file
+
+
+
+
+2012-05-16T16:34:12.000000Z
+6e409f9a89f114b030fa05d8edc9ee0d
+2011-12-19T00:00:49.839693Z
+144
+moreno
+

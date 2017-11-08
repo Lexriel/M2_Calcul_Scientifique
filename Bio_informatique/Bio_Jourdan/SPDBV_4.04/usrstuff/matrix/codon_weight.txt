@@ -1,0 +1,6 @@
+# this provides the extra score to attribute during alignment for each position of a codon
+# when it is conserved with its counterpart (default are  2 2 1 to put less weight
+# on the wobble position.)
+# setting to 0 0 0 ignores codon information and is faster.
+# 2 2 1
+0 0 0

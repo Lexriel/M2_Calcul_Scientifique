@@ -1,0 +1,8 @@
+GPU/code/cumodp/src/README
+
+benchmark.cu: C++ benchmarking/test file
+main.c : C test file
+
+naive_poly_mul.cu: very naive and less naive plain multiplications
+
+list_naive_poly_mul.cu: list of naive multiplications

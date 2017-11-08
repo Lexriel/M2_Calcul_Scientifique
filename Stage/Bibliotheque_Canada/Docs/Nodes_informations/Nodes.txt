@@ -1,0 +1,106 @@
+Head node
+=========
+4  x  4  x Intel(R) Xeon(R) CPU  E5620  @ 2.40GHz 
+           cache size	: 12288 KB
+           cache_alignment	: 64
+MemTotal:     24676472 kB
+
+compute-0-0
+============
+4   x 12  x  AMD Opteron(tm) Processor 6168
+             cache size	: 512 KB
+             cache_alignment	: 64
+MemTotal:     264286684 kB
+
+compute-0-1
+============
+4   x 12  x  AMD Opteron(tm) Processor 6168
+             cache size	: 512 KB
+             cache_alignment	: 64
+MemTotal:     264286684 kB
+
+compute-0-2
+============
+2  x  12  x Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+           cache size	: 12288 KB
+           cache_alignment	: 64
+MemTotal:     49449128 kB
+
+compute-0-3
+============
+2  x  12  x Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+           cache size	: 12288 KB
+           cache_alignment	: 64
+MemTotal:     49449128 kB
+
+compute-0-4
+============
+2  x  12  x Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+           cache size	: 12288 KB
+           cache_alignment	: 64
+MemTotal:     49449128 kB
+
+compute-0-5
+============
+2  x  12  x Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+           cache size	: 12288 KB
+           cache_alignment	: 64
+MemTotal:     49449128 kB
+
+compute-0-6
+============
+2  x  12  x Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+           cache size	: 12288 KB
+           cache_alignment	: 64
+MemTotal:     49449128 kB
+/usr/sbin/dmidecode | grep -i nvidia  -> nothing
+/sbin/lspci -v | grep -i nvidia   -> nothing
+
+compute-0-7
+============
+2  x  12  x Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+           cache size	: 12288 KB
+           cache_alignment	: 64
+MemTotal:     49449128 kB
+
+compute-0-8
+============
+2  x  12  x Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+           cache size	: 12288 KB
+           cache_alignment	: 64
+MemTotal:      41175240 kB   <----   !!!!!!!!!!  
+
+compute-0-9
+============
+2  x  12  x Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+           cache size	: 12288 KB
+           cache_alignment	: 64
+MemTotal:     49449128 kB
+
+compute-0-10
+============
+2  x  12  x Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+           cache size	: 12288 KB
+           cache_alignment	: 64
+MemTotal:     49449128 kB
+/usr/sbin/dmidecode | grep -i nvidia  -> nothing
+/sbin/lspci -v | grep -i nvidia   -> something
+
+
+compute-0-11
+============
+2  x  12  x Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+           cache size	: 12288 KB
+           cache_alignment	: 64
+MemTotal:     49449128 kB
+/usr/sbin/dmidecode | grep -i nvidia  -> nothing
+/sbin/lspci -v | grep -i nvidia   -> something
+
+compute-0-12
+============
+2  x  12  x Intel(R) Xeon(R) CPU           X5650  @ 2.67GHz
+           cache size	: 12288 KB
+           cache_alignment	: 64
+MemTotal:     49449128 kB
+/usr/sbin/dmidecode | grep -i nvidia  -> nothing
+/sbin/lspci -v | grep -i nvidia   -> something

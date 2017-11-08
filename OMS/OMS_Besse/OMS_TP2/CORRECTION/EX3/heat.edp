@@ -1,0 +1,15 @@
+// file heatex.edp
+border C1(t=-3,3){x=t; y=-3;}
+border C2(t=-3,3){x=3; y=t;}
+border C3(t=-3,3){x=t; y=3;}
+border C4(t=-3,3){x=-3; y=t;}
+
+mesh Th=buildmesh( C1(50)+ C2(50) + C3(-50) + C4(-50));
+plot(Th);
+
+fespace Vh(Th,P1); Vh u,v;
+Vh kappa=1+2*(x<1)*(x>-1)*(y<1)*(y>-1);
+solve a(u,v)= int2d(Th)(kappa*(dx(u)*dx(v)+dy(u)*dy(v)))
+                +on(C1,u=20)+on(C2,u=20)
+                +on(C3,u=20)+on(C4,u=100);
+plot(u,value=true,wait=1,fill=true);

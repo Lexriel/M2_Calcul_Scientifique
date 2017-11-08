@@ -1,0 +1,33 @@
+#! /bin/sh
+
+usage() 
+# How to use this script
+{
+    echo "Usage: `basename $0` directory" 
+    echo "Print all the files with the extension .txt inside another directory"
+    echo "Must have a single parameter which must be a directory".
+    return 0 # exit status of the function
+}
+
+if [ $# -eq 1 -a -d $1 ]
+then
+
+   #go to the imput folder and create a folder inside
+   cd $1
+   mkdir txt_files
+
+   #all files with the .txt extension are remove in txt_folder
+   for i in `ls *.txt` ; do
+#       if [ $i = *.txt ]
+#echo $i
+#       then 
+cp $i txt_files
+#       fi
+   done
+
+   #rename the files in txt_folder
+   cd txt_files
+   rename .txt .old *.txt
+
+else usage
+fi

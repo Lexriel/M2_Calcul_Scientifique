@@ -1,0 +1,258 @@
+
+
+\def\A {\ensuremath{\mathbb{A}}}
+\def\B {\ensuremath{\mathbb{B}}}
+\def\C {\ensuremath{\mathbb{C}}}
+\def\D {\ensuremath{\mathbb{D}}}
+\def\F {\ensuremath{\mathbb{F}}}
+\def\K {\ensuremath{\mathbb{K}}}
+\def\L {\ensuremath{\mathbb{L}}}
+\def\M {\ensuremath{\mathsf{M}}}
+\def\N {\ensuremath{\mathbb{N}}}
+\def\Q {\ensuremath{\mathbb{Q}}}
+\def\R {\ensuremath{\mathbb{R}}}
+\def\T {\ensuremath{\mathcal{T}}}
+\def\Z {\ensuremath{\mathbb{Z}}}
+%% \def\Z {\ensuremath{{Z}}}
+\newcommand{\qub}{\overline{\mathbb{Q}}}
+
+\newcommand{\Le}{\leqslant}
+\newcommand{\Ge}{\geqslant}
+
+%% \DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Char}{char}
+\DeclareMathOperator{\Rem}{\sf d-rem}
+\DeclareMathOperator{\drem}{\sf d-rem}
+\DeclareMathOperator{\ord}{ord}
+\DeclareMathOperator{\charact}{char}
+\DeclareMathOperator{\Quot}{Quot}
+
+
+
+
+\definecolor{greyB}{rgb}{0.1,0.1,0.35}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+\definecolor{red1}{rgb}{1,0,0}
+\definecolor{blue1}{rgb}{0,0,1}
+\definecolor{grey1}{rgb}{0.7,0.7,0.7}
+
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.5}
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{lightred}{rgb}{1,0.5,0.5}
+\definecolor{lightblue}{rgb}{0.7,0.7,1}
+\definecolor{magenta1}{cmyk}{0.1,0.8,0.3,0.1}
+\definecolor{magenta2}{cmyk}{0.1,0.8,1,0.1}
+\definecolor{magenta3}{cmyk}{0.2,0.9,1,0.1}
+\definecolor{magenta4}{cmyk}{0.3,0.7,1,0.1}
+\definecolor{cdef}{rgb}{0,0,0.5}
+\definecolor{cdef2}{rgb}{0.6,0.6,1}
+\definecolor{DarkGreen1}{rgb}{0.6000,1,0.600}
+\definecolor{cdef3}{rgb}{0.5,0,0.3}
+\definecolor{cemph}{rgb}{0,0.5,0}
+\definecolor{mycolor}{rgb}{0.9,0.04,0.02}
+\definecolor{mycolor1}{rgb}{0.9,0.54,0.52}
+\definecolor{mydarkblue}{rgb}{0,0.08,0.45}
+\definecolor{col0}{rgb}{0.000,0.000,0.000}
+\definecolor{col1}{rgb}{0.000,0.000,1.000}
+\definecolor{col2}{rgb}{0.000,1.000,0.000}
+\definecolor{col3}{rgb}{0.000,1.000,1.000}
+\definecolor{col4}{rgb}{1.000,0.000,0.000}
+\definecolor{col5}{rgb}{1.000,0.000,1.000}
+\definecolor{Yellow}{rgb}{1.000,1.000,0.000}
+\definecolor{col7}{rgb}{1.000,1.000,1.000}
+\definecolor{Darkblue}{rgb}{0.000,0.000,0.560}
+\definecolor{Blue}{rgb}{0.000,0.000,0.690}
+\definecolor{Lightblue}{rgb}{0.000,0.000,0.820}
+\definecolor{VeryLightBlue}{rgb}{0.530,0.810,1.000}
+\definecolor{DarkGreen}{rgb}{0.000,0.360,0.000}
+\definecolor{Green}{rgb}{0.000,0.690,0.000}
+\definecolor{LightGreen}{rgb}{0.000,0.820,0.000}
+\definecolor{Aquamarine}{rgb}{0.000,0.690,0.690}
+\definecolor{col17}{rgb}{0.000,0.820,0.820}
+\definecolor{RedViolet}{rgb}{0.560,0.000,0.000}
+\definecolor{RubineRed}{rgb}{0.690,0.000,0.000}
+\definecolor{WildStrawberry}{rgb}{0.820,0.000,0.000}
+\definecolor{Violet}{rgb}{0.560,0.000,0.560}
+\definecolor{col22}{rgb}{0.690,0.000,0.690}
+\definecolor{col23}{rgb}{0.820,0.000,0.820}
+\definecolor{Brown}{rgb}{0.500,0.190,0.000}
+\definecolor{col25}{rgb}{0.630,0.250,0.000}
+\definecolor{Bitter}{rgb}{0.750,0.380,0.000}
+\definecolor{Pink}{rgb}{1.000,0.500,0.500}
+\definecolor{col28}{rgb}{1.000,0.630,0.630}
+\definecolor{col30}{rgb}{1.000,0.880,0.880}
+\definecolor{Dandelion}{rgb}{1.000,0.840,0.000}
+\definecolor{Turquoise}{rgb}{1.00,0.860,0.860}
+
+
+\newcommand{\heading}[1]{
+  \begin{center}
+   {\large\bf{{\textcolor{Blue}{#1}}}}
+  \end{center}
+  \vspace{1ex}
+}
+\newcommand{\sheading}[1]{
+  \begin{center}
+   {\large\bf{\em{{\textcolor{RedViolet}{#1}}}}}
+  \end{center}
+  \vspace{1ex}
+}
+
+\newcommand{\Mblue}[1]{\mbox{\textcolor{blue}{$#1$}}}
+\newcommand{\Mcyan}[1]{\mbox{\textcolor{cyan}{$#1$}}}
+\newcommand{\Mmagenta}[1]{\mbox{\textcolor{magenta}{$#1$}}}
+\newcommand{\Mgreen}[1]{\mbox{\textcolor{green}{$#1$}}}
+\newcommand{\Myellow}[1]{\mbox{\textcolor{yellow}{$#1$}}}
+\newcommand{\Mtomato}[1]{\mbox{\textcolor{red}{$#1$}}}
+
+\newcommand{\red}[1]{\mbox{\textcolor{red}{#1}}}
+\newcommand{\blue}[1]{\mbox{\textcolor{blue}{#1}}}
+
+\newcommand{\colordef}[1]{\mbox{\bf{{\textcolor{red1}{#1}}}}}
+\newcommand{\colorem}[1]{\mbox{ \bf{{\textcolor{darkgreen}{#1}}}}}
+\newcommand{\colorEM}[1]{\mbox{ \bf{{\textcolor{magenta1}{#1}}}}}
+\newcommand{\colorenv}[1]{\mbox{ \bf{{\textcolor{Brown}{#1}}}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%       For Triangular Decomposition
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\degree}[1]{\mbox{{\rm degree}$(#1)$}}
+\newcommand{\init}[1]{\mbox{{\rm init}$(#1)$}}
+\newcommand{\iter}[1]{\mbox{{\rm iter}$(#1)$}}
+\newcommand{\mdeg}[1]{\mbox{{\rm mdeg}$(#1)$}}
+\newcommand{\mvar}[1]{\mbox{{\rm mvar}$(#1)$}}
+\newcommand{\prem}[1]{\mbox{{\rm prem}$(#1)$}}
+\newcommand{\pquo}[1]{\mbox{{\rm pquo}$(#1)$}}
+\newcommand{\rank}[1]{\mbox{{\rm rank}$(#1)$}}
+\newcommand{\res}[1]{\mbox{{\rm res}$(#1)$}}
+\newcommand{\sat}[1]{\mbox{{\rm sat}$(#1)$}}
+\newcommand{\sep}[1]{\mbox{{\rm sep}$(#1)$}}
+\newcommand{\tail}[1]{\mbox{{\rm tail}$(#1)$}}
+\newcommand{\disc}[1]{\mbox{{\rm disc}$(#1)$}}
+\newcommand{\alg}[1]{\mbox{{\rm alg}$(#1)$}}
+\newcommand{\collectUpper}[2]{\mbox{ ${#1}_{#2}^{+}$}}
+\newcommand{\collectUnder}[2]{\mbox{ ${#1}_{#2}^{-}$}}
+\newcommand{\select}[2]{\mbox{ ${#1}_{#2}$}}
+\newcommand{\trdred}[1]{\mbox{{\sf red}$(#1)$}}
+\newcommand{\dimension}[1]{\mbox{{\sf dim}$(#1)$}}
+\newcommand{\pseudoremainder}[1]{\mbox{{\rm prem}$(#1)$}}
+\newcommand{\pseudoquotient}[1]{\mbox{{\rm pquo}$(#1)$}}
+\newcommand{\pseudodivision}[1]{\mbox{{\rm pdivide}$(#1)$}}
+\newcommand{\euclideanDivision}[4]{\mbox{{$ \begin{array}{c|c} #1 & #2 \\ \cline{2-2}
+                                                               #3 & #4 \\ \end{array} $}}}
+\newcommand{\multivariateDivisionsix}[6]{\mbox{{$ \begin{array}{c|c|c} #1 & #2 & #3   \\ \cline{2-3}
+                                                                     #4 & #5 & #6 \\ \end{array} $}}}
+\newcommand{\multivariateDivisionhuit}[8]{\mbox{{$ \begin{array}{c|c|c|c} #1 & #2 & #3 & #4  \\ \cline{2-4}
+                                                                       #5 & #6 & #7 & #8 \\ \end{array} $}}}
+
+\newcommand{\conv}{\mathop{\rm conv}\nolimits}
+\newcommand{\ld}{\mathop{\rm ld}\nolimits}
+\newcommand{\lm}{\mathop{\rm lm}\nolimits}
+\newcommand{\lc}{\mathop{\rm lc}\nolimits}
+\newcommand{\lp}{\mathop{\rm lp}\nolimits}
+\newcommand{\lv}{\mathop{\rm lv}\nolimits}
+\newcommand{\NormalForm}[1]{\mbox{{\rm NormalForm}$(#1)$}}
+
+\newcommand{\Init}{\mathop{\mathbb {\rm I}}\nolimits}
+\newcommand{\Sep}{\mathop{\mathbb {\rm S}}\nolimits}
+\newcommand{\Ld}{\mathop{\rm Ld}}
+\newcommand{\Rk}{\mathop{\rm Rk}}
+\newcommand{\rk}{\mathop{\rm rk}\nolimits}
+\newcommand{\rkchar}{\mathop{\rm rkchar}\nolimits}
+\newcommand{\wrk}{\mathop{\rm wrk}\nolimits}
+\newcommand{\allrk}{\mathop{\rm allrk}\nolimits}
+\newcommand{\algrem}{\mbox{\sf alg-rem}}
+\newcommand{\partrem}{\mbox{\sf part-rem}}
+\newcommand{\fullrem}{\mbox{\sf full-rem}}
+\newcommand{\saturate}[1]{\mbox{{\rm Sat}$(#1)$}}
+\newcommand{\leadingCoefficient}[1]{\mbox{{\rm lc}$(#1)$}}
+\newcommand{\leadingMonomial}[1]{\mbox{{\rm lm}$(#1)$}}
+\newcommand{\leadingTerm}[1]{\mbox{{\rm lt}$(#1)$}}
+\newcommand{\setsize}[1]{\mbox{$ | #1 | $}}
+
+\def\jac {\ensuremath{{\mathrm{Jac}}}}
+\newcommand{\Autoreduce}{\mathop{\sf Autoreduce}}
+
+\def\pu {\ensuremath{\textcolor{blue}{p_1}}}
+\def\pd {\ensuremath{\textcolor{red}{p_2}}}
+
+\def\var{\ensuremath{\mathbf{V}}}
+\def\zero{\ensuremath{\mathbf{Z}}}
+\def\W{\ensuremath{\mathbf{W}}}
+\def\D{\ensuremath{\mathbf{D}}}
+\def\KK {\ensuremath{\overline{\mathbb{K}}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%       For Subresultants
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\dpol}[1]{\mbox{{\rm dpol}$(#1)$}}
+\newcommand{\mat}[1]{\mbox{{\rm mat}$(#1)$}}
+%% \newcommand{\det}[1]{\mbox{{\rm det}$(#1)$}}
+\newcommand{\fr}[1]{\mbox{{\rm fr}$(#1)$}}
+\newcommand{\lsr}[1]{\mbox{{\rm lsr}$(#1)$}}
+\newcommand{\src}[1]{\mbox{{\rm src}$(#1)$}}
+\newcommand{\resultant}[1]{\mbox{{\sf res}$(#1)$}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For the RegularChains library (functions)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\RegularChainRegularize}{\sc {Regularize}}
+\newcommand{\Normalize}[1]{\mbox{{\rm Normalize}$(#1)$}}
+\newcommand{\IsUnit}[1]{\mbox{{\rm IsInvertible}$(#1)$}}
+\newcommand{\RegularGcd}[1]{\mbox{{\rm RegularGcd}$(#1)$}}
+\newcommand{\MainVariable}[1]{\mbox{{\rm MainVariable}$(#1)$}}
+\newcommand{\Initial}[1]{\mbox{{\rm Initial}$(#1)$}}
+\newcommand{\Intersect}[1]{\mbox{{\rm Intersect}$(#1)$}}
+\newcommand{\Extend}[1]{\mbox{{\rm Extend}$(#1)$}}
+\newcommand{\GenericSolve}[1]{\mbox{{\rm GenericSolve}$(#1)$}}
+\newcommand{\Lift}[1]{\mbox{{\rm Lift}$(#1)$}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%      For FastTriade
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\IsInvertible}{\sc {IsInvertible}}
+\def\FFT{\ensuremath{\mathrm{FFT}}}
+\def\TFT{\ensuremath{\mathrm{TFT}}}
+\def\DFT{\ensuremath{\mathrm{DFT}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     For Software
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\AXIOM}{{\sc AXIOM}}
+\newcommand{\axiom}{{\sc axiom}}
+\newcommand{\Aldor}{{\sc Aldor}}
+\newcommand{\aldor}{{\sc Aldor}}
+\newcommand{\maple}{{\sc Maple}}
+\newcommand{\Maple}{{\sc Maple}}
+\newcommand{\Triade}{{\sf Triade}}
+\newcommand{\FastTriade}{{\sf FastTriade}}
+\newcommand{\BasicMath}{{\sf BasicMath}}
+\newcommand{\RegularChains}{{\tt RegularChains}}
+\newcommand{\lisp}{{\sc Lisp}}
+\newcommand{\spad}{{\sc SPAD}}
+\newcommand{\gnu}{\mbox{{\sc GNU}}}
+\newcommand{\gmp}{\mbox{{\sc GMP}}}
+\newcommand{\gcl}{\mbox{{\sc GCL}}}
+\newcommand{\ntl}{\mbox{{\sc NTL}}}
+\newcommand{\assembly}{\mbox{{\sc Assembly}}}
+\newcommand{\cc}{\mbox{{\sc C}}}
+\newcommand{\Epsilon}{{\sf Epsilon}}
+\newcommand{\Discoverer}{{\sf Discoverer}}
+\def\DELTA{\mbox{$\Delta$}}
+\def\BASICMATH{\package{BasicMath}}
+\newcommand{\Recden}{{\tt RecDen}}
+\newcommand{\Modpn}{{\tt modpn}}
+\newcommand{\modpn}{{\tt modpn}}
+\newcommand{\Magma}{\sc {Magma}}
+\newcommand{\fgb}{\sc {FGb}}
+\newcommand{\NTL}{\sc {NTL}}
+\newcommand{\cogepas}{\sc {CoGePas}}
+\newcommand{\bpas}{\sc {BPAS}}
+\newcommand{\pascolib}{\sc {PASCOLib}}
+
+
+\newcommand{\MMM}{\mbox{ ${\mbox{{M}}}^3$ }}
+
+\newcommand{\proc}[1]{\mbox{\textsc{#1}}}
+\newcommand{\matx}[2]		{\left(\!\!\!\begin{array}{*{#1}{c}}#2\end{array}\!\!\!\right)}

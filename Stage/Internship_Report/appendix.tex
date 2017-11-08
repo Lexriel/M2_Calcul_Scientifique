@@ -1,0 +1,34 @@
+\subsection{Divide and Conquer Cuda code}
+\subsubsection{taylor\_shift.cu}
+\lstinputlisting{code/TaylorShift.c}
+
+\subsubsection{taylor\_shift\_cpu.cu}
+\lstinputlisting{code/TaylorShiftCpu.c}
+
+\subsubsection{taylor\_shift\_kernel.cu}
+\lstinputlisting{code/TaylorShiftKernel.c}
+
+\subsubsection{taylor\_shift\_fft.cu}
+\lstinputlisting{code/TaylorShiftFft.c}
+
+\subsubsection{taylor\_shift\_conf.h}
+\lstinputlisting{code/TaylorShiftConf.c}
+
+\subsubsection{File calling these procedures : testGPU.cu}
+This code calls the procedure taylor\_shift included in the file \textit{taylor\_shift.cu} :
+\lstinputlisting{code/testGPU.c}
+
+\subsection{Horner's method C++ code}
+\lstinputlisting{code/testHOR.c}
+
+\subsection{Divide and Conquer C++ code}
+\lstinputlisting{code/testDNC.c}
+
+\subsection{Maple code}
+The procedure we describe in this part makes the taylor shift by one of a polynomial $pp$ of variable $x$ in input modulo $prime$ which is a prime number. We can create a random polynomial $pp$ with the maple instruction \textit{randpoly}, for example :\\
+\textit{pp := randpoly($x$, degree = $2^{10} - 1$, terms = $2^{10}$):}\\
+
+Then we can run the following procedure with $pp$ and a prime number we choose ($958922753$ as for the other examples). Here is the procedure : \\
+
+\lstinputlisting{code/xplus1.input}
+

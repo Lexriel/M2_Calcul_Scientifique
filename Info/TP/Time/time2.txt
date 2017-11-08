@@ -1,0 +1,3 @@
+set term postscript portrait
+set output "time2.ps"
+plot "time2.dat" using 1:3 title 'better algorithm'

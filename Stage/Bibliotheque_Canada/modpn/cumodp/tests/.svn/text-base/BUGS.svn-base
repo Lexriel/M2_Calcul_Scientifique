@@ -1,0 +1,20 @@
+BUGS
+====
+
+1/ subproduct_tree_file.sh
+   fails sometimes with bin/input_16.txt
+   See com_fail.mw and com_pass.mw
+   The polynomial Test[34] which has degree 1024 is
+   not always correct
+   ==> list of multiplication seems to have an issue
+
+   GONE !!!!
+
+
+2/ fast_evaluation_file.sh
+
+
+inputf_degree_15.txt
+inputx_32769_points.txt  with 16 on the first line
+
+     GONE !!!!!!
